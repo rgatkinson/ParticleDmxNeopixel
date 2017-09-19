@@ -167,7 +167,6 @@ public:
 
     override void begin()
     {
-        Log.info("ColorizerSequence: begin: %d remain ms=%d", count(), millis());
         _currentColorizer = 0;
         if (_currentColorizer < count())
         {
@@ -193,7 +192,6 @@ public:
                 }
                 if (_currentColorizer < count())
                 {
-                    Log.info("ColorizerSequence: moving to next: %d remain ms=%d", count()-_currentColorizer, millis());
                     _colorizers[_currentColorizer]->begin();
                 }
             }
@@ -203,7 +201,7 @@ public:
     override void report()
     {
         Colorizer::report(); // pro forma
-        Log.info("ColorizerSequence: %d _colorizers cur=%d", count(), _currentColorizer);
+        Log.info("ColorizerSequence: %d colorizers cur=%d", count(), _currentColorizer);
         for (int i = 0; i < count(); i++)
         {
             _colorizers[i]->pColorizer->report();
