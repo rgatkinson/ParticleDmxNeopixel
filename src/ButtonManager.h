@@ -4,6 +4,8 @@
 #ifndef __BUTTON_MANAGER_H__
 #define __BUTTON_MANAGER_H__
 
+#include "Particle.h"
+
 struct ButtonManager
 {
     //----------------------------------------------------------------------------------------------
@@ -37,6 +39,10 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
+    void begin()
+    {
+    }
+
     void loop()
     {
         if (buttonIsPressed())
@@ -44,7 +50,6 @@ public:
             if (!_buttonPressed)
             {
                 _buttonPressed = true;
-                //
                 _pfn();
             }
         }
