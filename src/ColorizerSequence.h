@@ -52,8 +52,9 @@ struct ColorizerSequence : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    ArrayList<ColorizerAndDeadline*> colorizers;
-    int iCur;
+    ArrayList<ColorizerAndDeadline*> _colorizers;
+    int _currentColorizer;
+    bool _looping;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -62,14 +63,15 @@ public:
 
     ColorizerSequence() : Colorizer(ColorizerModeSequence)
     {
-        iCur = 0;
+        _currentColorizer = 0;
+        _looping = false;
     }
 
     override ~ColorizerSequence()
     {
-        for (int i = 0; i < colorizers.count(); i++)
+        for (int i = 0; i < _colorizers.count(); i++)
         {
-            delete colorizers[i];
+            delete _colorizers[i];
         }
     }
 
@@ -83,7 +85,7 @@ public:
         else
         {
             ColorizerAndDeadline* pPair = new ColorizerAndDeadline(pColorizer, ms);
-            colorizers.addLast(pPair);
+            _colorizers.addLast(pPair);
         }
     }
 
@@ -91,8 +93,8 @@ public:
     {
         for (int i = 0; i < pColorizer->count(); i++)
         {
-            colorizers.addLast(pColorizer->colorizers[i]);
-            pColorizer->colorizers[i] = NULL;
+            _colorizers.addLast(pColorizer->_colorizers[i]);
+            pColorizer->_colorizers[i] = NULL;
         }
         delete pColorizer;
     }
@@ -102,7 +104,7 @@ public:
         Colorizer::setColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
         {
-            colorizers[i]->pColorizer->setColorizeable(pColorizeable);
+            _colorizers[i]->pColorizer->setColorizeable(pColorizeable);
         }
     }
 
@@ -110,14 +112,23 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
+    void setLooping(bool looping)
+    {
+        _looping = looping;
+    }
+    bool looping()
+    {
+        return _looping;
+    }
+
     bool isEmpty()
     {
-        return colorizers.isEmpty();
+        return _colorizers.isEmpty();
     }
 
     int count()
     {
-        return colorizers.count();
+        return _colorizers.count();
     }
 
     override bool sameAs(Colorizer* pThemAbstract)
@@ -131,8 +142,8 @@ public:
             {
                 for (int i = 0; i < count(); i++)
                 {
-                    ColorizerAndDeadline* pOurs = this->colorizers[i];
-                    ColorizerAndDeadline* pTheirs = pThem->colorizers[i];
+                    ColorizerAndDeadline* pOurs = this->_colorizers[i];
+                    ColorizerAndDeadline* pTheirs = pThem->_colorizers[i];
                     result = pOurs->sameAs(pTheirs);
                     if (!result)
                     {
@@ -157,29 +168,33 @@ public:
     override void begin()
     {
         Log.info("ColorizerSequence: begin: %d remain ms=%d", count(), millis());
-        iCur = 0;
-        if (iCur < count())
+        _currentColorizer = 0;
+        if (_currentColorizer < count())
         {
-            colorizers[iCur]->begin();
+            _colorizers[_currentColorizer]->begin();
         }
     }
 
     override void loop()
     {
         Colorizer::loop();  // pro forma
-        if (iCur < count())
+        if (_currentColorizer < count())
         {
-            // Run the first guy
-            colorizers[iCur]->pColorizer->loop();
+            // Run the current guy
+            _colorizers[_currentColorizer]->pColorizer->loop();
 
             // If we're done running him, move on to the next
-            if (colorizers[iCur]->deadline.hasExpired())
+            if (_colorizers[_currentColorizer]->deadline.hasExpired())
             {
-                iCur++;
-                Log.info("ColorizerSequence: moving to next: %d remain ms=%d", count()-iCur, millis());
-                if (iCur < count())
+                _currentColorizer++;
+                if (_currentColorizer == count() && _looping)
                 {
-                    colorizers[iCur]->begin();
+                    _currentColorizer = 0;
+                }
+                if (_currentColorizer < count())
+                {
+                    Log.info("ColorizerSequence: moving to next: %d remain ms=%d", count()-_currentColorizer, millis());
+                    _colorizers[_currentColorizer]->begin();
                 }
             }
         }
@@ -188,10 +203,10 @@ public:
     override void report()
     {
         Colorizer::report(); // pro forma
-        Log.info("ColorizerSequence: %d colorizers cur=%d", count(), iCur);
+        Log.info("ColorizerSequence: %d _colorizers cur=%d", count(), _currentColorizer);
         for (int i = 0; i < count(); i++)
         {
-            colorizers[i]->pColorizer->report();
+            _colorizers[i]->pColorizer->report();
         }
     }
 
