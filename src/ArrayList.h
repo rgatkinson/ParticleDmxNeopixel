@@ -99,7 +99,7 @@ public:
         return iItemMax - iItemFirst;
     }
 
-    ITEM operator[](int iItem)
+    ITEM& operator[](int iItem)
     {
         return items[iItemFirst + iItem];
     }

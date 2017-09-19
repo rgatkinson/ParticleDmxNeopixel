@@ -75,8 +75,26 @@ public:
 
     void addColorizer(Colorizer* pColorizer /*takes ownwership*/, int ms)
     {
-        ColorizerAndDeadline* pPair = new ColorizerAndDeadline(pColorizer, ms);
-        colorizers.addLast(pPair);
+        if (pColorizer->isSequence())
+        {
+            ColorizerSequence* pSequence = static_cast<ColorizerSequence*>(pColorizer);
+            addColorizer(pSequence);    // ignores ms
+        }
+        else
+        {
+            ColorizerAndDeadline* pPair = new ColorizerAndDeadline(pColorizer, ms);
+            colorizers.addLast(pPair);
+        }
+    }
+
+    void addColorizer(ColorizerSequence* pColorizer /*takes ownwership*/)
+    {
+        for (int i = 0; i < pColorizer->count(); i++)
+        {
+            colorizers.addLast(pColorizer->colorizers[i]);
+            pColorizer->colorizers[i] = NULL;
+        }
+        delete pColorizer;
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
@@ -87,7 +105,6 @@ public:
             colorizers[i]->pColorizer->setColorizeable(pColorizeable);
         }
     }
-
 
     //----------------------------------------------------------------------------------------------
     // Accessing
@@ -127,9 +144,15 @@ public:
         return result;
     }
 
+    virtual bool isSequence()  // a one-off dynamic_cast
+    {
+        return true;
+    }
+
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
+public:
 
     override void begin()
     {

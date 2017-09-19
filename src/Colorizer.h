@@ -73,6 +73,11 @@ public:
         return _mode;
     }
 
+    virtual bool isSequence()  // a one-off dynamic_cast
+    {
+        return false;
+    }
+
 protected:
 
     void setPixelColor(uint16_t iPixel, COLOR_INT color);
