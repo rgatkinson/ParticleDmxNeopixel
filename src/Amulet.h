@@ -50,7 +50,7 @@ public:
         ColorizerSequence* pSequence = new ColorizerSequence();
         pSequence->addColorizer(new RainbowColors(), ms);
         pSequence->addColorizer(new ConstantColor(_indicatorColor), ms);
-        pSequence->addColorizer(new ConstantColor(Color::BLACK), ms * 6);
+        pSequence->addColorizer(new ConstantColor(Color::BLACK), ms * 9);
         pSequence->setLooping(true);
         return pSequence;
     }
