@@ -1,5 +1,5 @@
 //
-// Artnet.h
+// Artnet.h:
 //
 #ifndef _ARTNET_H_
 #define _ARTNET_H_

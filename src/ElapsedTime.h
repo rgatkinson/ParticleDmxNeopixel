@@ -81,6 +81,4 @@ private:
     }
 };
 
-TIME ElapsedTime::loopNow = ElapsedTime::computeNow();
-
 #endif

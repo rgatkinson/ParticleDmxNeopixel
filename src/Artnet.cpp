@@ -1,5 +1,5 @@
 //
-// ArtnetDataAndFunctions.cpp
+// Artnet.cpp
 //
 #include "Particle.h"
 #include "Artnet.h"
