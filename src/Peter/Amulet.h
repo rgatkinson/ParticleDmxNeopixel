@@ -1,6 +1,8 @@
 //
 // Amulet.h
 //
+// Amulet design for Peter & the Starcatcher
+
 #ifndef __AMULET_H_
 #define __AMULET_H_
 
