@@ -53,8 +53,8 @@ public:
 
     virtual ~PixelSequence()
     {
-        delete pDimmer;
-        delete pColorizer;
+        releaseRef(pDimmer);
+        releaseRef(pColorizer);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -63,12 +63,12 @@ public:
 
     void setDimmer(Dimmer* pDimmer)
     {
-        delete this->pDimmer;
+        releaseRef(this->pDimmer);
         this->pDimmer = pDimmer; // takes ownership
     }
     void setColorizer(Colorizer* pColorizer)
     {
-        delete this->pColorizer;
+        releaseRef(this->pColorizer);
         this->pColorizer = pColorizer; // takes ownwership
         this->pColorizer->setColorizeable(this);
     }
@@ -76,7 +76,7 @@ public:
     {
         if (this->pColorizer->sameAs(pColorizer))
         {
-            delete pColorizer;
+            releaseRef(pColorizer);
         }
         else
         {

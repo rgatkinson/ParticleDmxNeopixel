@@ -12,8 +12,9 @@
 // ColorizerAndDeadline
 //==================================================================================================
 
-struct ColorizerAndDeadline
+struct ColorizerAndDeadline : ReferenceCounted
 {
+public:
     Colorizer*  pColorizer;
     Deadline    deadline;
 
@@ -22,11 +23,12 @@ struct ColorizerAndDeadline
         this->pColorizer = pColorizer; // takes ownership
         this->deadline = Deadline(msInterval);
     }
+protected:
     ~ColorizerAndDeadline()
     {
-        delete pColorizer;
+        releaseRef(pColorizer);
     }
-
+public:
     void begin()
     {
         pColorizer->begin();
@@ -71,7 +73,7 @@ public:
     {
         for (int i = 0; i < _colorizers.count(); i++)
         {
-            delete _colorizers[i];
+            releaseRef(_colorizers[i]);
         }
     }
 
@@ -96,7 +98,7 @@ public:
             _colorizers.addLast(pColorizer->_colorizers[i]);
             pColorizer->_colorizers[i] = NULL;
         }
-        delete pColorizer;
+        releaseRef(pColorizer);
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)

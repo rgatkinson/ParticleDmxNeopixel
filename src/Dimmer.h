@@ -4,10 +4,12 @@
 #ifndef __BRIGHTNESS_H_
 #define __BRIGHTNESS_H_
 
+#include "ReferenceCounted.h"
+
 typedef byte BRIGHTNESS;
 const BRIGHTNESS MAX_BRIGHTNESS = 255;
 
-class Dimmer
+struct Dimmer : ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -35,6 +37,8 @@ public:
         setDimming(MAX_BRIGHTNESS);
     }
 
+protected:
+
     virtual ~Dimmer()
     {
     }
@@ -42,6 +46,7 @@ public:
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
+public:
 
     void setMaxBrightness(BRIGHTNESS brightness)
     {
