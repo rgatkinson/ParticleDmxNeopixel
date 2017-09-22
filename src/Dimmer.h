@@ -4,12 +4,12 @@
 #ifndef __BRIGHTNESS_H_
 #define __BRIGHTNESS_H_
 
-#include "ReferenceCounted.h"
+#include "Durable.h"
 
 typedef byte BRIGHTNESS;
 const BRIGHTNESS MAX_BRIGHTNESS = 255;
 
-struct Dimmer : ReferenceCounted
+struct Dimmer : Durable
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -26,7 +26,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Dimmer()
+    Dimmer(int msDuration) : Durable(msDuration)
     {
         // We set a non-zero lower bound in recognition that at lower levels
         // the LEDs simply turn off. Perhaps we just need to tune our PWM curves
@@ -35,12 +35,6 @@ public:
         _min = 20;          // surprising. maybe voltage & color dependent?
         setCurrentLevel(1.0f);
         setDimming(MAX_BRIGHTNESS);
-    }
-
-protected:
-
-    virtual ~Dimmer()
-    {
     }
 
     //----------------------------------------------------------------------------------------------
@@ -98,6 +92,7 @@ public:
 
     virtual void begin()
     {
+        _duration.reset();
     }
 
     virtual void loop()

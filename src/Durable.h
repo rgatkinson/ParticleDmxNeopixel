@@ -1,48 +1,51 @@
 //
-// ConstantBrightness.h
+// Durable.h
 //
-#ifndef _CONSTANT_BRIGHTNESS_H_
-#define _CONSTANT_BRIGHTNESS_H_
+#ifndef __DURABLE_H__
+#define __DURABLE_H__
 
-#include "Dimmer.h"
+#include "ReferenceCounted.h"
 
-struct ConstantBrightness : Dimmer
+struct Durable : ReferenceCounted
 {
+    //----------------------------------------------------------------------------------------------
+    // State
+    //----------------------------------------------------------------------------------------------
+protected:
+
+    Deadline _duration;
+
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
+public:
 
-    ConstantBrightness(float level = 1.0f) : Dimmer(Deadline::Infinite)
+    Durable(int msDuration) : _duration(msDuration)
     {
-        setConstantBrightness(level);
+    }
+
+    virtual void setDuration(int msDuration)
+    {
+        _duration = Deadline(msDuration);
     }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    void setConstantBrightness(float f)
+    virtual bool sameAs(Durable* pThem)
     {
-        setCurrentLevel(f);
+        return _duration.msDuration() == pThem->_duration.msDuration();
     }
 
-    //----------------------------------------------------------------------------------------------
-    // Loop
-    //----------------------------------------------------------------------------------------------
-
-    override void begin()
+    virtual int msDuration()
     {
-        Dimmer::begin(); 
+        return _duration.msDuration();
     }
 
-    override void loop()
+    virtual bool hasExpired()
     {
-        Dimmer::loop();
-    }
-
-    override void report()
-    {
-        Dimmer::report();
+        return _duration.hasExpired();
     }
 
 };

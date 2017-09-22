@@ -7,7 +7,7 @@
 #include "Misc.h"
 #include "Color.h"
 #include "Deadline.h"
-#include "ReferenceCounted.h"
+#include "Durable.h"
 
 //==================================================================================================
 // Colorizeable
@@ -23,7 +23,7 @@ struct Colorizeable
 // Colorizer
 //==================================================================================================
 
-struct Colorizer : ReferenceCounted
+struct Colorizer : Durable
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -37,23 +37,17 @@ protected:
     ColorizerFlavor _flavor;
     Colorizeable*   _pColorizeable;
     int             _pixelCount;
-    Deadline        _duration;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(ColorizerFlavor flavor, int msDuration) : _duration(msDuration)
+    Colorizer(ColorizerFlavor flavor, int msDuration) : Durable(msDuration)
     {
         _flavor = flavor;
         _pColorizeable = NULL;
         _pixelCount = 0;
-    }
-
-    virtual void setDuration(int msDuration)
-    {
-        _duration = Deadline(msDuration);
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
@@ -73,19 +67,9 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual int msDuration()
+    override bool sameAs(Colorizer* pThem)
     {
-        return _duration.msDuration();
-    }
-
-    virtual bool hasExpired()
-    {
-        return _duration.hasExpired();
-    }
-
-    virtual bool sameAs(Colorizer* pThem)
-    {
-        return _flavor == pThem->_flavor;
+        return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
 
 protected:

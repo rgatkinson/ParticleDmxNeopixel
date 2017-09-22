@@ -54,7 +54,7 @@ public:
 
     override void loop()
     {
-        Colorizer::loop();  // pro forma
+        Colorizer::loop();
         if (_colorUpdateDeadline.hasExpired())
             {
                 // TRACE("RainbowColors: pixelOffset=%d", _pixelOffset);

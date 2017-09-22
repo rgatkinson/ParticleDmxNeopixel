@@ -14,20 +14,18 @@ struct BreathingBrightness : Dimmer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int msInterval;
-    float floatIntervalInverse;
-    ElapsedTime timer;
+    int _msInterval;
+    float _floatIntervalInverse;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingBrightness(int msInterval=4000)
+    BreathingBrightness(int msInterval) : Dimmer(msInterval)
     {
-        this->msInterval = msInterval;
-        this->floatIntervalInverse = 1.0f / (float)msInterval;
-        this->timer.reset();
+        _msInterval = msInterval;
+        _floatIntervalInverse = 1.0f / (float)_msInterval;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -46,16 +44,15 @@ public:
 
     override void begin()
     {
-        Dimmer::begin(); // pro forma
-        timer.reset();
+        Dimmer::begin();
     }
 
     override void loop()
     {
-        Dimmer::loop(); // pro forma
+        Dimmer::loop();
 
-        int ms = timer.milliseconds() % msInterval;
-        float intervalFraction = (float)ms * floatIntervalInverse;
+        int ms = _duration.milliseconds() % _msInterval;
+        float intervalFraction = (float)ms * _floatIntervalInverse;
 
         // linear up, linear down: the eye perceives it differently
         float level = (intervalFraction <= 0.5f)
@@ -64,6 +61,13 @@ public:
 
         setCurrentLevel(level);
     }
+
+    override void report()
+    {
+        Dimmer::report();
+        INFO("BreathingBrightness: interval=%d", _msInterval);
+    }
+
 };
 
 #endif

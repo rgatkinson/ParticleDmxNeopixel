@@ -160,7 +160,7 @@ public:
 
     override void loop()
     {
-        Colorizer::loop();  // pro forma
+        Colorizer::loop();
         if (_currentColorizer < count())
         {
             // Run the current guy
@@ -169,15 +169,14 @@ public:
             // If we're done running him, move on to the next
             if (_colorizers[_currentColorizer]->hasExpired())
             {
-                Log.info("ColorizerSequence: advancing: %d", _currentColorizer);
                 _currentColorizer++;
                 if (_currentColorizer == count() && _looping)
                 {
-                    Log.info("ColorizerSequence: looping");
                     _currentColorizer = 0;
                 }
                 if (_currentColorizer < count())
                 {
+                    INFO("ColorizerSequence: beginning: %d", _currentColorizer);
                     _colorizers[_currentColorizer]->begin();
                 }
             }
@@ -186,8 +185,8 @@ public:
 
     override void report()
     {
-        Colorizer::report(); // pro forma
-        Log.info("ColorizerSequence: %d colorizers cur=%d", count(), _currentColorizer);
+        Colorizer::report();
+        INFO("ColorizerSequence: %d colorizers cur=%d", count(), _currentColorizer);
         for (int i = 0; i < count(); i++)
         {
             _colorizers[i]->report();
