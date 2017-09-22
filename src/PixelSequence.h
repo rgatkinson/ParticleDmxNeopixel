@@ -47,8 +47,8 @@ public:
 
     virtual void initialize()
     {
-        setColorizer(new ConstantColor());
-        setDimmer(new ConstantBrightness());
+        setColorizer(new ConstantColor(Color::BLACK, Deadline::Infinite));
+        setDimmer(new ConstantBrightness(1.0f, Deadline::Infinite));
     }
 
     virtual ~PixelSequence()
@@ -86,9 +86,9 @@ public:
     }
 
 
-    void setDimming(BRIGHTNESS brightness)
+    void setDimmerBrightness(BRIGHTNESS brightness)
     {
-        pDimmer->setDimming(brightness);
+        pDimmer->setDimmerBrightness(brightness);
     }
 
     override void setPixelColor(uint16_t iPixel, COLOR_INT color)

@@ -48,7 +48,7 @@ public:
         _colorizers.addLast(pColorizer);
     }
 
-    virtual void setColorizeable(Colorizeable* pColorizeable)
+    override void setColorizeable(Colorizeable* pColorizeable)
     {
         Colorizer::setColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
@@ -126,11 +126,6 @@ public:
         return result;
     }
 
-    virtual bool isSequence()  // a one-off dynamic_cast
-    {
-        return true;
-    }
-
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
@@ -186,7 +181,7 @@ public:
     override void report()
     {
         Colorizer::report();
-        INFO("ColorizerSequence: %d colorizers cur=%d", count(), _currentColorizer);
+        INFO("ColorizerSequence: #colorizers=%d cur=%d", count(), _currentColorizer);
         for (int i = 0; i < count(); i++)
         {
             _colorizers[i]->report();

@@ -9,21 +9,18 @@
 struct ConstantBrightness : Dimmer
 {
     //----------------------------------------------------------------------------------------------
+    // State
+    //----------------------------------------------------------------------------------------------
+
+    float _level;
+
+    //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    ConstantBrightness(float level = 1.0f) : Dimmer(Deadline::Infinite)
+    ConstantBrightness(float level, int msDuration) : Dimmer(DimmerFlavorConstant, msDuration)
     {
-        setConstantBrightness(level);
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Accessing
-    //----------------------------------------------------------------------------------------------
-
-    void setConstantBrightness(float f)
-    {
-        setCurrentLevel(f);
+        _level = level;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -32,7 +29,8 @@ struct ConstantBrightness : Dimmer
 
     override void begin()
     {
-        Dimmer::begin(); 
+        Dimmer::begin();
+        setCurrentLevel(_level);
     }
 
     override void loop()

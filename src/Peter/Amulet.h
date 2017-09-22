@@ -11,6 +11,7 @@
 #include "Color.h"
 #include "BreathingBrightness.h"
 #include "ColorizerSequence.h"
+#include "DimmerSequence.h"
 
 struct Amulet : DmxPacketConsumer
 {
@@ -27,6 +28,8 @@ protected:
     ArtnetDevice    _device;
     PixelRing       _pixels;
     COLOR_INT       _indicatorColor;
+    int             _msIdleQuantum          = 1500;
+    float           _idleBrightnessLevel    = 0.1f;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -42,18 +45,24 @@ public:
 
         _device.setShortName(shortName);
 
-        _pixels.setColorizer(indicatorSequence());
-        _pixels.setDimmer(new ConstantBrightness(0.1));
+        _pixels.setColorizer(indicatorColorizer());
+        _pixels.setDimmer(indicatorDimmer());
     }
 
-    ColorizerSequence* indicatorSequence()
+    Colorizer* indicatorColorizer()
     {
-        int ms = 1500;
         ColorizerSequence* pSequence = new ColorizerSequence();
-        pSequence->addColorizer(new RainbowColors(10, ms));
-        pSequence->addColorizer(new ConstantColor(_indicatorColor, ms));
-        pSequence->addColorizer(new ConstantColor(Color::BLACK, ms * 4));
+        pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum));
+        pSequence->addColorizer(new ConstantColor(_indicatorColor, _msIdleQuantum));
+        pSequence->addColorizer(new ConstantColor(Color::BLACK, _msIdleQuantum * 4));
         pSequence->setLooping(true);
+        return pSequence;
+    }
+
+    DimmerSequence* indicatorDimmer()
+    {
+        DimmerSequence* pSequence = new DimmerSequence();
+        pSequence->addDimmer(new ConstantBrightness(_idleBrightnessLevel, Deadline::Infinite));
         return pSequence;
     }
 
@@ -98,8 +107,8 @@ public:
         {
             COLOR_INT color = Color::rgb(r, g, b);
             // Log.info("dmx: %d,%d,%d,%d", r,g,b,i);
-            _pixels.setColorizerIfDifferent(new ConstantColor(color));
-            _pixels.setDimming(i);
+            _pixels.setColorizerIfDifferent(new ConstantColor(color, Deadline::Infinite));
+            _pixels.setDimmerBrightness(i);
         }
     }
 };

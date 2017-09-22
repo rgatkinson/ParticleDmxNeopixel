@@ -21,7 +21,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ConstantColor(COLOR_INT color = Color::BLACK, int msDuration=Deadline::Infinite) : Colorizer(ColorizerFlavorConstant, msDuration)
+    ConstantColor(COLOR_INT color, int msDuration) : Colorizer(ColorizerFlavorConstant, msDuration)
     {
         _color = color;
         _colorUpdateDeadline = Deadline(Deadline::Infinite);

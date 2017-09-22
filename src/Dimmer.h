@@ -14,27 +14,35 @@ struct Dimmer : Durable
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
+public:
+
+    enum DimmerFlavor { DimmerFlavorNone, DimmerFlavorConstant, DimmerFlavorSequence, DimmerFlavorBreathing };
+
 protected:
 
-    float _min;             // min we ever report
-    float _max;             // max we ever report
-    float _currentLevel;    // controlled by us
-    float _dimmingLevel;    // controlled externally
+    DimmerFlavor _flavor;
+    BRIGHTNESS _minBrightness;      // min we ever report
+    BRIGHTNESS _maxBrightness;      // max we ever report
+    BRIGHTNESS _dimmerBrightness;   // controlled externally
+    float _currentLevel;            // controlled by us
+    float _dimmerLevel;             // controlled externally
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Dimmer(int msDuration) : Durable(msDuration)
+    Dimmer(DimmerFlavor flavor, int msDuration) : Durable(msDuration)
     {
+        _flavor = flavor;
+
         // We set a non-zero lower bound in recognition that at lower levels
         // the LEDs simply turn off. Perhaps we just need to tune our PWM curves
         // better, for for the moment, we do this.
-        _max = 255;
-        _min = 20;          // surprising. maybe voltage & color dependent?
+        _maxBrightness = 255;
+        _minBrightness = 20;          // surprising. maybe voltage & color dependent?
         setCurrentLevel(1.0f);
-        setDimming(MAX_BRIGHTNESS);
+        setDimmerBrightness(MAX_BRIGHTNESS);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -42,23 +50,30 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void setMaxBrightness(BRIGHTNESS brightness)
+    override bool sameAs(Dimmer* pThem)
     {
-        _max = brightness;
+        return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
-    void setMinBrightness(BRIGHTNESS brightness)
+
+    virtual void setMaxBrightness(BRIGHTNESS brightness)
     {
-        _min = brightness;
+        _maxBrightness = brightness;
+    }
+    virtual void setMinBrightness(BRIGHTNESS brightness)
+    {
+        _minBrightness = brightness;
     }
 
     // Controlled by external faders etc
-    void setDimming(int dimmingLevel)
+    virtual void setDimmerBrightness(BRIGHTNESS dimmerBrightness)
     {
-        float level = (float)dimmingLevel / MAX_BRIGHTNESS;
-        level = max(0, level);
-        level = min(1.0f, level);
-        _dimmingLevel = level;
-        // Log.info("_dimmingLevel=%f brightness=%d", _dimmingLevel, currentBrightness());
+        _dimmerBrightness = dimmerBrightness;
+
+        float dimmerLevel = (float)dimmerBrightness / (float)MAX_BRIGHTNESS;
+        dimmerLevel = max(0, dimmerLevel);
+        dimmerLevel = min(1.0f, dimmerLevel);
+        _dimmerLevel = dimmerLevel;
+        // Log.info("_dimmerLevel=%f brightness=%d", _dimmerLevel, currentBrightness());
     }
 
     virtual BRIGHTNESS currentBrightness()
@@ -72,10 +87,10 @@ protected:
 
     BRIGHTNESS rawCurrentBrightness()
     {
-        if (_dimmingLevel==0.0f)
+        if (_dimmerLevel==0.0f)
             return 0;   // honor blackout
         else
-            return (BRIGHTNESS)(_currentLevel * _dimmingLevel * (_max-_min) + _min + 0.5);
+            return (BRIGHTNESS)(_currentLevel * _dimmerLevel * (float)(_maxBrightness-_minBrightness) + (float)_minBrightness + 0.5f);
     }
 
     void setCurrentLevel(float level)
@@ -101,7 +116,7 @@ public:
 
     virtual void report()
     {
-        Log.info("brightness: cur=%f max=%d", _currentLevel, _max);
+        Log.info("brightness: cur=%f max=%d", _currentLevel, _maxBrightness);
     }
 
     //----------------------------------------------------------------------------------------------

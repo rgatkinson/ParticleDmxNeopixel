@@ -19,7 +19,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    RainbowColors(int msInterval, int msDuration=Deadline::Infinite) : Colorizer(ColorizerFlavorRainbow, msDuration)
+    RainbowColors(int msInterval, int msDuration) : Colorizer(ColorizerFlavorRainbow, msDuration)
     {
         _pixelOffset = 0;
         _colorUpdateDeadline = Deadline(msInterval);
