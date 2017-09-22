@@ -7,7 +7,7 @@
 #include "Misc.h"
 #include "ArrayList.h"
 
-SYSTEM_THREAD(DISABLED);    // TODO: enable system thread
+SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(MANUAL);
 
 struct WiFiPassword
