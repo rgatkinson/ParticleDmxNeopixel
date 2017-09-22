@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Private
+passwords.h
+Passwords.h
