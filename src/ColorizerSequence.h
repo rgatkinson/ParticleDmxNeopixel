@@ -73,14 +73,19 @@ public:
         }
         else
         {
-            int ms = 0;
-            for (int i = 0; i < count(); i++)
-            {
-                ms += _colorizers[i]->msDuration();
-            }
-            ms = min(ms, Deadline::Infinite);
-            return ms;
+            return msLoopingDuration();
         }
+    }
+
+    override int msLoopingDuration()
+    {
+        int ms = 0;
+        for (int i = 0; i < count(); i++)
+        {
+            ms += _colorizers[i]->msDuration();
+        }
+        ms = min(ms, Deadline::Infinite);
+        return ms;
     }
 
     void setLooping(bool looping)
@@ -137,6 +142,7 @@ public:
         _currentColorizer = 0;
         if (_currentColorizer < count())
         {
+            INFO("ColorizerSequence: beginning: %d", _currentColorizer);
             _colorizers[_currentColorizer]->begin();
         }
     }

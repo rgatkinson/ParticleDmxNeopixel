@@ -66,14 +66,19 @@ public:
         }
         else
         {
-            int ms = 0;
-            for (int i = 0; i < count(); i++)
-            {
-                ms += _dimmers[i]->msDuration();
-            }
-            ms = min(ms, Deadline::Infinite);
-            return ms;
+            return msLoopingDuration();
         }
+    }
+
+    override int msLoopingDuration()
+    {
+        int ms = 0;
+        for (int i = 0; i < count(); i++)
+        {
+            ms += _dimmers[i]->msDuration();
+        }
+        ms = min(ms, Deadline::Infinite);
+        return ms;
     }
 
     void setLooping(bool looping)
@@ -174,6 +179,7 @@ public:
         _currentDimmer = 0;
         if (_currentDimmer < count())
         {
+            INFO("DimmerSequence: beginning: %d", _currentDimmer);
             _dimmers[_currentDimmer]->begin();
         }
     }
@@ -208,7 +214,7 @@ public:
                 }
                 if (_currentDimmer < count())
                 {
-                    INFO("Dimmer: beginning: %d", _currentDimmer);
+                    INFO("DimmerSequence: beginning: %d", _currentDimmer);
                     _dimmers[_currentDimmer]->begin();
                 }
             }

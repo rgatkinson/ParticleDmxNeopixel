@@ -26,11 +26,11 @@ protected:
     static const int    pixelType = PixelType;
 
 private:
-    Adafruit_NeoPixel   neopixels;
-    Deadline            showDeadline;
-    Dimmer*             pDimmer;
-    Colorizer*          pColorizer;
-    COLOR_INT           pixelValues[pixelCount];
+    Adafruit_NeoPixel   _neopixels;
+    Deadline            _showDeadline;
+    Dimmer*             _pDimmer;
+    Colorizer*          _pColorizer;
+    COLOR_INT           _pixelValues[pixelCount];
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -38,11 +38,11 @@ private:
 public:
 
     PixelSequence()
-        : neopixels(pixelCount, pin, pixelType),
-          showDeadline(10)
+        : _neopixels(pixelCount, pin, pixelType),
+          _showDeadline(10)
     {
-        pDimmer = NULL;
-        pColorizer = NULL;
+        _pDimmer = NULL;
+        _pColorizer = NULL;
     }
 
     virtual void initialize()
@@ -53,8 +53,8 @@ public:
 
     virtual ~PixelSequence()
     {
-        releaseRef(pDimmer);
-        releaseRef(pColorizer);
+        releaseRef(_pDimmer);
+        releaseRef(_pColorizer);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -63,20 +63,25 @@ public:
 
     void setDimmer(Dimmer* pDimmer)
     {
-        releaseRef(this->pDimmer);
-        this->pDimmer = pDimmer; // takes ownership
+        releaseRef(_pDimmer);
+        _pDimmer = pDimmer; // takes ownership
     }
     void setColorizer(Colorizer* pColorizer)
     {
-        releaseRef(this->pColorizer);
-        this->pColorizer = pColorizer; // takes ownwership
-        this->pColorizer->setColorizeable(this);
+        releaseRef(_pColorizer);
+        _pColorizer = pColorizer; // takes ownwership
+        _pColorizer->setColorizeable(this);
     }
+    Colorizer* colorizer()
+    {
+        return _pColorizer;
+    }
+
     void setColorizerIfDifferent(Colorizer* pColorizer)
     {
-        if (this->pColorizer->sameAs(pColorizer))
+        if (_pColorizer->sameAs(pColorizer))
         {
-            releaseRef(pColorizer);
+            releaseRef(pColorizer); // already have 'em
         }
         else
         {
@@ -88,12 +93,12 @@ public:
 
     void setDimmerBrightness(BRIGHTNESS brightness)
     {
-        pDimmer->setDimmerBrightness(brightness);
+        _pDimmer->setDimmerBrightness(brightness);
     }
 
     override void setPixelColor(uint16_t iPixel, COLOR_INT color)
     {
-        pixelValues[iPixel] = color;
+        _pixelValues[iPixel] = color;
     }
 
     override int numberOfPixels()
@@ -107,41 +112,41 @@ public:
 
     virtual void begin()
     {
-        neopixels.begin();
+        _neopixels.begin();
         for (int iPixel = 0; iPixel < pixelCount; iPixel++)
         {
-            pixelValues[iPixel] = Color::BLACK;
+            _pixelValues[iPixel] = Color::BLACK;
         }
-        pDimmer->begin();
-        pColorizer->begin();
-        showDeadline.expire();
+        _pDimmer->begin();
+        _pColorizer->begin();
+        _showDeadline.expire();
     }
 
     virtual void loop()
     {
-        pColorizer->loop();
+        _pColorizer->loop();
 
-        if (showDeadline.hasExpired())
+        if (_showDeadline.hasExpired())
         {
-            // Only call the dimmer when we actually are going to show neopixels
-            pDimmer->loop();
-            byte brightness = pDimmer->currentBrightness();
+            // Only call the dimmer when we actually are going to show _neopixels
+            _pDimmer->loop();
+            byte brightness = _pDimmer->currentBrightness();
 
             for (int iPixel = 0; iPixel < pixelCount; iPixel++)
             {
-                COLOR_INT color = pixelValues[iPixel];
-                neopixels.setColorScaled(iPixel, Color::red(color), Color::green(color), Color::blue(color), brightness);
+                COLOR_INT color = _pixelValues[iPixel];
+                _neopixels.setColorScaled(iPixel, Color::red(color), Color::green(color), Color::blue(color), brightness);
             }
 
-            neopixels.show();
-            showDeadline.reset();
+            _neopixels.show();
+            _showDeadline.reset();
         }
     }
 
     virtual void report()
     {
-        pColorizer->report();
-        pDimmer->report();
+        _pColorizer->report();
+        _pDimmer->report();
     }
 
 

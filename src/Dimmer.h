@@ -55,6 +55,11 @@ public:
         return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
 
+    virtual int msLoopingDuration()
+    {
+        return msDuration();
+    }
+
     virtual void setMaxBrightness(BRIGHTNESS brightness)
     {
         _maxBrightness = brightness;

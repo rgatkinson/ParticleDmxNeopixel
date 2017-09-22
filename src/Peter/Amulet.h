@@ -46,22 +46,23 @@ public:
         _device.setShortName(shortName);
 
         _pixels.setColorizer(indicatorColorizer());
-        _pixels.setDimmer(indicatorDimmer());
+        _pixels.setDimmer(indicatorDimmer(2 * _pixels.colorizer()->msLoopingDuration()));
     }
 
     Colorizer* indicatorColorizer()
     {
         ColorizerSequence* pSequence = new ColorizerSequence();
         pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum));
-        pSequence->addColorizer(new ConstantColor(_indicatorColor, _msIdleQuantum));
-        pSequence->addColorizer(new ConstantColor(Color::BLACK, _msIdleQuantum * 4));
+        pSequence->addColorizer(new ConstantColor(_indicatorColor, _msIdleQuantum * 2));
+        pSequence->addColorizer(new ConstantColor(Color::BLACK, _msIdleQuantum * 6));
         pSequence->setLooping(true);
         return pSequence;
     }
 
-    DimmerSequence* indicatorDimmer()
+    DimmerSequence* indicatorDimmer(int msDuration)
     {
         DimmerSequence* pSequence = new DimmerSequence();
+        pSequence->addDimmer(new ConstantBrightness(1.0f, msDuration));
         pSequence->addDimmer(new ConstantBrightness(_idleBrightnessLevel, Deadline::Infinite));
         return pSequence;
     }

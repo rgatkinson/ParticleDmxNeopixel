@@ -72,6 +72,11 @@ public:
         return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
 
+    virtual int msLoopingDuration()
+    {
+        return msDuration();
+    }
+
 protected:
 
     void setPixelColor(uint16_t iPixel, COLOR_INT color);
