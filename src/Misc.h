@@ -54,10 +54,17 @@ inline void strfree(LPSTR& sz)
 
 inline LPSTR strdup(LPCSTR sz)
 {
-    int cch = strlen(sz);
-    LPSTR result = (LPSTR)mallocNoFail(cch + 1);
-    strcpy(result, sz);
-    return result;
+    if (sz == NULL)
+    {
+        return NULL;
+    }
+    else
+    {
+        int cch = strlen(sz);
+        LPSTR result = (LPSTR)mallocNoFail(cch + 1);
+        strcpy(result, sz);
+        return result;
+    }
 }
 
 inline void setString(LPSTR& variable, LPCSTR sz)
