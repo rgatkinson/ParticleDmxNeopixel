@@ -18,10 +18,10 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    RainbowColors(int msInterval=10) : Colorizer(ColorizerModeRainbow)
+    RainbowColors(int msInterval=10) : Colorizer(ColorizerFlavorRainbow)
     {
         pixelOffset = 0;
-        colorUpdateDeadline = Deadline(msInterval);
+        _colorUpdateDeadline = Deadline(msInterval);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ public:
         bool result = Colorizer::sameAs(pThem);
         if (result)
         {
-            result = this->colorUpdateDeadline.msDuration() == static_cast<RainbowColors*>(pThem)->colorUpdateDeadline.msDuration();
+            result = this->_colorUpdateDeadline.msDuration() == static_cast<RainbowColors*>(pThem)->_colorUpdateDeadline.msDuration();
         }
         return result;
     }
@@ -46,20 +46,20 @@ public:
     override void begin()
     {
         pixelOffset = 0;
-        colorUpdateDeadline.expire();
+        _colorUpdateDeadline.expire();
     }
 
     override void loop()
     {
         Colorizer::loop();  // pro forma
-        if (colorUpdateDeadline.hasExpired())
+        if (_colorUpdateDeadline.hasExpired())
             {
-                for (uint16_t iPixel=0; iPixel < pixelCount; iPixel++)
+                for (uint16_t iPixel=0; iPixel < _pixelCount; iPixel++)
                 {
                     COLOR_INT color = wheel( (iPixel+(pixelOffset & 255)) & 255);
                     setPixelColor(iPixel, color);
                 }
-                colorUpdateDeadline.reset();
+                _colorUpdateDeadline.reset();
                 pixelOffset++;
             }
     }

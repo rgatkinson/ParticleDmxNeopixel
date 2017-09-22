@@ -30,30 +30,30 @@ struct Colorizer : ReferenceCounted
     //----------------------------------------------------------------------------------------------
 public:
 
-    enum ColorizerMode { ColorizerModeNone, ColorizerModeConstant, ColorizerModeRainbow, ColorizerModeSequence };
+    enum ColorizerFlavor { ColorizerFlavorNone, ColorizerFlavorConstant, ColorizerFlavorRainbow, ColorizerFlavorSequence };
 
 protected:
 
-    ColorizerMode   _mode;
-    Deadline        colorUpdateDeadline;
-    Colorizeable*   pColorizeable;
-    int             pixelCount;
+    ColorizerFlavor _flavor;
+    Deadline        _colorUpdateDeadline;
+    Colorizeable*   _pColorizeable;
+    int             _pixelCount;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(ColorizerMode mode)
+    Colorizer(ColorizerFlavor flavor)
     {
-        _mode = mode;
-        pColorizeable = NULL;
+        _flavor = flavor;
+        _pColorizeable = NULL;
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
     {
-        this->pColorizeable = pColorizeable;
-        this->pixelCount = pColorizeable->numberOfPixels();
+        _pColorizeable = pColorizeable;
+        _pixelCount = pColorizeable->numberOfPixels();
     }
 
 protected:
@@ -69,12 +69,12 @@ public:
 
     virtual bool sameAs(Colorizer* pThem)
     {
-        return this->_mode == pThem->_mode;
+        return _flavor == pThem->_flavor;
     }
 
-    ColorizerMode mode()
+    ColorizerFlavor colorizerMode()
     {
-        return _mode;
+        return _flavor;
     }
 
     virtual bool isSequence()  // a one-off dynamic_cast

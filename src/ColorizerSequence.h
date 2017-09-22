@@ -63,7 +63,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizerSequence() : Colorizer(ColorizerModeSequence)
+    ColorizerSequence() : Colorizer(ColorizerFlavorSequence)
     {
         _currentColorizer = 0;
         _looping = false;

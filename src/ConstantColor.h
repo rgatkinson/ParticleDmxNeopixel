@@ -13,17 +13,17 @@ struct ConstantColor : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    COLOR_INT color;
+    COLOR_INT _color;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    ConstantColor(COLOR_INT color = Color::BLACK) : Colorizer(ColorizerModeConstant)
+    ConstantColor(COLOR_INT color = Color::BLACK) : Colorizer(ColorizerFlavorConstant)
     {
-        this->color = color;
-        colorUpdateDeadline = Deadline(Deadline::Infinite);
+        _color = color;
+        _colorUpdateDeadline = Deadline(Deadline::Infinite);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ public:
         bool result = Colorizer::sameAs(pThem);
         if (result)
         {
-            result = this->color == static_cast<ConstantColor*>(pThem)->color;
+            result = _color == static_cast<ConstantColor*>(pThem)->_color;
         }
         return result;
     }
@@ -47,26 +47,26 @@ public:
 
     override void begin()
     {
-        colorUpdateDeadline.expire();
+        _colorUpdateDeadline.expire();
     }
 
     override void loop()
     {
         Colorizer::loop(); // pro forma
-        if (colorUpdateDeadline.hasExpired())
+        if (_colorUpdateDeadline.hasExpired())
         {
-            for (uint16_t iPixel=0; iPixel < pixelCount; iPixel++)
+            for (uint16_t iPixel=0; iPixel < _pixelCount; iPixel++)
             {
-                setPixelColor(iPixel, color);
+                setPixelColor(iPixel, _color);
             }
-            colorUpdateDeadline.reset();
+            _colorUpdateDeadline.reset();
         }
     }
 
     override void report()
     {
         Colorizer::report(); // pro forma
-        Log.info("ConstantColor: color=0x%04x", color);
+        Log.info("ConstantColor: color=0x%04x", _color);
     }
 };
 
