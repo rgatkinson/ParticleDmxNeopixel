@@ -43,10 +43,6 @@ public:
     {
         _pDimmer = NULL;
         _pColorizer = NULL;
-    }
-
-    virtual void initialize()
-    {
         setColorizer(new ConstantColor(Color::BLACK, Deadline::Infinite));
         setDimmer(new ConstantBrightness(1.0f, Deadline::Infinite));
     }

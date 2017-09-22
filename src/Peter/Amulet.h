@@ -25,7 +25,7 @@ public:
 protected:
 
     DMX_ADDRESS     _dmxAddress;
-    ArtnetDevice    _device;
+    ArtnetDevice    _artnet;
     PixelRing       _pixels;
     COLOR_INT       _indicatorColor;
     int             _msIdleQuantum          = 1500;
@@ -37,13 +37,12 @@ protected:
 public:
 
     Amulet(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
-        : _device(this)
+        : _artnet(this)
     {
-        _pixels.initialize();
         _dmxAddress = dmxAddress;
         _indicatorColor = indicatorColor;
 
-        _device.setShortName(shortName);
+        _artnet.setShortName(shortName);
 
         _pixels.setColorizer(indicatorColorizer());
         _pixels.setDimmer(indicatorDimmer(2 * _pixels.colorizer()->msLoopingDuration()));
@@ -69,7 +68,7 @@ public:
 
     ArtnetDevice device()
     {
-        return _device;
+        return _artnet;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -79,19 +78,19 @@ public:
     void begin()
     {
         _pixels.begin();
-        _device.begin();
+        _artnet.begin();
     }
 
     void loop()
     {
         _pixels.loop();
-        _device.loop();
+        _artnet.loop();
     }
 
     void report()
     {
         _pixels.report();
-        _device.report();
+        _artnet.report();
     }
 
     //----------------------------------------------------------------------------------------------

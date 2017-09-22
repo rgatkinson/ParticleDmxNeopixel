@@ -10,6 +10,7 @@
 
 struct PixelRing : PixelSequence<24, D6, WS2812B>
 {
+    static const int TYPE = WS2812B;
 };
 
 #endif
