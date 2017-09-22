@@ -23,7 +23,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingBrightness(int msInterval)
+    BreathingBrightness(int msInterval=4000)
     {
         this->msInterval = msInterval;
         this->floatIntervalInverse = 1.0f / (float)msInterval;
