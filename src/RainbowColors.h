@@ -11,16 +11,17 @@ struct RainbowColors : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int pixelOffset;
+    int         _pixelOffset;
+    Deadline    _colorUpdateDeadline;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    RainbowColors(int msInterval=10) : Colorizer(ColorizerFlavorRainbow)
+    RainbowColors(int msInterval, int msDuration=Deadline::Infinite) : Colorizer(ColorizerFlavorRainbow, msDuration)
     {
-        pixelOffset = 0;
+        _pixelOffset = 0;
         _colorUpdateDeadline = Deadline(msInterval);
     }
 
@@ -45,7 +46,9 @@ public:
 
     override void begin()
     {
-        pixelOffset = 0;
+        // TRACE("RainbowColors::begin()");
+        Colorizer::begin();
+        _pixelOffset = 0;
         _colorUpdateDeadline.expire();
     }
 
@@ -54,19 +57,21 @@ public:
         Colorizer::loop();  // pro forma
         if (_colorUpdateDeadline.hasExpired())
             {
+                // TRACE("RainbowColors: pixelOffset=%d", _pixelOffset);
                 for (uint16_t iPixel=0; iPixel < _pixelCount; iPixel++)
                 {
-                    COLOR_INT color = wheel( (iPixel+(pixelOffset & 255)) & 255);
+                    COLOR_INT color = wheel( (iPixel+(_pixelOffset & 255)) & 255);
                     setPixelColor(iPixel, color);
                 }
                 _colorUpdateDeadline.reset();
-                pixelOffset++;
+                _pixelOffset++;
             }
     }
 
     override void report()
     {
-        Log.info("RainbowColors");
+        Colorizer::report();
+        INFO("RainbowColors");
     }
 
 protected:

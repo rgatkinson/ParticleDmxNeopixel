@@ -35,25 +35,31 @@ public:
 protected:
 
     ColorizerFlavor _flavor;
-    Deadline        _colorUpdateDeadline;
     Colorizeable*   _pColorizeable;
     int             _pixelCount;
+    Deadline        _duration;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(ColorizerFlavor flavor)
+    Colorizer(ColorizerFlavor flavor, int msDuration) : _duration(msDuration)
     {
         _flavor = flavor;
         _pColorizeable = NULL;
+        _pixelCount = 0;
+    }
+
+    virtual void setDuration(int msDuration)
+    {
+        _duration = Deadline(msDuration);
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
     {
         _pColorizeable = pColorizeable;
-        _pixelCount = pColorizeable->numberOfPixels();
+        _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
     }
 
 protected:
@@ -67,19 +73,19 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
+    virtual int msDuration()
+    {
+        return _duration.msDuration();
+    }
+
+    virtual bool hasExpired()
+    {
+        return _duration.hasExpired();
+    }
+
     virtual bool sameAs(Colorizer* pThem)
     {
         return _flavor == pThem->_flavor;
-    }
-
-    ColorizerFlavor colorizerMode()
-    {
-        return _flavor;
-    }
-
-    virtual bool isSequence()  // a one-off dynamic_cast
-    {
-        return false;
     }
 
 protected:
@@ -93,6 +99,7 @@ public:
 
     virtual void begin()
     {
+        _duration.reset();
     }
 
     virtual void loop()

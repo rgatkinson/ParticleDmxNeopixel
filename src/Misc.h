@@ -4,31 +4,44 @@
 #ifndef _MISC_H_
 #define _MISC_H_
 
+//--------------------------------------------------------------------------------------------------
+// Misc
+//--------------------------------------------------------------------------------------------------
+
 typedef long long Int64;
 
-typedef char* LPSTR;
-typedef const char* LPCSTR;
-
 #define override virtual
-#define assert(value) ((value) ? 0 : (assertFailed(__FILE__, __LINE__), 0))
+#define offset_of(type, field) (reinterpret_cast<size_t>(&reinterpret_cast<type*>(0)->field))
 
 static const double Pi  = 3.1415926535897932384626433832795;
 static const float  PiF = 3.1415926535897932384626433832795f;
 static const double TwoPi  = 2.0 * Pi;
 static const float  TwoPiF = 2.0f * PiF;
 
-inline void assertFailed(LPCSTR file, int line)
-{
-    Serial.printf("(%s,%d): assertion failed\r\n", file, line);
-    System.enterSafeMode();
-}
+//--------------------------------------------------------------------------------------------------
+// Tracing
+//--------------------------------------------------------------------------------------------------
+
+#define TRACE(...)      Log.info(__VA_ARGS__)
+#define INFO(...)       Log.info(__VA_ARGS__)
+
+//--------------------------------------------------------------------------------------------------
+// Memory
+//--------------------------------------------------------------------------------------------------
 
 inline void* mallocNoFail(size_t cb)
 {
     void* result = malloc(cb);
-    assert(result != NULL);
+    if (result == NULL) System.enterSafeMode();
     return result;
 }
+
+//--------------------------------------------------------------------------------------------------
+// Strings
+//--------------------------------------------------------------------------------------------------
+
+typedef char* LPSTR;
+typedef const char* LPCSTR;
 
 inline void safeStrNCpy(char*rgchBuffer, int cchBuffer, LPCSTR sz)
 {
@@ -73,6 +86,17 @@ inline void setString(LPSTR& variable, LPCSTR sz)
     variable = strdup(sz);
 }
 
-#define offset_of(type, field) (reinterpret_cast<size_t>(&reinterpret_cast<type*>(0)->field))
+
+//--------------------------------------------------------------------------------------------------
+// Assert
+//--------------------------------------------------------------------------------------------------
+
+#define assert(value) ((value) ? 0 : (assertFailed(__FILE__, __LINE__), 0))
+
+inline void assertFailed(LPCSTR file, int line)
+{
+    Serial.printf("(%s,%d): assertion failed\r\n", file, line);
+    System.enterSafeMode();
+}
 
 #endif

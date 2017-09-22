@@ -50,9 +50,9 @@ public:
     {
         int ms = 1500;
         ColorizerSequence* pSequence = new ColorizerSequence();
-        pSequence->addColorizer(new RainbowColors(), ms);
-        pSequence->addColorizer(new ConstantColor(_indicatorColor), ms);
-        pSequence->addColorizer(new ConstantColor(Color::BLACK), ms * 9);
+        pSequence->addColorizer(new RainbowColors(10, ms));
+        pSequence->addColorizer(new ConstantColor(_indicatorColor, ms));
+        pSequence->addColorizer(new ConstantColor(Color::BLACK, ms * 4));
         pSequence->setLooping(true);
         return pSequence;
     }

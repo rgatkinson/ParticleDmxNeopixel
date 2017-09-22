@@ -13,14 +13,15 @@ struct ConstantColor : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    COLOR_INT _color;
+    COLOR_INT   _color;
+    Deadline    _colorUpdateDeadline;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    ConstantColor(COLOR_INT color = Color::BLACK) : Colorizer(ColorizerFlavorConstant)
+    ConstantColor(COLOR_INT color = Color::BLACK, int msDuration=Deadline::Infinite) : Colorizer(ColorizerFlavorConstant, msDuration)
     {
         _color = color;
         _colorUpdateDeadline = Deadline(Deadline::Infinite);
@@ -47,6 +48,7 @@ public:
 
     override void begin()
     {
+        Colorizer::begin();
         _colorUpdateDeadline.expire();
     }
 

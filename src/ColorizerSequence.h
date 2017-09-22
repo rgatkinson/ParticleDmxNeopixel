@@ -9,41 +9,6 @@
 #include "ArrayList.h"
 
 //==================================================================================================
-// ColorizerAndDeadline
-//==================================================================================================
-
-struct ColorizerAndDeadline : ReferenceCounted
-{
-public:
-    Colorizer*  pColorizer;
-    Deadline    deadline;
-
-    ColorizerAndDeadline(Colorizer* pColorizer, int msInterval)
-    {
-        this->pColorizer = pColorizer; // takes ownership
-        this->deadline = Deadline(msInterval);
-    }
-protected:
-    ~ColorizerAndDeadline()
-    {
-        releaseRef(pColorizer);
-    }
-public:
-    void begin()
-    {
-        pColorizer->begin();
-        deadline.reset();
-    }
-
-    bool sameAs(ColorizerAndDeadline* pThem)
-    {
-        return this->pColorizer->sameAs(pThem->pColorizer)
-            && this->deadline.msDuration() == pThem->deadline.msDuration();
-    }
-};
-
-
-//==================================================================================================
 // ColorizerSequence
 //==================================================================================================
 
@@ -54,7 +19,7 @@ struct ColorizerSequence : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    ArrayList<ColorizerAndDeadline*> _colorizers;
+    ArrayList<Colorizer*> _colorizers;
     int _currentColorizer;
     bool _looping;
 
@@ -63,7 +28,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizerSequence() : Colorizer(ColorizerFlavorSequence)
+    ColorizerSequence() : Colorizer(ColorizerFlavorSequence, 0 /*ignored*/)
     {
         _currentColorizer = 0;
         _looping = false;
@@ -77,28 +42,10 @@ public:
         }
     }
 
-    void addColorizer(Colorizer* pColorizer /*takes ownwership*/, int ms)
+    void addColorizer(Colorizer* pColorizer /*takes ownwership*/)
     {
-        if (pColorizer->isSequence())
-        {
-            ColorizerSequence* pSequence = static_cast<ColorizerSequence*>(pColorizer);
-            addColorizer(pSequence);    // ignores ms
-        }
-        else
-        {
-            ColorizerAndDeadline* pPair = new ColorizerAndDeadline(pColorizer, ms);
-            _colorizers.addLast(pPair);
-        }
-    }
-
-    void addColorizer(ColorizerSequence* pColorizer /*takes ownwership*/)
-    {
-        for (int i = 0; i < pColorizer->count(); i++)
-        {
-            _colorizers.addLast(pColorizer->_colorizers[i]);
-            pColorizer->_colorizers[i] = NULL;
-        }
-        releaseRef(pColorizer);
+        pColorizer->setColorizeable(_pColorizeable);
+        _colorizers.addLast(pColorizer);
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
@@ -106,13 +53,35 @@ public:
         Colorizer::setColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
         {
-            _colorizers[i]->pColorizer->setColorizeable(pColorizeable);
+            _colorizers[i]->setColorizeable(pColorizeable);
         }
     }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
+
+    override void setDuration()
+    {
+        Log.error("invalid call: ColorizerSequence::setDuration()");
+    }
+    override int msDuration()
+    {
+        if (_looping)
+        {
+            return Deadline::Infinite;
+        }
+        else
+        {
+            int ms = 0;
+            for (int i = 0; i < count(); i++)
+            {
+                ms += _colorizers[i]->msDuration();
+            }
+            ms = min(ms, Deadline::Infinite);
+            return ms;
+        }
+    }
 
     void setLooping(bool looping)
     {
@@ -144,8 +113,8 @@ public:
             {
                 for (int i = 0; i < count(); i++)
                 {
-                    ColorizerAndDeadline* pOurs = this->_colorizers[i];
-                    ColorizerAndDeadline* pTheirs = pThem->_colorizers[i];
+                    Colorizer* pOurs = this->_colorizers[i];
+                    Colorizer* pTheirs = pThem->_colorizers[i];
                     result = pOurs->sameAs(pTheirs);
                     if (!result)
                     {
@@ -169,10 +138,23 @@ public:
 
     override void begin()
     {
+        Colorizer::begin();
         _currentColorizer = 0;
         if (_currentColorizer < count())
         {
             _colorizers[_currentColorizer]->begin();
+        }
+    }
+
+    override bool hasExpired()
+    {
+        if (_looping)
+        {
+            return false;
+        }
+        else
+        {
+            return _currentColorizer >= count();
         }
     }
 
@@ -182,14 +164,16 @@ public:
         if (_currentColorizer < count())
         {
             // Run the current guy
-            _colorizers[_currentColorizer]->pColorizer->loop();
+            _colorizers[_currentColorizer]->loop();
 
             // If we're done running him, move on to the next
-            if (_colorizers[_currentColorizer]->deadline.hasExpired())
+            if (_colorizers[_currentColorizer]->hasExpired())
             {
+                Log.info("ColorizerSequence: advancing: %d", _currentColorizer);
                 _currentColorizer++;
                 if (_currentColorizer == count() && _looping)
                 {
+                    Log.info("ColorizerSequence: looping");
                     _currentColorizer = 0;
                 }
                 if (_currentColorizer < count())
@@ -206,7 +190,7 @@ public:
         Log.info("ColorizerSequence: %d colorizers cur=%d", count(), _currentColorizer);
         for (int i = 0; i < count(); i++)
         {
-            _colorizers[i]->pColorizer->report();
+            _colorizers[i]->report();
         }
     }
 
