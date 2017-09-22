@@ -61,8 +61,7 @@ protected:
 
     void free()
     {
-        // We don't own our items
-        delete items;
+        delete [] items;
         initialize();
     }
 
