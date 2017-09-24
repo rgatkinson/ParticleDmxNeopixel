@@ -52,8 +52,8 @@ public:
 
     void setDemo()
     {
-        _pixels.setColorizer(demoColorizer());
-        _pixels.setDimmer(demoDimmer());
+        _pixels.setColorizerIfDifferent(demoColorizer());
+        _pixels.setDimmerIfDifferent(demoDimmer());
     }
 
     Colorizer* demoColorizer()
@@ -124,6 +124,7 @@ public:
     {
         _pixels.report();
         _artnet.report();
+        INFO("offset_of(ArtDmxPacketData, _data)=%d", offset_of(ArtDmxPacketData, _data));
     }
 
     void cycleDemo()
@@ -131,7 +132,6 @@ public:
         _demo = Demo(_demo + 1);
         if (_demo >= DemoMax) _demo = DemoFirst;
         setDemo();
-        _pixels.begin();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -144,10 +144,18 @@ public:
         int g = packet[_dmxAddress+1];
         int b = packet[_dmxAddress+2];
         int i = packet[_dmxAddress+3];
+        int m = packet[_dmxAddress+4];
         if (r >= 0 && g >= 0 && b >= 0 && i >= 0)
         {
             COLOR_INT color = Color::rgb(r, g, b);
-            // Log.info("dmx: %d,%d,%d,%d", r,g,b,i);
+            INFO("addr=%d dmx=%d,%d,%d,%d", _dmxAddress, r,g,b,i);
+            switch (m)
+            {
+                default:
+                case 0:
+                    _pixels.setDimmerIfDifferent(new ConstantBrightness(1.0f, Deadline::Infinite));
+                    break;
+            }
             _pixels.setColorizerIfDifferent(new ConstantColor(color, Deadline::Infinite));
             _pixels.setDimmerBrightness(i);
         }

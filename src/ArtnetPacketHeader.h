@@ -12,8 +12,8 @@ struct PACKED ArtnetPacketHeaderData
     static const int cbId = 8;
     static uint8_t rgbIdExpected[cbId];
 
-    uint8_t _rgbId[cbId];
-    int16_t _opMode;
+    uint8_t _rgbId[cbId];   // 0, 8
+    int16_t _opMode;        // 8, 2
 };
 #pragma pack(pop)
 

@@ -43,8 +43,8 @@ public:
     {
         _pDimmer = NULL;
         _pColorizer = NULL;
-        setColorizer(new ConstantColor(Color::BLACK, Deadline::Infinite));
-        setDimmer(new ConstantBrightness(1.0f, Deadline::Infinite));
+        setColorizerNoBegin(new ConstantColor(Color::BLACK, Deadline::Infinite));
+        setDimmerNoBegin(new ConstantBrightness(1.0f, Deadline::Infinite));
     }
 
     virtual ~PixelSequence()
@@ -56,40 +56,72 @@ public:
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
+protected:
+    void setColorizerNoBegin(Colorizer* pColorizer)
+    {
+        releaseRef(_pColorizer);
+        _pColorizer = pColorizer; // takes ownwership
+        if (_pColorizer) _pColorizer->setColorizeable(this);
+    }
 
-    void setDimmer(Dimmer* pDimmer)
+    void setDimmerNoBegin(Dimmer* pDimmer)
     {
         releaseRef(_pDimmer);
         _pDimmer = pDimmer; // takes ownership
     }
-    void setColorizer(Colorizer* pColorizer)
+
+public:
+
+    Dimmer* dimmer()
     {
-        releaseRef(_pColorizer);
-        _pColorizer = pColorizer; // takes ownwership
-        _pColorizer->setColorizeable(this);
+        return _pDimmer;
     }
+
     Colorizer* colorizer()
     {
         return _pColorizer;
     }
 
+    void setDimmer(Dimmer* pDimmer)
+    {
+        setDimmerNoBegin(pDimmer);
+        if (_pDimmer) _pDimmer->begin();
+    }
+
+    void setColorizer(Colorizer* pColorizer)
+    {
+        setColorizerNoBegin(pColorizer);
+        if (_pColorizer) _pColorizer->begin();
+    }
+
+    void setDimmerIfDifferent(Dimmer* pDimmer)
+    {
+        if (_pDimmer && _pDimmer->sameAs(pDimmer))
+        {
+            releaseRef(pDimmer);
+        }
+        else
+        {
+            setDimmer(pDimmer);
+        }
+    }
+
     void setColorizerIfDifferent(Colorizer* pColorizer)
     {
-        if (_pColorizer->sameAs(pColorizer))
+        if (_pColorizer && _pColorizer->sameAs(pColorizer))
         {
             releaseRef(pColorizer); // already have 'em
         }
         else
         {
             setColorizer(pColorizer);
-            pColorizer->begin();
         }
     }
 
 
     void setDimmerBrightness(BRIGHTNESS brightness)
     {
-        _pDimmer->setDimmerBrightness(brightness);
+        if (_pDimmer) _pDimmer->setDimmerBrightness(brightness);
     }
 
     override void setPixelColor(uint16_t iPixel, COLOR_INT color)
@@ -113,20 +145,20 @@ public:
         {
             _pixelValues[iPixel] = Color::BLACK;
         }
-        _pDimmer->begin();
-        _pColorizer->begin();
+        if (_pDimmer) _pDimmer->begin();
+        if (_pColorizer) _pColorizer->begin();
         _showDeadline.expire();
     }
 
     virtual void loop()
     {
-        _pColorizer->loop();
+        if (_pColorizer) _pColorizer->loop();
 
         if (_showDeadline.hasExpired())
         {
-            // Only call the dimmer when we actually are going to show _neopixels
-            _pDimmer->loop();
-            byte brightness = _pDimmer->currentBrightness();
+            // Only call the dimmer when we actually are going to show _neopixels: efficiency
+            if (_pDimmer) _pDimmer->loop();
+            BRIGHTNESS brightness = _pDimmer ? _pDimmer->currentBrightness() : MAX_BRIGHTNESS;
 
             for (int iPixel = 0; iPixel < pixelCount; iPixel++)
             {
@@ -141,8 +173,8 @@ public:
 
     virtual void report()
     {
-        _pColorizer->report();
-        _pDimmer->report();
+        if (_pColorizer) _pColorizer->report();
+        if (_pDimmer) _pDimmer->report();
     }
 
 
