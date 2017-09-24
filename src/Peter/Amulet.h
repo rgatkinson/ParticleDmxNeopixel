@@ -62,7 +62,9 @@ public:
         {
             case DemoWhite:
             {
-                return new ConstantColor(Color::WHITE, Deadline::Infinite);
+                COLOR_INT color = Color::temperature(2550);
+                Log.info("demo white: r=%d g=%d b=%d", Color::red(color), Color::green(color), Color::blue(color));
+                return new ConstantColor(color, Deadline::Infinite);
             }
             default:
             {
