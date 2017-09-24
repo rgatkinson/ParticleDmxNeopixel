@@ -14,18 +14,21 @@ struct BreathingBrightness : Dimmer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int _msInterval;
-    float _floatIntervalInverse;
+    int         _msInterval;
+    float       _floatIntervalInverse;
+    ElapsedTime _intervalTimer;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingBrightness(int msInterval) : Dimmer(DimmerFlavorBreathing, msInterval)
+    BreathingBrightness(int msInterval, int msDuration) : Dimmer(DimmerFlavorBreathing, msDuration)
     {
         _msInterval = msInterval;
         _floatIntervalInverse = 1.0f / (float)_msInterval;
+        _intervalTimer = ElapsedTime();
+        setMinBrightness(20);    // empiricly determined
     }
 
     //----------------------------------------------------------------------------------------------
@@ -45,13 +48,14 @@ public:
     override void begin()
     {
         Dimmer::begin();
+        _intervalTimer.reset();
     }
 
     override void loop()
     {
         Dimmer::loop();
 
-        int ms = _duration.milliseconds() % _msInterval;
+        int ms = _intervalTimer.milliseconds() % _msInterval;
         float intervalFraction = (float)ms * _floatIntervalInverse;
 
         // linear up, linear down: the eye perceives it differently

@@ -40,7 +40,7 @@ public:
         // the LEDs simply turn off. Perhaps we just need to tune our PWM curves
         // better, for for the moment, we do this.
         _maxBrightness = 255;
-        _minBrightness = 20;          // surprising. maybe voltage & color dependent?
+        _minBrightness = 0;
         setCurrentLevel(1.0f);
         setDimmerBrightness(MAX_BRIGHTNESS);
     }
