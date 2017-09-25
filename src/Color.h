@@ -78,13 +78,14 @@ protected:
 
     static float blackBodyRed0(float kelvin)
     {
-        if (kelvin <= 6500.f)
+        const float r0 = 6500;
+        if (kelvin <= r0)
         {
             return 1;
         }
-        else if (kelvin <= 10000.f)
+        else
         {
-            kelvin -= 6500.f;
+            kelvin -= r0;
             const float a = 3.11973f;
             const float b = -0.000467144f;
             const float c = 2.16043e-8f;
@@ -95,16 +96,17 @@ protected:
 
     static float blackBodyRed1(float kelvin)
     {
-        if (kelvin <= 6500.f)
+        const float r0 = 6500;
+        if (kelvin <= r0)
         {
             return 1;
         }
-        else if (kelvin <= 10000.f)
+        else
         {
-            kelvin -= 6500.f;
-            const float a = 1.00545;
-            const float b = -0.000193196;
-            const float c = 2.26863e-8;
+            kelvin -= r0;
+            const float a = 1.0018;
+            const float b = -0.000191353;
+            const float c = 2.27577e-8;
             const float d = 0;
             return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
@@ -114,62 +116,49 @@ protected:
 
     static float blackBodyGreen0(float kelvin)
     {
-        if (kelvin < 1000.f)
+        const float g0 = 1000;
+        const float g1 = 6500;
+
+        if (kelvin <= g1)
         {
-            return 0;
-        }
-        else if (kelvin <= 6500.f)
-        {
-            kelvin -= 1000.f;
+            kelvin -= g0;
             const float a = -0.00206477f;
             const float b = 0.000259848f;
             const float c = -1.62618e-8f;
-            return ((c * kelvin) + b) * kelvin + a;
+            const float d = 0;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
         else
         {
-            kelvin -= 6500.f;
+            kelvin -= g1;
             const float a = 0.938026f;
             const float b = -0.000107892f;
             const float c = 1.10377e-8f;
-            return ((c * kelvin) + b) * kelvin + a;
+            const float d = 0;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
     }
 
     static float blackBodyGreen1(float kelvin)
     {
         const float g0 = 1000;
-        const float g1 = 6500;
         const float g2 = 6600;
-        if (kelvin <= g0)
-        {
-            return 0;
-        }
-        else if (kelvin <= g1)
+        if (kelvin <= g2)
         {
             kelvin -= g0;
-            const float a = 0.0421145;
-            const float b = 0.000217582;
-            const float c = -5.21559e-9;
-            const float d = -8.2771e-13;
-            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
-        }
-        else if (kelvin <= g2)
-        {
-            kelvin -= g1;
-            const float a = 0.9445;
-            const float b = 0.0000625;
-            const float c = -4.05e-7;
-            const float d = -9.e-10;
+            const float a = 0.0374249;
+            const float b = 0.00022693;
+            const float c = -7.10085e-9;
+            const float d = -7.87308e-13;
             return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
         else
         {
             kelvin -= g2;
-            const float a = 0.945986;
-            const float b = -0.000123522;
-            const float c = 2.32367e-8;
-            const float d = -2.14392e-12;
+            const float a = 0.945357;
+            const float b = -0.000121171;
+            const float c = 2.21965e-8;
+            const float d = -2.03433e-12;
             return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
     }
@@ -206,7 +195,6 @@ protected:
 
     static float blackBodyBlue1(float kelvin)
     {
-        const float b0 = 1000;
         const float b1 = 1900;
         const float b2 = 6600;
         if (kelvin <= b1)
@@ -216,10 +204,10 @@ protected:
         else if (kelvin <= b2)
         {
             kelvin -= b1;
-            const float a = -0.0026298;
-            const float b = 0.0000801242;
-            const float c = 5.73172e-8;
-            const float d = -6.11809e-12;
+            const float a = -0.0058959;
+            const float b = 0.0000885465;
+            const float c = 5.48613e-8;
+            const float d = -5.96726e-12;
             return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
         else
