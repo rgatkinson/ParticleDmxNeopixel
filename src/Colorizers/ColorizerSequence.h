@@ -6,7 +6,7 @@
 
 #include "Colorizer.h"
 #include "ConstantColor.h"
-#include "ArrayList.h"
+#include "Util/ArrayList.h"
 
 //==================================================================================================
 // ColorizerSequence

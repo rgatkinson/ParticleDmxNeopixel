@@ -3,7 +3,8 @@
 //
 #ifndef __TWINKLE_BRIGHTNESS_H__
 #define __TWINKLE_BRIGHTNESS_H__
-#include "Deadline.h"
+
+#include "Util/Deadline.h"
 
 //==================================================================================================
 // Twinkler

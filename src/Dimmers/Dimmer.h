@@ -4,8 +4,8 @@
 #ifndef __BRIGHTNESS_H_
 #define __BRIGHTNESS_H_
 
-#include "Durable.h"
-#include "Colorizeable.h"
+#include "Util/Durable.h"
+#include "Pixels/Colorizeable.h"
 
 typedef byte BRIGHTNESS;
 const BRIGHTNESS MAX_BRIGHTNESS = 255;

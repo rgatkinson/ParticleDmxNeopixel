@@ -4,9 +4,9 @@
 #ifndef __DIMMER_SEQUENCE_H__
 #define __DIMMER_SEQUENCE_H__
 
+#include "Util/ArrayList.h"
 #include "Dimmer.h"
-#include "ConstantColor.h"
-#include "ArrayList.h"
+#include "Colorizers/ConstantColor.h"
 
 //==================================================================================================
 // ColorizerSequence

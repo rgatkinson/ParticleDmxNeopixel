@@ -4,8 +4,8 @@
 #ifndef _ARTNET_H_
 #define _ARTNET_H_
 
-#include "TypeConversion.h"
-#include "Misc.h"
+#include "Util/Misc.h"
+#include "Util/TypeConversion.h"
 
 struct ArtnetDevice;
 struct ArtnetPacketHeader;

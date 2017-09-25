@@ -4,11 +4,11 @@
 #ifndef __COLORIZER_H__
 #define __COLORIZER_H__
 
-#include "Misc.h"
-#include "Color.h"
-#include "Deadline.h"
-#include "Durable.h"
-#include "Colorizeable.h"
+#include "Util/Misc.h"
+#include "Util/Color.h"
+#include "Util/Deadline.h"
+#include "Util/Durable.h"
+#include "Pixels/Colorizeable.h"
 
 //==================================================================================================
 // Colorizer

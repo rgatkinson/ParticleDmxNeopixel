@@ -6,13 +6,13 @@
 #ifndef __AMULET_H_
 #define __AMULET_H_
 
-#include "Artnet.h"
-#include "PixelRing.h"
-#include "Color.h"
-#include "BreathingBrightness.h"
-#include "ColorizerSequence.h"
-#include "DimmerSequence.h"
-#include "TwinkleBrightness.h"
+#include "Artnet/Artnet.h"
+#include "Pixels/PixelRing.h"
+#include "Util/Color.h"
+#include "Dimmers/BreathingBrightness.h"
+#include "Dimmers/DimmerSequence.h"
+#include "Dimmers/TwinkleBrightness.h"
+#include "Colorizers/ColorizerSequence.h"
 
 struct Amulet : DmxPacketConsumer
 {

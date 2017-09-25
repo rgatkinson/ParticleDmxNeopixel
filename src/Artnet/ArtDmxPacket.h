@@ -4,7 +4,7 @@
 #ifndef _ARTDMXPACKET_H_
 #define _ARTDMXPACKET_H_
 
-#include "Color.h"
+#include "Util/Color.h"
 
 //==================================================================================================
 // ArtDmxPacket

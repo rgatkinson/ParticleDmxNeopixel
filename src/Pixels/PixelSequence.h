@@ -5,14 +5,14 @@
 #define __PIXEL_SEQUENCE_H_
 
 #include "neopixel.h"
-#include "Deadline.h"
-#include "Color.h"
-#include "Dimmer.h"
-#include "ConstantBrightness.h"
-#include "Colorizer.h"
-#include "ConstantColor.h"
-#include "RainbowColors.h"
-#include "ColorizerSequence.h"
+#include "Util/Deadline.h"
+#include "Util/Color.h"
+#include "Dimmers/Dimmer.h"
+#include "Dimmers/ConstantBrightness.h"
+#include "Colorizers/Colorizer.h"
+#include "Colorizers/ConstantColor.h"
+#include "Colorizers/RainbowColors.h"
+#include "Colorizers/ColorizerSequence.h"
 
 template<int PixelCount, int Pin, int PixelType>
 struct PixelSequence : Colorizeable

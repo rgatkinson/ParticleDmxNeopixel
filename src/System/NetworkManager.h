@@ -4,8 +4,8 @@
 #ifndef __NETWORK_MANAGER_H_
 #define __NETWORK_MANAGER_H_
 
-#include "Misc.h"
-#include "ArrayList.h"
+#include "Util/Misc.h"
+#include "Util/ArrayList.h"
 
 //==================================================================================================
 // Globals
