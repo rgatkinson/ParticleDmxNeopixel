@@ -44,10 +44,20 @@ public:
 
     void addDimmer(Dimmer* pDimmer /*takes ownwership*/)
     {
+        pDimmer->setColorizeable(_pColorizeable);
         pDimmer->setMaxBrightness(_maxBrightness);
         pDimmer->setMinBrightness(_minBrightness);
         pDimmer->setDimmerBrightness(_dimmerBrightness);
         _dimmers.addLast(pDimmer);
+    }
+
+    override void setColorizeable(Colorizeable* pColorizeable)
+    {
+        Dimmer::setColorizeable(pColorizeable);
+        for (int i = 0; i < count(); i++)
+        {
+            _dimmers[i]->setColorizeable(pColorizeable);
+        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -138,6 +148,42 @@ public:
         else
         {
             return Dimmer::currentBrightness();
+        }
+    }
+
+    override BRIGHTNESS currentBrightness(int iPixel)
+    {
+        if (_currentDimmer < count())
+        {
+            return _dimmers[_currentDimmer]->currentBrightness(iPixel);
+        }
+        else
+        {
+            return Dimmer::currentBrightness(iPixel);
+        }
+    }
+
+    override bool hasPixelizedBrightness()
+    {
+        if (_currentDimmer < count())
+        {
+            return _dimmers[_currentDimmer]->hasPixelizedBrightness();
+        }
+        else
+        {
+            return Dimmer::hasPixelizedBrightness();
+        }
+    }
+
+    override bool usesGammaCorrection()
+    {
+        if (_currentDimmer < count())
+        {
+            return _dimmers[_currentDimmer]->usesGammaCorrection();
+        }
+        else
+        {
+            return Dimmer::usesGammaCorrection();
         }
     }
 

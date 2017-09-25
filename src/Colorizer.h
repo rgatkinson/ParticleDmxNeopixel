@@ -8,16 +8,7 @@
 #include "Color.h"
 #include "Deadline.h"
 #include "Durable.h"
-
-//==================================================================================================
-// Colorizeable
-//==================================================================================================
-
-struct Colorizeable
-{
-    virtual void setPixelColor(uint16_t iPixel, COLOR_INT color) = 0;
-    virtual int  numberOfPixels() = 0;
-};
+#include "Colorizeable.h"
 
 //==================================================================================================
 // Colorizer
@@ -54,12 +45,6 @@ public:
     {
         _pColorizeable = pColorizeable;
         _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
-    }
-
-protected:
-
-    virtual ~Colorizer()
-    {
     }
 
     //----------------------------------------------------------------------------------------------

@@ -5,6 +5,7 @@
 #define __BRIGHTNESS_H_
 
 #include "Durable.h"
+#include "Colorizeable.h"
 
 typedef byte BRIGHTNESS;
 const BRIGHTNESS MAX_BRIGHTNESS = 255;
@@ -16,11 +17,14 @@ struct Dimmer : Durable
     //----------------------------------------------------------------------------------------------
 public:
 
-    enum DimmerFlavor { DimmerFlavorNone, DimmerFlavorConstant, DimmerFlavorSequence, DimmerFlavorBreathing };
+    enum DimmerFlavor { DimmerFlavorNone, DimmerFlavorConstant, DimmerFlavorSequence,
+        DimmerFlavorBreathing, DimmerFlavorTwinkle };
 
 protected:
 
     DimmerFlavor _flavor;
+    Colorizeable*  _pColorizeable;
+    int _pixelCount;
     BRIGHTNESS _minBrightness;      // min we ever report
     BRIGHTNESS _maxBrightness;      // max we ever report
     BRIGHTNESS _dimmerBrightness;   // controlled externally
@@ -35,14 +39,22 @@ public:
     Dimmer(DimmerFlavor flavor, int msDuration) : Durable(msDuration)
     {
         _flavor = flavor;
+        _pColorizeable = NULL;
+        _pixelCount = 0;
 
         // We set a non-zero lower bound in recognition that at lower levels
         // the LEDs simply turn off. Perhaps we just need to tune our PWM curves
-        // better, for for the moment, we do this.
+        // better, for for the moment, we do this. [old comment]
         _maxBrightness = 255;
         _minBrightness = 0;
         setCurrentLevel(1.0f);
         setDimmerBrightness(MAX_BRIGHTNESS);
+    }
+
+    virtual void setColorizeable(Colorizeable* pColorizeable)
+    {
+        _pColorizeable = pColorizeable;
+        _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -83,19 +95,37 @@ public:
 
     virtual BRIGHTNESS currentBrightness()
     {
-        BRIGHTNESS raw = this->rawCurrentBrightness();
-        BRIGHTNESS result = gammaCorrect(raw);
+        BRIGHTNESS result = this->rawCurrentBrightness(_currentLevel);
+        if (usesGammaCorrection())
+        {
+            result = gammaCorrect(result);
+        }
         return result;
+    }
+
+    virtual BRIGHTNESS currentBrightness(int iPixel)
+    {
+        return currentBrightness();
+    }
+
+    virtual bool hasPixelizedBrightness()
+    {
+        return false;
+    }
+
+    virtual bool usesGammaCorrection()
+    {
+        return true;
     }
 
 protected:
 
-    BRIGHTNESS rawCurrentBrightness()
+    BRIGHTNESS rawCurrentBrightness(float currentLevel)
     {
         if (_dimmerLevel==0.0f)
             return 0;   // honor blackout
         else
-            return (BRIGHTNESS)(_currentLevel * _dimmerLevel * (float)(_maxBrightness-_minBrightness) + (float)_minBrightness + 0.5f);
+            return (BRIGHTNESS)(currentLevel * _dimmerLevel * (float)(_maxBrightness-_minBrightness) + (float)_minBrightness + 0.5f);
     }
 
     void setCurrentLevel(float level)

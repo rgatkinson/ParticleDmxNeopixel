@@ -12,6 +12,7 @@
 #include "BreathingBrightness.h"
 #include "ColorizerSequence.h"
 #include "DimmerSequence.h"
+#include "TwinkleBrightness.h"
 
 struct Amulet : DmxPacketConsumer
 {

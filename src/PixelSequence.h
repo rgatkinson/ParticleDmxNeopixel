@@ -68,6 +68,7 @@ protected:
     {
         releaseRef(_pDimmer);
         _pDimmer = pDimmer; // takes ownership
+        if (_pDimmer) _pDimmer->setColorizeable(this);
     }
 
 public:
@@ -163,6 +164,10 @@ public:
             for (int iPixel = 0; iPixel < pixelCount; iPixel++)
             {
                 COLOR_INT color = _pixelValues[iPixel];
+                if (_pDimmer && _pDimmer->hasPixelizedBrightness())
+                {
+                    brightness = _pDimmer->currentBrightness(iPixel);
+                }
                 _neopixels.setColorScaled(iPixel, Color::red(color), Color::green(color), Color::blue(color), brightness);
             }
 

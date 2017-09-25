@@ -7,8 +7,16 @@
 #include "Misc.h"
 #include "ArrayList.h"
 
+//==================================================================================================
+// Globals
+//==================================================================================================
+
 SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(MANUAL);
+
+//==================================================================================================
+// WiFiPassword
+//==================================================================================================
 
 struct WiFiPassword
 {
@@ -37,6 +45,10 @@ struct WiFiPassword
     }
 };
 
+//==================================================================================================
+// NetworkManager
+//==================================================================================================
+
 struct NetworkManager
 {
     //----------------------------------------------------------------------------------------------
@@ -44,9 +56,10 @@ struct NetworkManager
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int  loopCount = 0;
-    bool connectAttempted = false;
-    int  connectAttemptLoopCount = 0;
+    int  _loopCount = 0;
+    bool _connectAttempted = false;
+    int  _connectAttemptLoopCount = 0;
+    bool _clearCredentials = false;
     ArrayList<WiFiPassword> _passwords;
 
     //----------------------------------------------------------------------------------------------
@@ -63,8 +76,9 @@ public:
         _passwords.addLast(password);
     }
 
-    void addPasswords(WiFiPassword wifiPasswords[], int cb)
+    void addPasswords(bool clearWifiPasswords, WiFiPassword wifiPasswords[], int cb)
     {
+        _clearCredentials = clearWifiPasswords;
         int passwordCount = cb / sizeof(wifiPasswords[0]);
         for (int i = 0; i < passwordCount; i++)
         {
@@ -80,6 +94,10 @@ public:
     {
         WiFi.on();  // must be on first before we call setCredentials()
 
+        if (_clearCredentials)
+        {
+            WiFi.clearCredentials();
+        }
         for (int i = 0; i < _passwords.count(); i++)
         {
             WiFiPassword& password = _passwords[i];
@@ -92,15 +110,15 @@ public:
 
     void loop()
     {
-        if (WiFi.ready() && !connectAttempted)
+        if (WiFi.ready() && !_connectAttempted)
         {
             Log.info("calling Particle.connect()...");
             Particle.connect();
             Log.info("...done");
-            connectAttempted = true;
-            connectAttemptLoopCount = loopCount;
+            _connectAttempted = true;
+            _connectAttemptLoopCount = _loopCount;
         }
-        if (connectAttempted && connectAttemptLoopCount == loopCount-1)
+        if (_connectAttempted && _connectAttemptLoopCount == _loopCount-1)
         {
             if (!Particle.connected())
             {
@@ -112,12 +130,11 @@ public:
             }
         }
         Particle.process();
-        loopCount++;
+        _loopCount++;
     }
 
     void report()
     {
-
     }
 
 };

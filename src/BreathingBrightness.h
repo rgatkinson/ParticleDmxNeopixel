@@ -34,16 +34,17 @@ public:
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
+protected:
 
-    override BRIGHTNESS currentBrightness()
+    override bool usesGammaCorrection()
     {
-        // We specifically want to NOT be gamma-corrected
-        return rawCurrentBrightness();
+        return false;
     }
 
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
+public:
 
     override void begin()
     {
