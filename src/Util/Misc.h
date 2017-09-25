@@ -19,11 +19,13 @@ static const double TwoPi  = 2.0 * Pi;
 static const float  TwoPiF = 2.0f * PiF;
 
 //--------------------------------------------------------------------------------------------------
-// Tracing
+// Logging / tracing
 //--------------------------------------------------------------------------------------------------
 
-#define TRACE(...)      Log.info(__VA_ARGS__)
+#define TRACE(...)      Log.trace(__VA_ARGS__)
 #define INFO(...)       Log.info(__VA_ARGS__)
+#define WARN(...)       Log.warn(__VA_ARGS__)
+#define ERROR(...)      Log.error(__VA_ARGS__)
 
 //--------------------------------------------------------------------------------------------------
 // Memory
@@ -32,7 +34,11 @@ static const float  TwoPiF = 2.0f * PiF;
 inline void* mallocNoFail(size_t cb)
 {
     void* result = malloc(cb);
-    if (result == NULL) System.enterSafeMode();
+    if (result == NULL)
+    {
+        ERROR("out of memory");
+        System.enterSafeMode();
+    }
     return result;
 }
 

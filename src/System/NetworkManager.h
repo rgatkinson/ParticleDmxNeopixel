@@ -8,13 +8,6 @@
 #include "Util/ArrayList.h"
 
 //==================================================================================================
-// Globals
-//==================================================================================================
-
-SYSTEM_THREAD(ENABLED);
-SYSTEM_MODE(MANUAL);
-
-//==================================================================================================
 // WiFiPassword
 //==================================================================================================
 
@@ -56,11 +49,11 @@ struct NetworkManager
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int  _loopCount = 0;
     bool _connectAttempted = false;
-    int  _connectAttemptLoopCount = 0;
     bool _clearCredentials = false;
     ArrayList<WiFiPassword> _passwords;
+
+    static NetworkManager* _pTheInstance;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -68,7 +61,9 @@ protected:
 public:
     NetworkManager()
     {
+        _pTheInstance = this;
         WiFi.selectAntenna(ANT_INTERNAL);   // persistently remembered
+        registerSystemEvents();
     }
 
     void addPassword(WiFiPassword& password)
@@ -83,6 +78,35 @@ public:
         for (int i = 0; i < passwordCount; i++)
         {
             addPassword(wifiPasswords[i]);
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // System Events
+    //----------------------------------------------------------------------------------------------
+
+    void registerSystemEvents()
+    {
+        System.on(network_status, &staticOnNetworkStatus);
+    }
+
+    static void staticOnNetworkStatus(system_event_t event, int eventParam)
+    {
+        _pTheInstance->onNetworkStatus(event, eventParam);
+    }
+
+    void onNetworkStatus(system_event_t ignored, int netStatus)
+    {
+        switch (netStatus)
+        {
+            case network_status_powering_off:   INFO("network: powering off"); break;
+            case network_status_off:            INFO("network: off"); break;
+            case network_status_powering_on:    INFO("network: powering on"); break;
+            case network_status_on:             INFO("network: on"); break;
+            case network_status_connecting:     INFO("network: connecting"); break;
+            case network_status_connected:      INFO("network: connected"); break;      // DHCP acquired
+            case network_status_disconnecting:  INFO("network: disconnecting"); break;
+            case network_status_disconnected:   INFO("network: disconnected"); break;
         }
     }
 
@@ -110,31 +134,26 @@ public:
 
     void loop()
     {
-        if (WiFi.ready() && !_connectAttempted)
+        if (WiFi.connecting())
         {
-            Log.info("calling Particle.connect()...");
-            Particle.connect();
-            Log.info("...done");
-            _connectAttempted = true;
-            _connectAttemptLoopCount = _loopCount;
+
         }
-        if (_connectAttempted && _connectAttemptLoopCount == _loopCount-1)
+        else if (WiFi.ready() && !_connectAttempted)
         {
-            if (!Particle.connected())
-            {
-                Log.warn("Particle.connect() failed");
-            }
-            else
-            {
-                Log.info("Particle.connect() succeeded");
-            }
+            _connectAttempted = true;
+            Particle.connect();
         }
         Particle.process();
-        _loopCount++;
     }
 
     void report()
     {
+        WiFiAccessPoint ap[5];
+        int credentialCount = WiFi.getCredentials(ap, 5);
+        for (int i = 0; i < credentialCount; i++)
+        {
+            INFO("credential: ssid=%s security=%d cipher=%d", ap[i].ssid, ap[i].security, ap[i].cipher);
+        }
     }
 
 };
