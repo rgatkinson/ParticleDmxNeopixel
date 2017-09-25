@@ -1,0 +1,2134 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ColorData", "Subsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"colorPart", "[", 
+   RowBox[{"fn_", ",", " ", "i_"}], "]"}], " ", ":=", " ", 
+  RowBox[{"Function", "[", 
+   RowBox[{
+    RowBox[{"{", "x", "}"}], ",", " ", 
+    RowBox[{
+     RowBox[{"fn", "[", "x", "]"}], "[", 
+     RowBox[{"[", "i", "]"}], "]"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"plotRGBColors", "[", "fn_", "]"}], " ", ":=", " ", 
+  RowBox[{"plotRGBColors", "[", 
+   RowBox[{"fn", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", " ", "1"}], "}"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"plotRGBColors", "[", 
+   RowBox[{"fn_", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"min_", ",", " ", "max_"}], "}"}]}], "]"}], " ", ":=", " ", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"colorPart", "[", 
+          RowBox[{"fn", ",", " ", "1"}], "]"}], "[", "x", "]"}], ",", " ", 
+        "Red"}], "]"}], ",", " ", "\[IndentingNewLine]", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"colorPart", "[", 
+          RowBox[{"fn", ",", " ", "2"}], "]"}], "[", "x", "]"}], ",", " ", 
+        "Green"}], "]"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"colorPart", "[", 
+          RowBox[{"fn", ",", "3"}], "]"}], "[", "x", "]"}], ",", " ", 
+        "Blue"}], "]"}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", " ", "min", ",", " ", "max"}], "}"}], ",", " ", 
+    RowBox[{"ImageSize", "\[Rule]", "Large"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"plotRGBColors", "[", 
+  RowBox[{
+   RowBox[{"ColorData", "[", "\"\<BlackBodySpectrum\>\"", "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"1000", ",", " ", "10000"}], "}"}]}], "]"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Modelling", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Mathematica BlackBodySpectrum", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["Data", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"bb", " ", ":=", " ", 
+   RowBox[{"ColorData", "[", "\"\<BlackBodySpectrum\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"LinearGradientImage", "[", 
+  RowBox[{
+   RowBox[{"bb", "[", 
+    RowBox[{
+     RowBox[{"9000", " ", "#"}], " ", "+", " ", "1000"}], "]"}], "&"}], 
+  "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"bbRed", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"bb", "[", "x", "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"bbGreen", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"bb", "[", "x", "]"}], "[", 
+   RowBox[{"[", "2", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"bbBlue", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"bb", "[", "x", "]"}], "[", 
+   RowBox[{"[", "3", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"6500", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"bbRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6490", ",", " ", "6510"}], "}"}]}], "]"}]}], 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"6500", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"bbGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6490", ",", " ", "6510"}], "}"}]}], "]"}]}], 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"1500", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"bbBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "1000", ",", " ", "2000"}], "}"}]}], "]"}]}], 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"6500", " ", "\[Rule]", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"bbBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6490", ",", " ", "6510"}], "}"}]}], "]"}]}], 
+   ",", "\[IndentingNewLine]", 
+   RowBox[{"7000", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"bbBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6900", ",", " ", "7100"}], "}"}]}], "]"}]}]}], 
+  "\[IndentingNewLine]", "}"}], "\[IndentingNewLine]"}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Red", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"redData0", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", " ", ",", " ", 
+       RowBox[{"bbRed", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"6500", ",", " ", "10000", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"redFit0", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"redData0", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", "x"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Plot", "[", 
+    RowBox[{
+     RowBox[{"redFit0", "[", "x", "]"}], ",", " ", 
+     RowBox[{"{", " ", 
+      RowBox[{"x", ",", " ", "6500", ",", " ", "10000"}], "}"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"redData0", ",", " ", "Red"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"redFit0", "[", "x", "]"}], ",", " ", 
+       RowBox[{"{", " ", 
+        RowBox[{"x", ",", " ", "6500", ",", " ", "10000"}], "}"}]}], "]"}]}], 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"redFit0", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "redFit", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"redFit", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Piecewise", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", " ", 
+       RowBox[{"x", " ", "\[LessEqual]", " ", "6500"}]}], "}"}], "}"}], ",", 
+    " ", 
+    RowBox[{"redFit0", "[", "x", "]"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"bbRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}], 
+   ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"?", "redFit0"}], "\[IndentingNewLine]", 
+ RowBox[{"redFit0", "[", "\"\<BestFitParameters\>\"", "]"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Green", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"g0", " ", "=", " ", "1000"}], ";", " ", 
+  RowBox[{"g1", " ", "=", " ", "6500"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"gs0", " ", "=", " ", "1"}], ";", " ", 
+  RowBox[{"gs1", " ", "=", " ", "1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenData0", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"(", 
+         RowBox[{"g0", "/", "gs0"}], ")"}]}], ",", " ", 
+       RowBox[{"bbGreen", "[", 
+        RowBox[{"#", " ", "*", " ", "gs0"}], "]"}]}], "}"}], "&"}], " ", "/@",
+     " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"g0", "/", "gs0"}], " ", "+", " ", "1"}], ",", " ", 
+      RowBox[{"6500", "/", " ", "gs0"}], ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenData1", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"(", 
+         RowBox[{"g1", " ", "/", "gs1"}], ")"}]}], ",", " ", 
+       RowBox[{"bbGreen", "[", 
+        RowBox[{"#", " ", "*", " ", "gs1"}], "]"}]}], "}"}], "&"}], " ", "/@",
+     " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"g1", " ", "/", "gs1"}], "+", " ", "1"}], ",", " ", 
+      RowBox[{"10000", "/", " ", "gs1"}], ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"greenData0", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"greenData1", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], 
+  "}"}], "\[IndentingNewLine]"}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"greenData0a", " ", "=", " ", "greenData0"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"greenFit0", " ", "=", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"greenData0a", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", "x"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"greenData0", ",", " ", "Green"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"greenFit0", "[", "x", "]"}], ",", " ", 
+       RowBox[{"{", " ", 
+        RowBox[{"x", ",", " ", 
+         RowBox[{
+          RowBox[{"greenData0", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", 
+          "Min"}], ",", " ", 
+         RowBox[{
+          RowBox[{"greenData0", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", 
+          "Max"}]}], "}"}]}], "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"greenFit0", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"greenFit1", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"greenData1", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", " ", 
+       RowBox[{"x", " ", "^", "2"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", " ", "x"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"greenData1", ",", " ", "Green"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"greenFit1", "[", "x", "]"}], ",", " ", 
+       RowBox[{"{", " ", 
+        RowBox[{"x", ",", " ", 
+         RowBox[{
+          RowBox[{"greenData1", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", 
+          "Min"}], ",", " ", 
+         RowBox[{
+          RowBox[{"greenData1", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", 
+          "Max"}]}], "}"}]}], "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"greenFit1", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "greenFit", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Piecewise", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"greenFit0", "[", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"x", "-", "g0"}], ")"}], " ", "/", " ", "gs0"}], "]"}], ",",
+        " ", 
+       RowBox[{"x", " ", "\[LessEqual]", " ", "g1"}]}], "}"}], "}"}], ",", 
+    " ", 
+    RowBox[{"greenFit1", "[", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"x", "-", "g1"}], ")"}], " ", "/", " ", "gs0"}], "]"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"bbGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+     " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], 
+    "}"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"?", "greenFit"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit0", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", "2"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit1", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", " ", "2"}], "]"}], "]"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Blue", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"blueData0", " ", "=", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"#", ",", " ", 
+        RowBox[{"bbBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+     RowBox[{"Range", "[", 
+      RowBox[{"1000", ",", " ", "1500", ",", " ", "1"}], "]"}]}]}], ";"}], 
+  " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"blueData1", " ", "=", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"#", ",", " ", 
+        RowBox[{"bbBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+     RowBox[{"Range", "[", 
+      RowBox[{"1500", ",", " ", "6500", ",", " ", "1"}], "]"}]}]}], ";"}], 
+  " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueData2", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", ",", " ", 
+       RowBox[{"bbBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"6500", ",", " ", "7000", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueData3", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", ",", " ", 
+       RowBox[{"bbBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"7000", ",", " ", "10000", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"{", " ", 
+  RowBox[{
+   RowBox[{"ListPlot", "[", "blueData0", "]"}], ",", " ", 
+   RowBox[{"ListPlot", "[", "blueData1", "]"}], ",", " ", 
+   RowBox[{"ListPlot", "[", "blueData2", "]"}], ",", " ", 
+   RowBox[{"ListPlot", "[", "blueData3", "]"}]}], " ", "}"}]}], "Input"],
+
+Cell[BoxData[""], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"b0", " ", "=", " ", "1000"}], ";", " ", 
+  RowBox[{"b1", " ", "=", " ", "1500"}], ";", " ", 
+  RowBox[{"b2", " ", "=", " ", "6500"}], ";", " ", 
+  RowBox[{"b3", " ", "=", " ", "7000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"bs0", " ", "=", " ", "1"}], ";", " ", 
+  RowBox[{"bs1", " ", "=", " ", "1"}], ";", " ", 
+  RowBox[{"bs2", " ", "=", " ", "1"}], ";", " ", 
+  RowBox[{"bs3", "  ", "=", " ", "1"}], ";"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"blueData0", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"(", 
+         RowBox[{"b0", "/", "bs0"}], ")"}]}], ",", " ", 
+       RowBox[{"bbBlue", "[", 
+        RowBox[{"#", " ", "*", " ", "bs0"}], "]"}]}], "}"}], "&"}], " ", "/@",
+     " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"b0", "/", "bs0"}], " ", "+", " ", "1"}], ",", " ", 
+      RowBox[{"b1", "/", " ", "bs0"}], ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "blueData0", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Clear", "[", "blueFit0", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueFit0", "[", "x_", "]"}], " ", ":=", " ", 
+  "0"}], "\[IndentingNewLine]"}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"weight1", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"b0", "/", "bs1"}], ",", " ", 
+        RowBox[{"b1", "/", "bs1"}]}], "}"}], "]"}]}], ")"}], "^", 
+   "2"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight1", "[", "x", "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", 
+     RowBox[{"b0", "/", "bs1"}], ",", " ", 
+     RowBox[{"b1", "/", "bs1"}]}], "}"}]}], "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"blueData1", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"(", 
+         RowBox[{"b1", "/", "bs1"}], ")"}]}], ",", " ", 
+       RowBox[{"bbBlue", "[", 
+        RowBox[{"#", " ", "*", " ", "bs1"}], "]"}]}], "}"}], "&"}], " ", "/@",
+     " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"b1", "/", "bs1"}], " ", "+", " ", "1"}], ",", " ", 
+      RowBox[{"b2", "/", " ", "bs1"}], ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"min1", " ", "=", "  ", 
+   RowBox[{
+    RowBox[{"blueData1", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", "Min"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"max1", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"blueData1", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", "Max"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight1", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", 
+      RowBox[{"{", 
+       RowBox[{"min1", ",", " ", "max1"}], "}"}], "]"}]}], ")"}], "^", 
+   "2"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight1", "[", "x", "]"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "min1", ",", " ", "max1"}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"blueFit1", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"blueData1", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", " ", 
+       RowBox[{"x", " ", "^", "2"}]}], " ", "+", " ", 
+      RowBox[{"d", " ", 
+       RowBox[{"x", "^", "3"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", " ", "b", ",", "c", ",", " ", "d"}], "}"}], ",", " ", 
+    "x", ",", " ", 
+    RowBox[{"Weights", "\[Rule]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"weight1", "[", "#", "]"}], "&"}], ")"}]}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"blueData1", ",", " ", "Blue"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"blueFit1", "[", "x", "]"}], ",", " ", 
+       RowBox[{"{", " ", 
+        RowBox[{"x", ",", "min1", ",", " ", "max1"}], "}"}]}], "]"}]}], "]"}],
+    ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"blueFit1", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"blueData2", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"(", 
+         RowBox[{"b2", "/", "bs2"}], ")"}]}], ",", " ", 
+       RowBox[{"bbBlue", "[", 
+        RowBox[{"#", " ", "*", " ", "bs2"}], "]"}]}], "}"}], "&"}], " ", "/@",
+     " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"b2", "/", "bs2"}], " ", "+", " ", "1"}], ",", " ", 
+      RowBox[{"b3", "/", " ", "bs2"}], ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "blueData2", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"blueFit2", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"blueData2", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", 
+      RowBox[{"b", " ", "x"}]}], " ", "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b"}], "}"}], ",", " ", "x"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"blueData2", ",", " ", "Blue"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"blueFit2", "[", "x", "]"}], ",", " ", 
+       RowBox[{"{", " ", 
+        RowBox[{"x", ",", " ", 
+         RowBox[{
+          RowBox[{"blueData2", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", 
+          "Min"}], ",", " ", 
+         RowBox[{
+          RowBox[{"blueData2", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", " ", "1"}], "]"}], "]"}], " ", "//", " ", 
+          "Max"}]}], "}"}]}], "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"blueFit2", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"blueData3", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"(", 
+         RowBox[{"b3", "/", "bs3"}], ")"}]}], ",", " ", 
+       RowBox[{"bbBlue", "[", 
+        RowBox[{"#", " ", "*", " ", "bs3"}], "]"}]}], "}"}], "&"}], " ", "/@",
+     " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"b3", "/", "bs3"}], " ", "+", " ", "1"}], ",", " ", 
+      RowBox[{"10000", "/", " ", "bs3"}], ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "blueData3", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueFit3", "[", "x_", "]"}], " ", ":=", " ", "1"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "blueFit", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{"b0", ",", " ", "b1", ",", " ", "b2", ",", " ", "b3"}], 
+  "}"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{"bs0", ",", " ", "bs1", ",", " ", "bs2", ",", " ", "bs3"}], 
+  "}"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueFit", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Piecewise", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"blueFit0", "[", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"x", "-", "b0"}], ")"}], " ", "/", " ", "bs0"}], "]"}], 
+        ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b1"}]}], "}"}], ",", " ", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"blueFit1", "[", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"x", "-", "b1"}], ")"}], " ", "/", " ", "bs1"}], "]"}], 
+        ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b2"}]}], "}"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"blueFit2", "[", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"x", "-", "b2"}], ")"}], " ", "/", " ", "bs2"}], "]"}], 
+        ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b3"}]}], "}"}]}], 
+     "\[IndentingNewLine]", "}"}], ",", " ", "\[IndentingNewLine]", 
+    RowBox[{"blueFit3", "[", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"x", "-", "b3"}], ")"}], " ", "/", " ", "bs3"}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"bbBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}],
+    ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], 
+  "]"}], "\[IndentingNewLine]"}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"blueFit1", "[", "\"\<BestFitParameters\>\"", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"blueFit2", "[", "\"\<BestFitParameters\>\"", 
+  "]"}], "\[IndentingNewLine]"}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["All", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{"plot1", " ", "=", " ", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+      " ", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Blue"}], "]"}]}], 
+     "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+    RowBox[{"ImageSize", "\[Rule]", "Large"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{"plot1", ",", " ", 
+   RowBox[{"plotRGBColors", "[", 
+    RowBox[{"bb", ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"1000", ",", " ", "10000"}], "}"}]}], "]"}]}], "]"}]}], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Mitchell Charity", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Data", "Subsection"],
+
+Cell["\<\
+From here: \
+http://www.vendian.org/mncharity/dir3/blackbody/UnstableURLs/bbr_color.html \
+\>", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"charity", " ", "=", "  ", 
+   RowBox[{
+    RowBox[{"Import", "[", 
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], " ", "<>", " ", 
+      "\"\<Mitchell Charity.xlsx\>\""}], "]"}], "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"charity", " ", "=", " ", 
+   RowBox[{"charity", "[", 
+    RowBox[{"[", 
+     RowBox[{"2", ";;", "All"}], "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tenDeg", " ", "=", " ", 
+   RowBox[{"Select", "[", 
+    RowBox[{"charity", ",", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"#", "[", 
+        RowBox[{"[", "2", "]"}], "]"}], "\[Equal]", "\"\<10deg\>\""}], 
+      "&"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"twoDeg", " ", "=", " ", 
+   RowBox[{"Select", "[", 
+    RowBox[{"charity", ",", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"#", "[", 
+        RowBox[{"[", "2", "]"}], "]"}], "\[Equal]", "\"\<2deg\>\""}], "&"}]}],
+     "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Dimensions", "[", "charity", "]"}], ",", " ", 
+   RowBox[{"Dimensions", "[", "tenDeg", "]"}], ",", " ", 
+   RowBox[{"Dimensions", "[", "twoDeg", "]"}]}], "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"charityColorData", "=", " ", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"tenDeg", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", " ", 
+         RowBox[{"{", "1", "}"}]}], "]"}], "]"}], ",", 
+      RowBox[{"tenDeg", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", " ", 
+         RowBox[{"{", 
+          RowBox[{"6", ",", " ", "7", ",", " ", "8"}], "}"}]}], "]"}], 
+       "]"}]}], "}"}], "//", " ", "Transpose"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"charityColorData", " ", "=", " ", 
+  RowBox[{"Interpolation", "[", 
+   RowBox[{"charityColorData", ",", " ", 
+    RowBox[{"InterpolationOrder", "\[Rule]", "3"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"charityColor", "[", "kelvin_", "]"}], " ", ":=", " ", 
+  RowBox[{"RGBColor", " ", "@@", " ", 
+   RowBox[{
+   "charityColorData", "[", "kelvin", "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"charityColorData", "[", "2550", "]"}], " ", "*", " ", 
+  "255"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"charityColorNormal", "[", "level_", "]"}], " ", ":=", " ", 
+  RowBox[{"charityColor", "[", 
+   RowBox[{
+    RowBox[{"9000", " ", "level"}], " ", "+", " ", "1000"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"LinearGradientImage", "[", "charityColorNormal", "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"plotRGBColors", "[", 
+  RowBox[{"charityColor", ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"1000", ",", " ", "10000"}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"plotRGBColors", "[", 
+    RowBox[{"charityColor", ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"1000", ",", " ", "10000"}], "}"}]}], "]"}], ",", 
+   RowBox[{"plotRGBColors", "[", 
+    RowBox[{"bb", ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"1000", ",", " ", "10000"}], "}"}]}], "]"}]}], "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ccRed", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"charityColor", "[", "x", "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ccGreen", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"charityColor", "[", "x", "]"}], "[", 
+   RowBox[{"[", "2", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ccBlue", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"charityColor", "[", "x", "]"}], "[", 
+   RowBox[{"[", "3", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"6500", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"ccRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6400", ",", " ", "6600"}], "}"}], ",", " ", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"6600", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"ccGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6500", ",", " ", "6700"}], "}"}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"2000", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "1500", ",", " ", "2500"}], "}"}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"6600", " ", "\[Rule]", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6300", ",", " ", "6700"}], "}"}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}]}], 
+  "\[IndentingNewLine]", "}"}], "\[IndentingNewLine]"}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Piecewise", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["Red", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{"range", " ", "=", " ", 
+  RowBox[{"{", 
+   RowBox[{"6500", ",", " ", "10000"}], "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{"r0", " ", "=", " ", 
+  RowBox[{"range", "[", 
+   RowBox[{"[", "1", "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"sRange", " ", "=", " ", 
+   RowBox[{"(", 
+    RowBox[{"range", " ", "-", " ", "r0"}], ")"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"xRange", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", "sRange"}]}], ";"}],
+   "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"weight", "[", "x_", "]"}], " ", ":=", " ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"sRange", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "x"}], ")"}], " ", 
+       "/", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"sRange", "[", 
+          RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", 
+         RowBox[{"sRange", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ")"}], " ", "^", " ", 
+     "2"}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight", "[", "x", "]"}], ",", " ", "xRange"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"redData0", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", 
+        RowBox[{"range", "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], " ", ",", " ", 
+       RowBox[{"ccRed", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"(", 
+     RowBox[{"Range", "@@", "range"}], ")"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ListPlot", "[", 
+   RowBox[{"Style", "[", 
+    RowBox[{"redData0", ",", " ", "Red"}], "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"redFit0", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"redData0", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", "x", ",", " ", 
+    RowBox[{"Weights", "\[Rule]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"weight", "[", "#", "]"}], "&"}], ")"}]}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Plot", "[", 
+    RowBox[{
+     RowBox[{"redFit0", "[", "x", "]"}], ",", " ", "xRange", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"redData0", ",", " ", "Red"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"redFit0", "[", "x", "]"}], ",", " ", "xRange"}], "]"}]}], 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"redFit0", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "redFit", 
+  "]"}], "\[IndentingNewLine]", "range", "\[IndentingNewLine]", 
+ RowBox[{"redFit0", "[", "\"\<BestFitParameters\>\"", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"redFit", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Piecewise", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", " ", 
+       RowBox[{"x", " ", "\[LessEqual]", " ", 
+        RowBox[{"range", "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], "}"}], ",", " ", 
+    RowBox[{"redFit0", "[", 
+     RowBox[{"x", "-", 
+      RowBox[{"range", "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}], 
+   ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "0", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}], 
+   ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "6400", ",", " ", "6600"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}]}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Green", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{"6600", " ", "\[Rule]", " ", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{"Style", "[", 
+     RowBox[{
+      RowBox[{"ccGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+    " ", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", " ", "6200", ",", " ", "6700"}], "}"}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"range0", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"1000", ",", " ", "6500"}], "}"}]}], ";", " ", 
+  RowBox[{"sRange0", " ", "=", " ", 
+   RowBox[{"(", 
+    RowBox[{"range0", " ", "-", " ", 
+     RowBox[{"range0", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"range1", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"6500", ",", " ", "6600"}], "}"}]}], ";", " ", 
+  RowBox[{"sRange1", " ", "=", " ", 
+   RowBox[{"(", 
+    RowBox[{"range1", " ", "-", " ", 
+     RowBox[{"range1", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"range2", " ", "=", " ", 
+    RowBox[{"{", 
+     RowBox[{"6600", ",", " ", "10000"}], "}"}]}], ";", " ", 
+   RowBox[{"sRange2", " ", "=", " ", 
+    RowBox[{"(", 
+     RowBox[{"range2", " ", "-", " ", 
+      RowBox[{"range2", "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"xRange0", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", 
+   "sRange0"}]}], "\[IndentingNewLine]", 
+ RowBox[{"xRange1", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", 
+   "sRange1"}]}], "\[IndentingNewLine]", 
+ RowBox[{"xRange2", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", 
+   "sRange2"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight0", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange0", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight1", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange1", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight2", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange2", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight0", "[", "x", "]"}], ",", " ", "xRange0"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight1", "[", "x", "]"}], ",", " ", "xRange1"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight2", "[", "x", "]"}], ",", " ", "xRange2"}], 
+  "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"g0", " ", "=", " ", 
+   RowBox[{"range0", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";", " ", 
+  RowBox[{"g1", " ", "=", " ", 
+   RowBox[{"range1", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";", " ", 
+  RowBox[{"g2", " ", "=", " ", 
+   RowBox[{"range2", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenData0", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", "g0"}], ",", " ", 
+       RowBox[{"ccGreen", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"g0", ",", " ", "g1", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenData1", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", "g1"}], " ", ",", " ", 
+       RowBox[{"ccGreen", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"g1", ",", " ", "g2", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenData2", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", "g2"}], " ", ",", " ", 
+       RowBox[{"ccGreen", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"g2", ",", " ", "10000", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"greenData0", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"greenData1", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"greenData2", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"greenFit0", " ", "=", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"greenData0", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}], " ", "+", " ", 
+      RowBox[{"d", " ", 
+       RowBox[{"x", "^", "3"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c", ",", " ", "d"}], "}"}], ",", "x", ",", 
+    " ", 
+    RowBox[{"Weights", "\[Rule]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"weight0", "[", "#", "]"}], "&"}], ")"}]}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"greenData0", ",", " ", "Green"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"greenFit0", "[", "x", "]"}], ",", " ", "xRange0"}], "]"}]}], 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"greenFit0", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"greenFit1", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"greenData1", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}], " ", "+", " ", 
+      RowBox[{"d", " ", 
+       RowBox[{"x", "^", "3"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c", ",", " ", "d"}], "}"}], ",", " ", "x", 
+    ",", " ", 
+    RowBox[{"Weights", "\[Rule]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"weight1", "[", "#", "]"}], "&"}], ")"}]}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"greenData1", ",", " ", "Green"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"greenFit1", "[", "x", "]"}], ",", " ", "xRange1"}], "]"}]}], 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"greenFit1", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"greenFit2", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"greenData2", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}], " ", "+", " ", 
+      RowBox[{"d", " ", 
+       RowBox[{"x", "^", "3"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c", ",", " ", "d"}], "}"}], ",", " ", "x", 
+    ",", " ", 
+    RowBox[{"Weights", "\[Rule]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"weight2", "[", "#", "]"}], "&"}], ")"}]}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"greenData2", ",", " ", "Green"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"greenFit2", "[", "x", "]"}], ",", " ", "xRange2"}], "]"}]}], 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"greenFit2", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "greenFit", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"{", " ", 
+  RowBox[{"g0", " ", ",", " ", "g1", ",", " ", "g2"}], 
+  "}"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit0", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", "2"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit1", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", " ", "2"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit2", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", " ", "2"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenFit", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Piecewise", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"greenFit0", "[", 
+         RowBox[{"x", "-", "g0"}], "]"}], ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "g1"}]}], "}"}], ",", " ", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"greenFit1", "[", 
+         RowBox[{"x", "-", "g1"}], "]"}], ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "g2"}]}], "}"}]}], "}"}], ",", 
+    " ", 
+    RowBox[{"greenFit2", "[", 
+     RowBox[{"x", "-", "g2"}], "]"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+     " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], 
+    "}"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+     " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], 
+    "}"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "6300", ",", " ", "6700"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}]}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Blue", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"2000", " ", "\[Rule]", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "1500", ",", " ", "2500"}], "}"}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"6600", " ", "\[Rule]", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", 
+      " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "6300", ",", " ", "6700"}], "}"}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}]}], 
+  "}"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"range0", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"1000", ",", " ", "1900"}], "}"}]}], ";", " ", 
+  RowBox[{"sRange0", " ", "=", " ", 
+   RowBox[{"(", 
+    RowBox[{"range0", " ", "-", " ", 
+     RowBox[{"range0", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"range1", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"range0", "[", 
+      RowBox[{"[", "2", "]"}], "]"}], ",", " ", "6600"}], "}"}]}], ";", " ", 
+  RowBox[{"sRange1", " ", "=", " ", 
+   RowBox[{"(", 
+    RowBox[{"range1", " ", "-", " ", 
+     RowBox[{"range1", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"range2", " ", "=", " ", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"range1", "[", 
+       RowBox[{"[", "2", "]"}], "]"}], ",", " ", "10000"}], "}"}]}], ";", " ", 
+   RowBox[{"sRange2", " ", "=", " ", 
+    RowBox[{"(", 
+     RowBox[{"range2", " ", "-", " ", 
+      RowBox[{"range2", "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"xRange0", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", 
+   "sRange0"}]}], "\[IndentingNewLine]", 
+ RowBox[{"xRange1", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", 
+   "sRange1"}]}], "\[IndentingNewLine]", 
+ RowBox[{"xRange2", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"{", "x", "}"}], " ", "~", "Join", "~", " ", 
+   "sRange2"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight0", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange0", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight1", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange1", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"weight2", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"Abs", "[", 
+    RowBox[{"x", " ", "-", " ", 
+     RowBox[{"Mean", "[", "sRange2", "]"}]}], "]"}], "^", 
+   "4"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight0", "[", "x", "]"}], ",", " ", "xRange0"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight1", "[", "x", "]"}], ",", " ", "xRange1"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"weight2", "[", "x", "]"}], ",", " ", "xRange2"}], 
+  "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"b0", " ", "=", " ", 
+   RowBox[{"range0", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";", " ", 
+  RowBox[{"b1", " ", "=", " ", 
+   RowBox[{"range1", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";", " ", 
+  RowBox[{"b2", " ", "=", " ", 
+   RowBox[{"range2", "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueData0", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", "b0"}], ",", " ", 
+       RowBox[{"ccBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"b0", ",", " ", "b1", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueData1", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", "b1"}], " ", ",", " ", 
+       RowBox[{"ccBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"b1", ",", " ", "b2", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueData2", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"#", "-", "b2"}], " ", ",", " ", 
+       RowBox[{"ccBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"b2", ",", " ", "10000", ",", " ", "1"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"blueData0", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"blueData1", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{"blueData2", ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}], "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "blueFit0", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"blueFit0", "[", "x_", "]"}], " ", ":=", " ", "0"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"blueFit0", " ", "=", 
+    RowBox[{"NonlinearModelFit", "[", 
+     RowBox[{"blueData0", ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"a", " ", "+", " ", 
+        RowBox[{"b", " ", "x"}]}], " ", "}"}], ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"a", ",", "b"}], "}"}], ",", "x", ",", " ", 
+      RowBox[{"Weights", "\[Rule]", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"weight0", "[", "#", "]"}], "&"}], ")"}]}]}], "]"}]}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{"Show", "[", 
+   RowBox[{
+    RowBox[{"ListPlot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"blueData0", ",", " ", "Blue"}], "]"}], ",", " ", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"blueFit0", "[", "x", "]"}], ",", " ", "xRange0"}], "]"}]}], 
+   "]"}], 
+  RowBox[{"(*", 
+   RowBox[{",", "\[IndentingNewLine]", 
+    RowBox[{"ListPlot", "[", 
+     RowBox[{
+      RowBox[{"blueFit0", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+      RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], "*)"}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"blueFit1", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"blueData1", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", " ", "+", " ", 
+      RowBox[{"b", " ", "x"}], " ", "+", " ", 
+      RowBox[{"c", "  ", 
+       RowBox[{"x", " ", "^", "2"}]}], " ", "+", " ", 
+      RowBox[{"d", " ", 
+       RowBox[{"x", "^", "3"}]}]}], "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c", ",", " ", "d"}], "}"}], ",", " ", "x", 
+    ",", " ", 
+    RowBox[{"Weights", "\[Rule]", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"weight1", "[", "#", "]"}], "&"}], ")"}]}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{
+       RowBox[{"Style", "[", 
+        RowBox[{"blueData1", ",", " ", "Blue"}], "]"}], ",", " ", 
+       RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"blueFit1", "[", "x", "]"}], ",", " ", "xRange1"}], "]"}]}], 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"blueFit1", "[", "\"\<FitResiduals\>\"", "]"}], ",", " ", 
+     RowBox[{"ImageSize", "\[Rule]", " ", "Medium"}]}], "]"}]}], 
+  "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "blueFit2", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueFit2", "[", "x_", "]"}], " ", ":=", " ", 
+  "1"}], "\[IndentingNewLine]", 
+ RowBox[{"{", "\[IndentingNewLine]", 
+  RowBox[{"Show", "[", 
+   RowBox[{
+    RowBox[{"ListPlot", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"blueData2", ",", " ", "Blue"}], "]"}], ",", " ", 
+      RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}], ",", " ", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"blueFit2", "[", "x", "]"}], ",", " ", "xRange1"}], "]"}]}], 
+   "]"}], "\[IndentingNewLine]", "}"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Clear", "[", "blueFit", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"{", 
+  RowBox[{"b0", ",", " ", "b1", ",", " ", "b2"}], 
+  "}"}], "\[IndentingNewLine]", 
+ RowBox[{"blueFit1", "[", "\"\<BestFitParameters\>\"", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueFit", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Piecewise", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"blueFit0", "[", 
+         RowBox[{"x", "-", "b0"}], "]"}], ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b1"}]}], "}"}], ",", " ", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"blueFit1", "[", 
+         RowBox[{"x", "-", "b1"}], "]"}], ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b2"}]}], "}"}]}], 
+     "\[IndentingNewLine]", "}"}], ",", " ", "\[IndentingNewLine]", 
+    RowBox[{"blueFit2", "[", 
+     RowBox[{"x", "-", "b2"}], "]"}]}], "\[IndentingNewLine]", 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}],
+    ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}],
+    ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "6400", ",", " ", "6700"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}]}], "Input"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Holistic", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["Prolog", "Subsubsection"],
+
+Cell[TextData[{
+ "It\[CloseCurlyQuote]s actually a ",
+ StyleBox["much ",
+  FontSlant->"Italic"],
+ "better idea if we throw the ",
+ StyleBox["whole ",
+  FontSlant->"Italic"],
+ "function at NonlinearModelFit so that it sees the pieces and can fit across \
+same."
+}], "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"shiftQuad", "[", "dx_", "]"}], " ", ":=", " ", 
+  RowBox[{"a", " ", "+", " ", 
+   RowBox[{"b", " ", 
+    RowBox[{"(", 
+     RowBox[{"x", "-", "dx"}], ")"}]}], " ", "+", " ", 
+   RowBox[{"c", "  ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"x", "-", "dx"}], ")"}], " ", "^", 
+     "2"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"shiftCubic", "[", "dx_", "]"}], " ", ":=", " ", 
+  RowBox[{"a", " ", "+", " ", 
+   RowBox[{"b", " ", 
+    RowBox[{"(", 
+     RowBox[{"x", "-", "dx"}], ")"}]}], " ", "+", " ", 
+   RowBox[{"c", "  ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"x", "-", "dx"}], ")"}], " ", "^", "2"}]}], " ", "+", "  ", 
+   RowBox[{"d", "  ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"x", "-", "dx"}], ")"}], " ", "^", 
+     "3"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"shiftCubic2", "[", "dx_", "]"}], " ", ":=", " ", 
+  RowBox[{"e", " ", "+", " ", 
+   RowBox[{"f", " ", 
+    RowBox[{"(", 
+     RowBox[{"x", "-", "dx"}], ")"}]}], " ", "+", " ", 
+   RowBox[{"g", "  ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"x", "-", "dx"}], ")"}], " ", "^", "2"}]}], " ", "+", "  ", 
+   RowBox[{"h", "  ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"x", "-", "dx"}], ")"}], " ", "^", "3"}]}]}]}]}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Red", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{"redForm", " ", "=", " ", 
+  RowBox[{"Piecewise", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", " ", 
+       RowBox[{"x", " ", "\[LessEqual]", " ", "r0"}]}], "}"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"shiftQuad", "[", "r0", "]"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"redData", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", " ", ",", " ", 
+       RowBox[{"ccRed", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"1000", ",", " ", "10000"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "redData", "]"}]}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"redFit", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"redData", ",", " ", "redForm", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c"}], "}"}], ",", "x"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"redFit", "[", "\"\<BestFitParameters\>\"", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}], 
+   ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "0", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccRed", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}], 
+   ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "6400", ",", " ", "6600"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}]}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Green", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"g0", ",", " ", "g2"}], " ", "}"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"greenForm", " ", "=", " ", 
+  RowBox[{"Piecewise", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"shiftCubic", "[", "g0", "]"}], ",", " ", 
+       RowBox[{"x", " ", "\[LessEqual]", " ", "g2"}]}], "}"}], 
+     "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"shiftCubic2", "[", "g2", "]"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"greenData", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", " ", ",", " ", 
+       RowBox[{"ccGreen", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"1000", ",", " ", "10000"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "greenData", "]"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"greenFit", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"greenData", ",", " ", "greenForm", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{
+     "a", ",", "b", ",", "c", ",", " ", "d", ",", " ", "e", ",", " ", "f", 
+      ",", " ", "g", ",", " ", "h"}], "}"}], ",", "x"}], "]"}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"greenFit", "[", "\"\<BestFitParameters\>\"", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+     " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], 
+    "}"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccGreen", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+     " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], 
+    "}"}], ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "6500", ",", " ", "6700"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}]}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Blue", "Subsubsection"],
+
+Cell[BoxData[
+ RowBox[{"{", " ", 
+  RowBox[{"b1", ",", " ", "b2"}], " ", "}"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"blueForm", " ", "=", " ", 
+  RowBox[{"Piecewise", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"0", ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b1"}]}], "}"}], ",", " ", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"shiftCubic", "[", "b1", "]"}], ",", " ", 
+        RowBox[{"x", " ", "\[LessEqual]", " ", "b2"}]}], "}"}]}], "}"}], ",", 
+    "\[IndentingNewLine]", "1"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"blueData", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"#", " ", ",", " ", 
+       RowBox[{"ccBlue", "[", "#", "]"}]}], "}"}], "&"}], " ", "/@", " ", 
+    RowBox[{"Range", "[", 
+     RowBox[{"1000", ",", " ", "10000"}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "blueData", "]"}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"blueFit", " ", "=", " ", 
+  RowBox[{"NonlinearModelFit", "[", 
+   RowBox[{"blueData", ",", " ", "blueForm", ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"a", ",", "b", ",", "c", ",", " ", "d"}], "}"}], ",", "x"}], 
+   "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"blueFit", "[", "\"\<BestFitParameters\>\"", "]"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}],
+    ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "0", ",", " ", "10000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}],
+    ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "1800", ",", " ", "2000"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"ccBlue", "[", "x", "]"}], ",", " ", "Blue"}], "]"}], ",", " ", 
+     RowBox[{"Style", "[", 
+      RowBox[{
+       RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Gray"}], "]"}]}], "}"}],
+    ",", " ", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", " ", "6500", ",", " ", "6700"}], "}"}], ",", " ", 
+   RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}]}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["All", "Subsubsection"],
+
+Cell[BoxData[{
+ RowBox[{"plot2", " ", "=", " ", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"redFit", "[", "x", "]"}], ",", " ", "Red"}], "]"}], ",", " ", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"greenFit", "[", "x", "]"}], ",", " ", "Green"}], "]"}], ",", 
+      " ", 
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"blueFit", "[", "x", "]"}], ",", " ", "Blue"}], "]"}]}], 
+     "}"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", " ", "1000", ",", " ", "10000"}], "}"}], ",", " ", 
+    RowBox[{"ImageSize", "\[Rule]", "Large"}]}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{"plot2", ",", " ", 
+   RowBox[{"plotRGBColors", "[", 
+    RowBox[{"charityColor", ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"1000", ",", " ", "10000"}], "}"}]}], "]"}]}], "]"}]}], "Input"],
+
+Cell[BoxData[""], "Input"],
+
+Cell[BoxData[""], "Input"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1246, 1548},
+WindowMargins->{{535, Automatic}, {Automatic, 0}},
+CellContext->Notebook,
+Magnification:>0.9 Inherited,
+FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (September 21, 2016)",
+StyleDefinitions->"Default.nb"
+]
+
