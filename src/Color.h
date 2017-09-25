@@ -59,7 +59,7 @@ struct Color
 
     static COLOR_INT temperature(float kelvin)
     {
-        return rgb(blackBodyRed(kelvin), blackBodyGreen(kelvin), blackBodyBlue(kelvin));
+        return rgb(blackBodyRed0(kelvin), blackBodyGreen0(kelvin), blackBodyBlue0(kelvin));
     }
 
 protected:
@@ -72,9 +72,11 @@ protected:
         return (int)(f * 255.0f + 0.5f);
     }
 
+    //----------------------------------------------------------------------------------------------
     // black body curve pieces fitted to Mathematica's ColorData["BlackBodySpectrum"] function
+    //----------------------------------------------------------------------------------------------
 
-    static float blackBodyRed(float kelvin)
+    static float blackBodyRed0(float kelvin)
     {
         if (kelvin <= 6500.f)
         {
@@ -86,11 +88,31 @@ protected:
             const float a = 3.11973f;
             const float b = -0.000467144f;
             const float c = 2.16043e-8f;
-            return ((c * kelvin) + b) * kelvin + a;
+            const float d = 0;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
     }
 
-    static float blackBodyGreen(float kelvin)
+    static float blackBodyRed1(float kelvin)
+    {
+        if (kelvin <= 6500.f)
+        {
+            return 1;
+        }
+        else if (kelvin <= 10000.f)
+        {
+            kelvin -= 6500.f;
+            const float a = 1.00545;
+            const float b = -0.000193196;
+            const float c = 2.26863e-8;
+            const float d = 0;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    static float blackBodyGreen0(float kelvin)
     {
         if (kelvin < 1000.f)
         {
@@ -114,7 +136,47 @@ protected:
         }
     }
 
-    static float blackBodyBlue(float kelvin)
+    static float blackBodyGreen1(float kelvin)
+    {
+        const float g0 = 1000;
+        const float g1 = 6500;
+        const float g2 = 6600;
+        if (kelvin <= g0)
+        {
+            return 0;
+        }
+        else if (kelvin <= g1)
+        {
+            kelvin -= g0;
+            const float a = 0.0421145;
+            const float b = 0.000217582;
+            const float c = -5.21559e-9;
+            const float d = -8.2771e-13;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
+        }
+        else if (kelvin <= g2)
+        {
+            kelvin -= g1;
+            const float a = 0.9445;
+            const float b = 0.0000625;
+            const float c = -4.05e-7;
+            const float d = -9.e-10;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
+        }
+        else
+        {
+            kelvin -= g2;
+            const float a = 0.945986;
+            const float b = -0.000123522;
+            const float c = 2.32367e-8;
+            const float d = -2.14392e-12;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    static float blackBodyBlue0(float kelvin)
     {
         if (kelvin <= 1500.f)
         {
@@ -135,6 +197,30 @@ protected:
             const float a = 0.988f;
             const float b = 0.000024f;
             return b * kelvin + a;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
+    static float blackBodyBlue1(float kelvin)
+    {
+        const float b0 = 1000;
+        const float b1 = 1900;
+        const float b2 = 6600;
+        if (kelvin <= b1)
+        {
+            return 0;
+        }
+        else if (kelvin <= b2)
+        {
+            kelvin -= b1;
+            const float a = -0.0026298;
+            const float b = 0.0000801242;
+            const float c = 5.73172e-8;
+            const float d = -6.11809e-12;
+            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
         }
         else
         {
