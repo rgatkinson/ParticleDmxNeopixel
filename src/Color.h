@@ -59,7 +59,8 @@ struct Color
 
     static COLOR_INT temperature(float kelvin)
     {
-        return rgb(blackBodyRed0(kelvin), blackBodyGreen0(kelvin), blackBodyBlue0(kelvin));
+        // return rgb(blackBodyRed0(kelvin), blackBodyGreen0(kelvin), blackBodyBlue0(kelvin));
+        return rgb(blackBodyRed1(kelvin), blackBodyGreen1(kelvin), blackBodyBlue1(kelvin));
     }
 
 protected:
