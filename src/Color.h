@@ -74,7 +74,7 @@ protected:
     }
 
     //----------------------------------------------------------------------------------------------
-    // black body curve pieces fitted to Mathematica's ColorData["BlackBodySpectrum"] function
+    // curve pieces fitted to black body spectrum data
     //----------------------------------------------------------------------------------------------
 
     static float blackBodyRed0(float kelvin)
