@@ -10,6 +10,10 @@ typedef int COLOR_INT;
 
 struct Color
 {
+    //----------------------------------------------------------------------------------------------
+    // Public function
+    //----------------------------------------------------------------------------------------------
+
     static const COLOR_INT BLACK       = 0xFF000000;
     static const COLOR_INT DKGRAY      = 0xFF444444;
     static const COLOR_INT GRAY        = 0xFF888888;
@@ -23,25 +27,25 @@ struct Color
     static const COLOR_INT MAGENTA     = 0xFFFF00FF;
     static const COLOR_INT TRANSPARENT = 0;
 
-    static int alpha(COLOR_INT color)
+    static inline int alpha(COLOR_INT color)
     {
         return (color >> 24) & 0xFF;
     }
-    static int red(COLOR_INT color)
+    static inline int red(COLOR_INT color)
     {
         return (color >> 16) & 0xFF;
     }
-    static int green(COLOR_INT color)
+    static inline int green(COLOR_INT color)
     {
         return (color >> 8) & 0xFF;
     }
-    static int blue(COLOR_INT color)
+    static inline int blue(COLOR_INT color)
     {
         return (color >> 0) & 0xFF;
     }
 
 
-    static COLOR_INT rgb(int red, int green, int blue)
+    static inline COLOR_INT rgb(int red, int green, int blue)
     {
         return argb(0xFF, red, green, blue);
     }
@@ -50,7 +54,8 @@ struct Color
         return (clip(alpha) << 24) | (clip(red) << 16) | (clip(green) << 8) | clip(blue);
     }
 
-    static COLOR_INT rgb(float red, float green, float blue)
+
+    static inline COLOR_INT rgb(float red, float green, float blue)
     {
         return argb(1.0f, red, green, blue);
     }
@@ -59,12 +64,30 @@ struct Color
         return argb(asByte(alpha), asByte(red), asByte(green), asByte(blue));
     }
 
+
     static COLOR_INT temperature(float kelvin)
     {
         return rgb(blackBodyRed(kelvin), blackBodyGreen(kelvin), blackBodyBlue(kelvin));
     }
 
+
+    static inline COLOR_INT wheelTri(float f)
+    {
+        return wheel<triUp, triDown>(f);
+    }
+
+    static inline COLOR_INT wheelSin(float f)
+    {
+        return wheel<sinUp, sinDown>(f);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Internal
+    //----------------------------------------------------------------------------------------------
+
 protected:
+
+    typedef float (*PFN)(float);
 
     static int clip(int b)
     {
@@ -77,25 +100,15 @@ protected:
         return clip(int(f * 256.0f));
     }
 
+    template <PFN pfn>
+    inline static byte scalePfn(float f, float scale)
+    {
+        return asByte(scale * pfn(f));
+    }
+
     //----------------------------------------------------------------------------------------------
     // Color Wheel
     //----------------------------------------------------------------------------------------------
-
-public:
-
-    static inline COLOR_INT wheelTri(float f)
-    {
-        return wheel<triUp, triDown>(f);
-    }
-
-    static inline COLOR_INT wheelSin(float f)
-    {
-        return wheel<sinUp, sinDown>(f);
-    }
-
-protected:
-
-    typedef float (*PFN)(float);
 
     // For a given (fractional) angle around the color wheel, returns
     // the color associated therewith. Red is at 0 (and 1); green is
@@ -155,12 +168,6 @@ protected:
     inline static float sinDown(float f)
     {
         return sinUp(f);
-    }
-
-    template <PFN pfn>
-    inline static byte scalePfn(float f, float scale)
-    {
-        return asByte(scale * pfn(f));
     }
 
     //----------------------------------------------------------------------------------------------
