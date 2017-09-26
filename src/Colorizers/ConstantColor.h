@@ -68,7 +68,7 @@ public:
     override void report()
     {
         Colorizer::report(); // pro forma
-        Log.info("ConstantColor: color=0x%04x", _color);
+        INFO("ConstantColor: color=0x%04x", _color);
     }
 };
 
