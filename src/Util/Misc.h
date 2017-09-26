@@ -23,6 +23,7 @@ static const float  TwoPiF = 2.0f * PiF;
 
 // https://gcc.gnu.org/onlinedocs/gcc-4.4.2/gcc/Diagnostic-Pragmas.html
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#pragma GCC diagnostic error   "-Wreturn-type"
 
 #undef TRACE
 #undef INFO
