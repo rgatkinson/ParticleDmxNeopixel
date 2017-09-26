@@ -51,7 +51,7 @@ struct Color
     }
     static COLOR_INT argb(int alpha, int red, int green, int blue)
     {
-        return (clip(alpha) << 24) | (clip(red) << 16) | (clip(green) << 8) | clip(blue);
+        return (clipByte(alpha) << 24) | (clipByte(red) << 16) | (clipByte(green) << 8) | clipByte(blue);
     }
 
 
@@ -61,7 +61,7 @@ struct Color
     }
     static COLOR_INT argb(float alpha, float red, float green, float blue)
     {
-        return argb(asByte(alpha), asByte(red), asByte(green), asByte(blue));
+        return argb(zeroOneToByte(alpha), zeroOneToByte(red), zeroOneToByte(green), zeroOneToByte(blue));
     }
 
 
@@ -89,21 +89,10 @@ protected:
 
     typedef float (*PFN)(float);
 
-    static int clip(int b)
-    {
-        return min(255, max(0, b));
-    }
-    static int asByte(float f)
-    {
-        // [0-1) should clearly be [0-255)
-        // Additionally, we assign the pesky 1.0f ALSO to 255
-        return clip(int(f * 256.0f));
-    }
-
     template <PFN pfn>
     inline static byte scalePfn(float f, float scale)
     {
-        return asByte(scale * pfn(f));
+        return zeroOneToByte(scale * pfn(f));
     }
 
     //----------------------------------------------------------------------------------------------
@@ -116,14 +105,14 @@ protected:
     template <PFN pfnUp, PFN pfnDown>
     static COLOR_INT wheel(float f)
     {
-        const float oneThird = 1.f / 3.f;
-        const float twoThirds = 2.f / 3.f;
-        const float threeHalves = 1.5f;
+        constexpr float oneThird = 1.f / 3.f;
+        constexpr float twoThirds = 2.f / 3.f;
+        constexpr float threeHalves = 1.5f;
 
         // Red appears less intense; we can compensate
-        const float redScale = 1.0f;
-        const float greenScale = 1.0f;
-        const float blueScale = 1.0f;
+        constexpr float redScale = 1.0f;
+        constexpr float greenScale = 1.0f;
+        constexpr float blueScale = 1.0f;
 
         f -= floorf(f); // remove integer part
 

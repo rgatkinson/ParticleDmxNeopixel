@@ -1,12 +1,12 @@
 //
-// ConstantBrightness.h
+// UniformBrightness.h
 //
 #ifndef _CONSTANT_BRIGHTNESS_H_
 #define _CONSTANT_BRIGHTNESS_H_
 
 #include "Dimmer.h"
 
-struct ConstantBrightness : Dimmer
+struct UniformBrightness : Dimmer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -18,7 +18,7 @@ struct ConstantBrightness : Dimmer
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    ConstantBrightness(float level, int msDuration) : Dimmer(DimmerFlavorConstant, msDuration)
+    UniformBrightness(float level, int msDuration) : Dimmer(Flavor::Uniform, msDuration)
     {
         _level = level;
     }

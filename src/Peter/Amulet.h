@@ -14,6 +14,8 @@
 #include "Dimmers/TwinkleBrightness.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "DmxParameterBlock.h"
+#include "DmxBrightnessEffectSelector.h"
+#include "DmxColorEffectSelector.h"
 
 struct Amulet : DmxPacketConsumer
 {
@@ -28,14 +30,15 @@ public:
 
 protected:
 
-    DMX_ADDRESS     _dmxAddress;
-    ArtnetDevice    _artnet;
-    PixelRing       _pixels;
-    COLOR_INT       _indicatorColor;
-    int             _msIdleQuantum          = 1500;
-    float           _idleBrightnessLevel    = 0.3f;
-    Demo            _demo                   = DemoShow;
-
+    DMX_ADDRESS                     _dmxAddress;
+    ArtnetDevice                    _artnet;
+    DmxBrightnessEffectSelector*    _pBrightnessEffectSelector;
+    DmxColorEffectSelector*         _pColorEffectSelector;
+    PixelRing*                      _pPixels;
+    COLOR_INT                       _indicatorColor;
+    int                             _msIdleQuantum          = 1500;
+    float                           _idleBrightnessLevel    = 0.3f;
+    Demo                            _demo                   = DemoShow;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -45,6 +48,9 @@ public:
     Amulet(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
         : _artnet(this)
     {
+        _pPixels = new PixelRing();
+        _pBrightnessEffectSelector = new DmxBrightnessEffectSelector(_pPixels);
+        _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
         _dmxAddress = dmxAddress;
         _indicatorColor = indicatorColor;
 
@@ -52,10 +58,17 @@ public:
         setDemo();
     }
 
+    ~Amulet()
+    {
+        releaseRef(_pBrightnessEffectSelector);
+        releaseRef(_pColorEffectSelector);
+        releaseRef(_pPixels);
+    }
+
     void setDemo()
     {
-        _pixels.setColorizerIfDifferent(demoColorizer());
-        _pixels.setDimmerIfDifferent(demoDimmer());
+        _pPixels->setColorizerIfDifferent(demoColorizer());
+        _pPixels->setDimmerIfDifferent(demoDimmer());
     }
 
     Colorizer* demoColorizer()
@@ -66,15 +79,15 @@ public:
             {
                 COLOR_INT color = Color::temperature(2550);
                 Log.info("demo white: r=%d g=%d b=%d", Color::red(color), Color::green(color), Color::blue(color));
-                return new ConstantColor(color, Deadline::Infinite);
+                return new UniformColor(color, Deadline::Infinite);
             }
             default:
             {
                 ColorizerSequence* pSequence = new ColorizerSequence();
                 pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum * 2));
-                pSequence->addColorizer(new ConstantColor(_indicatorColor, _msIdleQuantum * 2));
+                pSequence->addColorizer(new UniformColor(_indicatorColor, _msIdleQuantum * 2));
                 pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum * 2));
-                pSequence->addColorizer(new ConstantColor(Color::BLACK, _msIdleQuantum * 6));
+                pSequence->addColorizer(new UniformColor(Color::BLACK, _msIdleQuantum * 6));
                 pSequence->setLooping(true);
                 return pSequence;
             }
@@ -88,25 +101,20 @@ public:
             case DemoWhite:
             {
                 DimmerSequence* pSequence = new DimmerSequence();
-                pSequence->addDimmer(new ConstantBrightness(1.0f, 5000));
+                pSequence->addDimmer(new UniformBrightness(1.0f, 5000));
                 pSequence->addDimmer(new BreathingBrightness(5000, Deadline::Infinite));
 
                 return pSequence;
             }
             default:
             {
-                int msDuration = 2 * _pixels.colorizer()->msLoopingDuration();
+                int msDuration = 2 * _pPixels->colorizer()->msLoopingDuration();
                 DimmerSequence* pSequence = new DimmerSequence();
-                pSequence->addDimmer(new ConstantBrightness(1.0f, msDuration));
-                pSequence->addDimmer(new ConstantBrightness(_idleBrightnessLevel, Deadline::Infinite));
+                pSequence->addDimmer(new UniformBrightness(1.0f, msDuration));
+                pSequence->addDimmer(new UniformBrightness(_idleBrightnessLevel, Deadline::Infinite));
                 return pSequence;
             }
         }
-    }
-
-    ArtnetDevice device()
-    {
-        return _artnet;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -115,19 +123,19 @@ public:
 
     void begin()
     {
-        _pixels.begin();
+        _pPixels->begin();
         _artnet.begin();
     }
 
     void loop()
     {
-        _pixels.loop();
+        _pPixels->loop();
         _artnet.loop();
     }
 
     void report()
     {
-        _pixels.report();
+        _pPixels->report();
         _artnet.report();
         INFO("offsetof(ArtDmxPacketData, _data)=%d", offsetof(ArtDmxPacketData, _data));
     }
@@ -143,10 +151,13 @@ public:
     // Packets
     //----------------------------------------------------------------------------------------------
 
-    void onDmxPacket(ArtDmxPacket& packet) override 
+    void onDmxPacket(ArtDmxPacket& packet) override
     {
         byte* pb = packet.pDmx(_dmxAddress);
-        DmxParameterBlock* pParameterBlock = reinterpret_cast<DmxParameterBlock*>(pb);
+        DmxParameterBlock& parameterBlock = *reinterpret_cast<DmxParameterBlock*>(pb);
+
+        _pColorEffectSelector->processParameterBlock(parameterBlock);
+        _pBrightnessEffectSelector->processParameterBlock(parameterBlock);
 
 #if 0
         int r = packet[_dmxAddress];
@@ -163,11 +174,11 @@ public:
             {
                 default:
                 case 0:
-                    _pixels.setDimmerIfDifferent(new ConstantBrightness(1.0f, Deadline::Infinite));
+                    _pPixels->setDimmerIfDifferent(new UniformBrightness(1.0f, Deadline::Infinite));
                     break;
             }
-            _pixels.setColorizerIfDifferent(new ConstantColor(color, Deadline::Infinite));
-            _pixels.setDimmerBrightness(i);
+            _pPixels->setColorizerIfDifferent(new UniformColor(color, Deadline::Infinite));
+            _pPixels->setDimmerBrightness(i);
         }
 #endif
     }

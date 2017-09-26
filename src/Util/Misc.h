@@ -22,7 +22,7 @@ static const float  TwoPiF = 2.0f * PiF;
 // https://gcc.gnu.org/onlinedocs/gcc-4.4.2/gcc/Diagnostic-Pragmas.html
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 #pragma GCC diagnostic error   "-Wreturn-type"
-#pragma GCC diagnostic error   "-Wsuggest-override"
+// #pragma GCC diagnostic error "-Wsuggest-override" // not in the version of GCC we use, I think
 
 #undef TRACE
 #undef INFO
@@ -48,6 +48,44 @@ inline void* mallocNoFail(size_t cb)
     }
     return result;
 }
+
+//--------------------------------------------------------------------------------------------------
+// Math / numerics
+//--------------------------------------------------------------------------------------------------
+
+template<typename T, T _first, T _last>
+inline int clip(T t)
+{
+    return min(_last, max(_first, t));
+}
+
+template<typename T>
+    inline int clip(T t, T _first, T _last)
+{
+    return min(_last, max(_first, t));
+}
+
+template <typename T>
+inline int clipByte(T b)
+{
+    return min(255, max(0, b));
+}
+
+
+inline int zeroOneToInt(float f, int iMax)
+{
+    // [0-1) should clearly be [0-iMax)
+    // Additionally, we assign the pesky 1.0f ALSO to iMax-1
+    return clip((int)(f * iMax), 0, iMax-1);
+}
+
+inline int zeroOneToByte(float f)
+{
+    // [0-1) should clearly be [0-255]
+    // Additionally, we assign the pesky 1.0f ALSO to 255
+    return clipByte(int(f * 256.0f));
+}
+
 
 //--------------------------------------------------------------------------------------------------
 // Strings

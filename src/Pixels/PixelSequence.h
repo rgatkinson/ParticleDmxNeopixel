@@ -8,55 +8,58 @@
 #include "Util/Deadline.h"
 #include "Util/Color.h"
 #include "Dimmers/Dimmer.h"
-#include "Dimmers/ConstantBrightness.h"
+#include "Dimmers/UniformBrightness.h"
 #include "Colorizers/Colorizer.h"
-#include "Colorizers/ConstantColor.h"
+#include "Colorizers/UniformColor.h"
 #include "Colorizers/RainbowColors.h"
 #include "Colorizers/ColorizerSequence.h"
 
-template<int PixelCount, int Pin, int PixelType>
-struct PixelSequence : Colorizeable
+struct PixelSequence : ReferenceCounted, Colorizeable
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
-    static const int    pixelCount = PixelCount;
-    static const int    pin = Pin;
-    static const int    pixelType = PixelType;
-
-private:
+    int                 _pixelCount;
     Adafruit_NeoPixel   _neopixels;
     Deadline            _showDeadline;
     Dimmer*             _pDimmer;
     Colorizer*          _pColorizer;
-    COLOR_INT           _pixelValues[pixelCount];
+    COLOR_INT*          _pixelValues;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    PixelSequence()
+    PixelSequence(int pixelCount, int pin, int pixelType)
         : _neopixels(pixelCount, pin, pixelType),
           _showDeadline(10)
     {
+        _pixelCount = pixelCount;
         _pDimmer = NULL;
         _pColorizer = NULL;
-        setColorizerNoBegin(new ConstantColor(Color::BLACK, Deadline::Infinite));
-        setDimmerNoBegin(new ConstantBrightness(1.0f, Deadline::Infinite));
+        _pixelValues = new COLOR_INT[pixelCount];
+        setColorizerNoBegin(new UniformColor(Color::BLACK, Deadline::Infinite));
+        setDimmerNoBegin(new UniformBrightness(1.0f, Deadline::Infinite));
     }
 
-    virtual ~PixelSequence()
+    DELEGATE_REF_COUNTING
+
+protected:
+
+    virtual ~PixelSequence() override
     {
         releaseRef(_pDimmer);
         releaseRef(_pColorizer);
+        delete [] _pixelValues;
     }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
 protected:
+
     void setColorizerNoBegin(Colorizer* pColorizer)
     {
         releaseRef(_pColorizer);
@@ -83,13 +86,13 @@ public:
         return _pColorizer;
     }
 
-    void setDimmer(Dimmer* pDimmer)
+    void setDimmer(Dimmer* pDimmer) override
     {
         setDimmerNoBegin(pDimmer);
         if (_pDimmer) _pDimmer->begin();
     }
 
-    void setColorizer(Colorizer* pColorizer)
+    void setColorizer(Colorizer* pColorizer) override
     {
         setColorizerNoBegin(pColorizer);
         if (_pColorizer) _pColorizer->begin();
@@ -132,7 +135,7 @@ public:
 
     int numberOfPixels() override
     {
-        return pixelCount;
+        return _pixelCount;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -142,7 +145,7 @@ public:
     virtual void begin()
     {
         _neopixels.begin();
-        for (int iPixel = 0; iPixel < pixelCount; iPixel++)
+        for (int iPixel = 0; iPixel < _pixelCount; iPixel++)
         {
             _pixelValues[iPixel] = Color::BLACK;
         }
@@ -161,7 +164,7 @@ public:
             if (_pDimmer) _pDimmer->loop();
             BRIGHTNESS brightness = _pDimmer ? _pDimmer->currentBrightness() : MAX_BRIGHTNESS;
 
-            for (int iPixel = 0; iPixel < pixelCount; iPixel++)
+            for (int iPixel = 0; iPixel < _pixelCount; iPixel++)
             {
                 COLOR_INT color = _pixelValues[iPixel];
                 if (_pDimmer && _pDimmer->hasPixelizedBrightness())

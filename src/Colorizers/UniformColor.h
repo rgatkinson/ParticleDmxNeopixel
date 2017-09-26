@@ -1,12 +1,12 @@
 //
-// ConstantColor.h
+// UniformColor.h
 //
 #ifndef __CONSTANT_COLOR_H__
 #define __CONSTANT_COLOR_H__
 
 #include "Colorizer.h"
 
-struct ConstantColor : Colorizer
+struct UniformColor : Colorizer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -21,7 +21,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ConstantColor(COLOR_INT color, int msDuration) : Colorizer(ColorizerFlavorConstant, msDuration)
+    UniformColor(COLOR_INT color, int msDuration) : Colorizer(Flavor::Uniform, msDuration)
     {
         _color = color;
         _colorUpdateDeadline = Deadline(Deadline::Infinite);
@@ -36,7 +36,7 @@ public:
         bool result = Colorizer::sameAs(pThem);
         if (result)
         {
-            result = _color == static_cast<ConstantColor*>(pThem)->_color;
+            result = _color == static_cast<UniformColor*>(pThem)->_color;
         }
         return result;
     }
@@ -65,10 +65,10 @@ public:
         }
     }
 
-    void report() override 
+    void report() override
     {
         Colorizer::report(); // pro forma
-        INFO("ConstantColor: color=0x%04x", _color);
+        INFO("UniformColor: color=0x%04x", _color);
     }
 };
 

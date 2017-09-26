@@ -4,11 +4,6 @@
 #ifndef __DMX_PARAMTER_BLOCK_H__
 #define __DMX_PARAMTER_BLOCK_H__
 
-enum DmxColorEffect
-{
-
-};
-
 struct PACKED DmxParameterBlock
 {
     byte    red;
@@ -21,16 +16,6 @@ struct PACKED DmxParameterBlock
     byte    brightnessEffect;
     byte    brightnessSpeed;
     byte    brightnessControl;
-};
-
-struct DmxColorEffectSelector
-{
-
-};
-
-struct DmxBrightnessEffectSelector
-{
-
 };
 
 #endif

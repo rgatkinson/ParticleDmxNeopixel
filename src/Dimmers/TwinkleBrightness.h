@@ -102,7 +102,7 @@ struct TwinkleBrightness: Dimmer
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    TwinkleBrightness(float msInterval, int msDuration) : Dimmer(DimmerFlavorTwinkle, msDuration)
+    TwinkleBrightness(float msInterval, int msDuration) : Dimmer(Flavor::Twinkle, msDuration)
     {
         _msInterval = msInterval;
     }
@@ -119,7 +119,7 @@ struct TwinkleBrightness: Dimmer
 
     bool sameAs(Dimmer* pThem) override
     {
-        return Dimmer::sameAs(pThem) && _msInterval == static_cast<TwinkleBrightness*>(pThem)->_flavor;
+        return Dimmer::sameAs(pThem) && _msInterval == static_cast<TwinkleBrightness*>(pThem)->_msInterval;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ struct TwinkleBrightness: Dimmer
         }
     }
 
-    void report() override 
+    void report() override
     {
         Dimmer::report();
     }

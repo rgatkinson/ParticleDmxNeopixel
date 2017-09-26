@@ -11,8 +11,8 @@ struct RainbowColors : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int         _pixelOffset;
     Deadline    _colorUpdateDeadline;
+    int         _pixelOffset = 0;
     float       _wheelFractionVisible = 0.1f;
 
     //----------------------------------------------------------------------------------------------
@@ -20,9 +20,8 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    RainbowColors(int msInterval, int msDuration) : Colorizer(ColorizerFlavorRainbow, msDuration)
+    RainbowColors(int msInterval, int msDuration) : Colorizer(Flavor::Rainbow, msDuration)
     {
-        _pixelOffset = 0;
         _colorUpdateDeadline = Deadline(msInterval);
     }
 

@@ -6,7 +6,7 @@
 
 #include "Util/ArrayList.h"
 #include "Dimmer.h"
-#include "Colorizers/ConstantColor.h"
+#include "Colorizers/UniformColor.h"
 
 //==================================================================================================
 // ColorizerSequence
@@ -28,7 +28,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    DimmerSequence() : Dimmer(DimmerFlavorSequence, 0 /*ignored*/)
+    DimmerSequence() : Dimmer(Flavor::Sequence, 0 /*ignored*/)
     {
         _currentDimmer = 0;
         _looping = false;
@@ -267,7 +267,7 @@ public:
         }
     }
 
-    void report() override 
+    void report() override
     {
         Dimmer::report();
         INFO("Dimmer: #dimmers=%d cur=%d", count(), _currentDimmer);

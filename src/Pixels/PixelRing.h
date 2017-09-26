@@ -6,9 +6,13 @@
 
 #include "PixelSequence.h"
 
-struct PixelRing : PixelSequence<24, D6, WS2812B>
+struct PixelRing : PixelSequence
 {
     static const int TYPE = WS2812B;
+
+    PixelRing() : PixelSequence(24, D6, TYPE)
+    {
+    }
 };
 
 #endif

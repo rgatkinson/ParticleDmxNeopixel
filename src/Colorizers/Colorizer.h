@@ -9,42 +9,39 @@
 #include "Util/Deadline.h"
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
+#include "ColorizableHolder.h"
 
 //==================================================================================================
 // Colorizer
 //==================================================================================================
 
-struct Colorizer : Durable
+struct Colorizer : Durable, ColorizableHolder
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 public:
 
-    enum ColorizerFlavor { ColorizerFlavorNone, ColorizerFlavorConstant, ColorizerFlavorRainbow, ColorizerFlavorSequence };
+    enum class Flavor
+    {
+        None,
+        Uniform,
+        Rainbow,
+        Sequence
+    };
 
 protected:
 
-    ColorizerFlavor _flavor;
-    Colorizeable*   _pColorizeable;
-    int             _pixelCount;
+    Flavor _flavor;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(ColorizerFlavor flavor, int msDuration) : Durable(msDuration)
+    Colorizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizableHolder(false)
     {
         _flavor = flavor;
-        _pColorizeable = NULL;
-        _pixelCount = 0;
-    }
-
-    virtual void setColorizeable(Colorizeable* pColorizeable)
-    {
-        _pColorizeable = pColorizeable;
-        _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
     }
 
     //----------------------------------------------------------------------------------------------

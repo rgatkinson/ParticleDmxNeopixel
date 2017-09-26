@@ -5,7 +5,7 @@
 #define __COLORIZER_SEQUENCE_H__
 
 #include "Colorizer.h"
-#include "ConstantColor.h"
+#include "UniformColor.h"
 #include "Util/ArrayList.h"
 
 //==================================================================================================
@@ -28,7 +28,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizerSequence() : Colorizer(ColorizerFlavorSequence, 0 /*ignored*/)
+    ColorizerSequence() : Colorizer(Flavor::Sequence, 0 /*ignored*/)
     {
         _currentColorizer = 0;
         _looping = false;

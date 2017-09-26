@@ -17,12 +17,18 @@ struct Dimmer : Durable
     //----------------------------------------------------------------------------------------------
 public:
 
-    enum DimmerFlavor { DimmerFlavorNone, DimmerFlavorConstant, DimmerFlavorSequence,
-        DimmerFlavorBreathing, DimmerFlavorTwinkle };
+    enum class Flavor
+    {
+        None,
+        Uniform,
+        Sequence,
+        Breathing,
+        Twinkle
+    };
 
 protected:
 
-    DimmerFlavor _flavor;
+    Flavor _flavor;
     Colorizeable*  _pColorizeable;
     int _pixelCount;
     BRIGHTNESS _minBrightness;      // min we ever report
@@ -36,7 +42,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Dimmer(DimmerFlavor flavor, int msDuration) : Durable(msDuration)
+    Dimmer(Flavor flavor, int msDuration) : Durable(msDuration)
     {
         _flavor = flavor;
         _pColorizeable = NULL;

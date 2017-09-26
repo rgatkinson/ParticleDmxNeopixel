@@ -23,7 +23,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingBrightness(int msInterval, int msDuration) : Dimmer(DimmerFlavorBreathing, msDuration)
+    BreathingBrightness(int msInterval, int msDuration) : Dimmer(Flavor::Breathing, msDuration)
     {
         _msInterval = msInterval;
         _floatIntervalInverse = 1.0f / (float)_msInterval;
