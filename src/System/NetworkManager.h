@@ -13,28 +13,26 @@
 
 struct WiFiPassword
 {
-    LPSTR           ssid;
-    LPSTR           password;
+    String          ssid;
+    String          password;
     SecurityType    securityType;
 
-    WiFiPassword(LPCSTR ssid=NULL, LPCSTR password=NULL, SecurityType securityType = WPA2)
+    WiFiPassword(LPCSTR ssid="", LPCSTR password="", SecurityType securityType = WPA2)
     {
-        this->ssid = strdup(ssid);
-        this->password = strdup(password);
+        this->ssid = String(ssid);
+        this->password = String(password);
         this->securityType = securityType;
     }
 
     WiFiPassword(const WiFiPassword& them)
     {
-        this->ssid = strdup(them.ssid);
-        this->password = strdup(them.password);
+        this->ssid = them.ssid;
+        this->password = them.password;
         this->securityType = them.securityType;
     }
 
     ~WiFiPassword()
     {
-        strfree(ssid);
-        strfree(password);
     }
 };
 
@@ -116,20 +114,26 @@ public:
 
     void begin()
     {
+        delay(500); // allow the Log to become ready for output
+        INFO("NetworkManager::begin");
+
         WiFi.on();  // must be on first before we call setCredentials()
 
         if (_clearCredentials)
         {
-            WiFi.clearCredentials();
+            WiFi.clearCredentials();    // will issue WARN
         }
         for (int i = 0; i < _passwords.count(); i++)
         {
             WiFiPassword& password = _passwords[i];
+            INFO("adding credential: ssid=\"%s\" pw=\"%s\" security=%d cipher=%d", password.ssid.c_str(), password.password.c_str(), password.securityType, WLAN_CIPHER_AES);
             WiFi.setCredentials(password.ssid, password.password, password.securityType, WLAN_CIPHER_AES);
         }
 
         // no point in WIFI_CONNECT_SKIP_LISTEN: that only matters if WiFi lacks credentials
         WiFi.connect();
+
+        report();
     }
 
     void loop()
@@ -150,9 +154,10 @@ public:
     {
         WiFiAccessPoint ap[5];
         int credentialCount = WiFi.getCredentials(ap, 5);
+        INFO("%d credentials reported", credentialCount);
         for (int i = 0; i < credentialCount; i++)
         {
-            INFO("credential: ssid=%s security=%d cipher=%d", ap[i].ssid, ap[i].security, ap[i].cipher);
+            INFO("credential: ssid=\"%s\" security=%d cipher=%d", ap[i].ssid, ap[i].security, ap[i].cipher);
         }
     }
 

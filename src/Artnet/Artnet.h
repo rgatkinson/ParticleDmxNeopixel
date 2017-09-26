@@ -13,7 +13,8 @@ struct ArtPollPacket;
 struct ArtPollReplyPacket;
 struct ArtDmxPacket;
 
-#define PACKED // __attribute__((packed)) __attribute__((aligned(1)))
+// https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html
+#define PACKED __attribute__((__packed__))
 
 //==================================================================================================
 // Prolog

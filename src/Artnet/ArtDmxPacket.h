@@ -25,7 +25,7 @@ struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
 
     static int cb(int channelCount)
     {
-        return offset_of(ArtDmxPacketData, _data) + channelCount * sizeof(byte);
+        return offsetof(ArtDmxPacketData, _data) + channelCount * sizeof(byte);
     }
 };
 #pragma pack(pop)
@@ -100,7 +100,7 @@ public:
 
     bool validate()
     {
-        bool result = ArtDmxPacketData::cb(channelCount()) <= cbData;
+        return ArtDmxPacketData::cb(channelCount()) <= cbData;
     }
 
     int operator[](DMX_ADDRESS dmxAddress)

@@ -11,7 +11,6 @@
 typedef long long Int64;
 
 #define override virtual
-#define offset_of(type, field) (reinterpret_cast<size_t>(&reinterpret_cast<type*>(0)->field))
 
 static const double Pi  = 3.1415926535897932384626433832795;
 static const float  PiF = 3.1415926535897932384626433832795f;
@@ -22,10 +21,18 @@ static const float  TwoPiF = 2.0f * PiF;
 // Logging / tracing
 //--------------------------------------------------------------------------------------------------
 
-#define TRACE(...)      Log.trace(__VA_ARGS__)
-#define INFO(...)       Log.info(__VA_ARGS__)
-#define WARN(...)       Log.warn(__VA_ARGS__)
-#define ERROR(...)      Log.error(__VA_ARGS__)
+// https://gcc.gnu.org/onlinedocs/gcc-4.4.2/gcc/Diagnostic-Pragmas.html
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+
+#undef TRACE
+#undef INFO
+#undef WARN
+#undef ERROR
+
+#define TRACE(fmt, ...)      Log.trace(fmt, ##__VA_ARGS__)
+#define INFO(fmt, ...)       Log.info(fmt, ##__VA_ARGS__)
+#define WARN(fmt, ...)       Log.warn(fmt, ##__VA_ARGS__)
+#define ERROR(fmt, ...)      Log.error(fmt, ##__VA_ARGS__)
 
 //--------------------------------------------------------------------------------------------------
 // Memory

@@ -127,7 +127,7 @@ public:
     {
         _pixels.report();
         _artnet.report();
-        INFO("offset_of(ArtDmxPacketData, _data)=%d", offset_of(ArtDmxPacketData, _data));
+        INFO("offsetof(ArtDmxPacketData, _data)=%d", offsetof(ArtDmxPacketData, _data));
     }
 
     void cycleDemo()
