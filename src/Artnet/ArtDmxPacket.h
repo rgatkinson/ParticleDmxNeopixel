@@ -18,7 +18,7 @@ struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
     int8_t  _physical;      // 13, 1
     int8_t  _subuni;        // 14, 1
     int8_t  _net;           // 15, 1
-    int8_t  _lengthHi;      // 16, 0
+    int8_t  _lengthHi;      // 16, 1
     int8_t  _lengthLo;      // 17, 1
     uint8_t _data[0];       // 18, ...
 
