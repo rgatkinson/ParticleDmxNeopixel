@@ -30,7 +30,7 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    override bool sameAs(Colorizer* pThem)
+    bool sameAs(Colorizer* pThem) override
     {
         bool result = Colorizer::sameAs(pThem);
         if (result)
@@ -45,7 +45,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override void begin()
+    void begin() override
     {
         // INFO("RainbowColors::begin()");
         Colorizer::begin();
@@ -53,7 +53,7 @@ public:
         _colorUpdateDeadline.expire();
     }
 
-    override void loop()
+    void loop() override
     {
         Colorizer::loop();
         if (_colorUpdateDeadline.hasExpired())
@@ -69,7 +69,7 @@ public:
             }
     }
 
-    override void report()
+    void report() override
     {
         Colorizer::report();
         INFO("RainbowColors");

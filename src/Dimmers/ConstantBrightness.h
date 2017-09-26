@@ -27,18 +27,18 @@ struct ConstantBrightness : Dimmer
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    override void begin()
+    void begin() override
     {
         Dimmer::begin();
         setCurrentLevel(_level);
     }
 
-    override void loop()
+    void loop() override
     {
         Dimmer::loop();
     }
 
-    override void report()
+    void report() override
     {
         Dimmer::report();
     }

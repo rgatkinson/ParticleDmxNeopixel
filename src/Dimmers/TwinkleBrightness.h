@@ -117,7 +117,7 @@ struct TwinkleBrightness: Dimmer
         }
     }
 
-    override bool sameAs(Dimmer* pThem)
+    bool sameAs(Dimmer* pThem) override
     {
         return Dimmer::sameAs(pThem) && _msInterval == static_cast<TwinkleBrightness*>(pThem)->_flavor;
     }
@@ -126,17 +126,17 @@ struct TwinkleBrightness: Dimmer
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    override bool hasPixelizedBrightness()
+    bool hasPixelizedBrightness() override
     {
         return true;
     }
 
-    override bool usesGammaCorrection()
+    bool usesGammaCorrection() override
     {
         return false;
     }
 
-    override BRIGHTNESS currentBrightness(int iPixel)
+    BRIGHTNESS currentBrightness(int iPixel) override
     {
         return rawCurrentBrightness(_twinklers[iPixel].currentLevel());
     }
@@ -145,7 +145,7 @@ struct TwinkleBrightness: Dimmer
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    override void begin()
+    void begin() override
     {
         Dimmer::begin();
         for (int i = 0; i < _twinklers.count(); i++)
@@ -154,7 +154,7 @@ struct TwinkleBrightness: Dimmer
         }
     }
 
-    override void loop()
+    void loop() override
     {
         Dimmer::loop();
         for (int i = 0; i < _twinklers.count(); i++)
@@ -163,7 +163,7 @@ struct TwinkleBrightness: Dimmer
         }
     }
 
-    override void report()
+    void report() override 
     {
         Dimmer::report();
     }

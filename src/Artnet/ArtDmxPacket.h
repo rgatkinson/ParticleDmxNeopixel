@@ -20,7 +20,7 @@ struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
     int8_t  _net;           // 15, 1
     int8_t  _lengthHi;      // 16, 1
     int8_t  _lengthLo;      // 17, 1
-    uint8_t _data[0];       // 18, ...
+    byte    _data[0];       // 18, ...
 
     static int cb(int channelCount)
     {
@@ -101,14 +101,19 @@ public:
         return ArtDmxPacketData::cb(channelCount()) <= cbData;
     }
 
-    int operator[](DMX_ADDRESS dmxAddress)
+    byte* pDmx(DMX_ADDRESS dmxAddress)
+    {
+        return &pData->_data[dmxAddress - 1];
+    }
+
+    byte dmx(DMX_ADDRESS dmxAddress)
     {
         int channelNumber = dmxAddress - 1;    // make zero-based
         if (0 <= channelNumber && channelNumber < channelCount())
         {
             return pData->_data[channelNumber];
         }
-        return -1;  // anything negative
+        return 0;   // useful default
     }
 };
 

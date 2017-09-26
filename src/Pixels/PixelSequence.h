@@ -125,12 +125,12 @@ public:
         if (_pDimmer) _pDimmer->setDimmerBrightness(brightness);
     }
 
-    override void setPixelColor(uint16_t iPixel, COLOR_INT color)
+    void setPixelColor(uint16_t iPixel, COLOR_INT color) override
     {
         _pixelValues[iPixel] = color;
     }
 
-    override int numberOfPixels()
+    int numberOfPixels() override
     {
         return pixelCount;
     }

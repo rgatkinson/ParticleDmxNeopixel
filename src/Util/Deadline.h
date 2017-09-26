@@ -38,7 +38,7 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    override void reset()
+    void reset() override
     {
         ElapsedTime::reset();
         _msDeadline = _msStartTime + _msDuration;

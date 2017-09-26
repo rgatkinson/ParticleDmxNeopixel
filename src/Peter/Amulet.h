@@ -13,7 +13,7 @@
 #include "Dimmers/DimmerSequence.h"
 #include "Dimmers/TwinkleBrightness.h"
 #include "Colorizers/ColorizerSequence.h"
-#include "Artnet/DmxColorEffect.h"
+#include "DmxParameterBlock.h"
 
 struct Amulet : DmxPacketConsumer
 {
@@ -22,7 +22,7 @@ struct Amulet : DmxPacketConsumer
     //----------------------------------------------------------------------------------------------
 public:
 
-    static const int DMX_ADDRESS_COUNT = 4;
+    static const int DMX_ADDRESS_COUNT = sizeof(DmxParameterBlock);
 
     enum Demo { DemoNone, DemoFirst, DemoShow=DemoFirst, DemoWhite, DemoMax };
 
@@ -143,8 +143,12 @@ public:
     // Packets
     //----------------------------------------------------------------------------------------------
 
-    override void onDmxPacket(ArtDmxPacket& packet)
+    void onDmxPacket(ArtDmxPacket& packet) override 
     {
+        byte* pb = packet.pDmx(_dmxAddress);
+        DmxParameterBlock* pParameterBlock = reinterpret_cast<DmxParameterBlock*>(pb);
+
+#if 0
         int r = packet[_dmxAddress];
         int g = packet[_dmxAddress+1];
         int b = packet[_dmxAddress+2];
@@ -165,6 +169,7 @@ public:
             _pixels.setColorizerIfDifferent(new ConstantColor(color, Deadline::Infinite));
             _pixels.setDimmerBrightness(i);
         }
+#endif
     }
 };
 

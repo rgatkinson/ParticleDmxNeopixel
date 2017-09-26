@@ -52,7 +52,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override bool sameAs(Colorizer* pThem)
+    virtual bool sameAs(Colorizer* pThem)
     {
         return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }

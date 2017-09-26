@@ -31,7 +31,7 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    override bool sameAs(Colorizer* pThem)
+    bool sameAs(Colorizer* pThem) override
     {
         bool result = Colorizer::sameAs(pThem);
         if (result)
@@ -46,13 +46,13 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override void begin()
+    void begin() override
     {
         Colorizer::begin();
         _colorUpdateDeadline.expire();
     }
 
-    override void loop()
+    void loop() override
     {
         Colorizer::loop(); // pro forma
         if (_colorUpdateDeadline.hasExpired())
@@ -65,7 +65,7 @@ public:
         }
     }
 
-    override void report()
+    void report() override 
     {
         Colorizer::report(); // pro forma
         INFO("ConstantColor: color=0x%04x", _color);

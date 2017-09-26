@@ -10,8 +10,6 @@
 
 typedef long long Int64;
 
-#define override virtual
-
 static const double Pi  = 3.1415926535897932384626433832795;
 static const float  PiF = 3.1415926535897932384626433832795f;
 static const double TwoPi  = 2.0 * Pi;
@@ -24,6 +22,7 @@ static const float  TwoPiF = 2.0f * PiF;
 // https://gcc.gnu.org/onlinedocs/gcc-4.4.2/gcc/Diagnostic-Pragmas.html
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 #pragma GCC diagnostic error   "-Wreturn-type"
+#pragma GCC diagnostic error   "-Wsuggest-override"
 
 #undef TRACE
 #undef INFO

@@ -36,7 +36,7 @@ public:
     //----------------------------------------------------------------------------------------------
 protected:
 
-    override bool usesGammaCorrection()
+    bool usesGammaCorrection() override
     {
         return false;
     }
@@ -46,13 +46,13 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override void begin()
+    void begin() override
     {
         Dimmer::begin();
         _intervalTimer.reset();
     }
 
-    override void loop()
+    void loop() override
     {
         Dimmer::loop();
 
@@ -67,7 +67,7 @@ public:
         setCurrentLevel(level);
     }
 
-    override void report()
+    void report() override
     {
         Dimmer::report();
         INFO("BreathingBrightness: interval=%d", _msInterval);

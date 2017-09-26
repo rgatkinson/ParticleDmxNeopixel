@@ -34,7 +34,7 @@ public:
         _looping = false;
     }
 
-    override ~DimmerSequence()
+    ~DimmerSequence() override
     {
         for (int i = 0; i < _dimmers.count(); i++)
         {
@@ -51,7 +51,7 @@ public:
         _dimmers.addLast(pDimmer);
     }
 
-    override void setColorizeable(Colorizeable* pColorizeable)
+    void setColorizeable(Colorizeable* pColorizeable) override
     {
         Dimmer::setColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
@@ -64,11 +64,11 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    override void setDuration()
+    void setDuration(int msDuration) override
     {
         Log.error("invalid call: DimmerSequence::setDuration()");
     }
-    override int msDuration()
+    int msDuration() override
     {
         if (_looping)
         {
@@ -80,7 +80,7 @@ public:
         }
     }
 
-    override int msLoopingDuration()
+    int msLoopingDuration() override
     {
         int ms = 0;
         for (int i = 0; i < count(); i++)
@@ -110,7 +110,7 @@ public:
         return _dimmers.count();
     }
 
-    override bool sameAs(Dimmer* pThemAbstract)
+    bool sameAs(Dimmer* pThemAbstract) override
     {
         bool result = Dimmer::sameAs(pThemAbstract);
         if (result)
@@ -139,7 +139,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override BRIGHTNESS currentBrightness()
+    BRIGHTNESS currentBrightness() override
     {
         if (_currentDimmer < count())
         {
@@ -151,7 +151,7 @@ public:
         }
     }
 
-    override BRIGHTNESS currentBrightness(int iPixel)
+    BRIGHTNESS currentBrightness(int iPixel) override
     {
         if (_currentDimmer < count())
         {
@@ -163,7 +163,7 @@ public:
         }
     }
 
-    override bool hasPixelizedBrightness()
+    bool hasPixelizedBrightness() override
     {
         if (_currentDimmer < count())
         {
@@ -175,7 +175,7 @@ public:
         }
     }
 
-    override bool usesGammaCorrection()
+    bool usesGammaCorrection() override
     {
         if (_currentDimmer < count())
         {
@@ -187,7 +187,7 @@ public:
         }
     }
 
-    override void setMaxBrightness(BRIGHTNESS brightness)
+    void setMaxBrightness(BRIGHTNESS brightness) override
     {
         Dimmer::setMaxBrightness(brightness);
         for (int i = 0; i < count(); i++)
@@ -195,7 +195,7 @@ public:
             _dimmers[i]->setMaxBrightness(brightness);
         }
     }
-    override void setMinBrightness(BRIGHTNESS brightness)
+    void setMinBrightness(BRIGHTNESS brightness) override
     {
         Dimmer::setMinBrightness(brightness);
         for (int i = 0; i < count(); i++)
@@ -205,7 +205,7 @@ public:
     }
 
     // Controlled by external faders etc
-    override void setDimmerBrightness(BRIGHTNESS dimmerBrightness)
+    void setDimmerBrightness(BRIGHTNESS dimmerBrightness) override
     {
         Dimmer::setDimmerBrightness(dimmerBrightness);
         for (int i = 0; i < count(); i++)
@@ -219,7 +219,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override void begin()
+    void begin() override
     {
         Dimmer::begin();
         _currentDimmer = 0;
@@ -230,7 +230,7 @@ public:
         }
     }
 
-    override bool hasExpired()
+    bool hasExpired() override
     {
         if (_looping)
         {
@@ -242,7 +242,7 @@ public:
         }
     }
 
-    override void loop()
+    void loop() override
     {
         Dimmer::loop();
         if (_currentDimmer < count())
@@ -267,7 +267,7 @@ public:
         }
     }
 
-    override void report()
+    void report() override 
     {
         Dimmer::report();
         INFO("Dimmer: #dimmers=%d cur=%d", count(), _currentDimmer);

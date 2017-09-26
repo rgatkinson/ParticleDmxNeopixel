@@ -62,7 +62,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    override bool sameAs(Dimmer* pThem)
+    virtual bool sameAs(Dimmer* pThem)
     {
         return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
