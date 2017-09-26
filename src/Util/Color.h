@@ -139,11 +139,12 @@ protected:
 
     inline static float triUp(float f)
     {
-        return 2 * f;
+        return f + f;
     }
     inline static float triDown(float f)
     {
-        return 2 * (1 - f);
+        float result = (1 - f);
+        return result + result;
     }
 
     inline static float sinUp(float f)
