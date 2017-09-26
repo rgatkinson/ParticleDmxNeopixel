@@ -10,9 +10,11 @@
 #include "Pixels/PixelRing.h"
 #include "Util/Color.h"
 #include "Dimmers/BreathingBrightness.h"
-#include "Dimmers/DimmerSequence.h"
+#include "Dimmers/BrightnessSequence.h"
 #include "Dimmers/TwinkleBrightness.h"
+#include "Dimmers/SelfTestBrightness.h"
 #include "Colorizers/ColorizerSequence.h"
+#include "Colorizers/SelfTestColorizer.h"
 #include "DmxParameterBlock.h"
 #include "DmxBrightnessEffectSelector.h"
 #include "DmxColorEffectSelector.h"
@@ -36,8 +38,6 @@ protected:
     DmxColorEffectSelector*         _pColorEffectSelector;
     PixelRing*                      _pPixels;
     COLOR_INT                       _indicatorColor;
-    int                             _msIdleQuantum          = 1500;
-    float                           _idleBrightnessLevel    = 0.3f;
     Demo                            _demo                   = DemoShow;
 
     //----------------------------------------------------------------------------------------------
@@ -83,24 +83,18 @@ public:
             }
             default:
             {
-                ColorizerSequence* pSequence = new ColorizerSequence();
-                pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum * 2));
-                pSequence->addColorizer(new UniformColor(_indicatorColor, _msIdleQuantum * 2));
-                pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum * 2));
-                pSequence->addColorizer(new UniformColor(Color::BLACK, _msIdleQuantum * 6));
-                pSequence->setLooping(true);
-                return pSequence;
+                return new SelfTestColorizer(_indicatorColor);
             }
         }
     }
 
-    DimmerSequence* demoDimmer()
+    BrightnessSequence* demoDimmer()
     {
         switch (_demo)
         {
             case DemoWhite:
             {
-                DimmerSequence* pSequence = new DimmerSequence();
+                BrightnessSequence* pSequence = new BrightnessSequence();
                 pSequence->addDimmer(new UniformBrightness(1.0f, 5000));
                 pSequence->addDimmer(new BreathingBrightness(5000, Deadline::Infinite));
 
@@ -108,11 +102,7 @@ public:
             }
             default:
             {
-                int msDuration = 2 * _pPixels->colorizer()->msLoopingDuration();
-                DimmerSequence* pSequence = new DimmerSequence();
-                pSequence->addDimmer(new UniformBrightness(1.0f, msDuration));
-                pSequence->addDimmer(new UniformBrightness(_idleBrightnessLevel, Deadline::Infinite));
-                return pSequence;
+                return new SelfTestBrightness(_pPixels->colorizer()->msLoopingDuration());
             }
         }
     }
@@ -153,34 +143,22 @@ public:
 
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        byte* pb = packet.pDmx(_dmxAddress);
-        DmxParameterBlock& parameterBlock = *reinterpret_cast<DmxParameterBlock*>(pb);
+        DmxParameterBlock parameterBlock = DmxParameterBlock(packet.pDmx(_dmxAddress));
 
         _pColorEffectSelector->processParameterBlock(parameterBlock);
         _pBrightnessEffectSelector->processParameterBlock(parameterBlock);
 
-#if 0
-        int r = packet[_dmxAddress];
-        int g = packet[_dmxAddress+1];
-        int b = packet[_dmxAddress+2];
-        int i = packet[_dmxAddress+3];
-        int m = packet[_dmxAddress+4];
-
-        if (r >= 0 && g >= 0 && b >= 0 && i >= 0)
+        Colorizer* pColorizer = _pPixels->colorizer();
+        if (pColorizer)
         {
-            COLOR_INT color = Color::rgb(r, g, b);
-            INFO("addr=%d dmx=%d,%d,%d,%d", _dmxAddress, r,g,b,i);
-            switch (m)
-            {
-                default:
-                case 0:
-                    _pPixels->setDimmerIfDifferent(new UniformBrightness(1.0f, Deadline::Infinite));
-                    break;
-            }
-            _pPixels->setColorizerIfDifferent(new UniformColor(color, Deadline::Infinite));
-            _pPixels->setDimmerBrightness(i);
+            pColorizer->processParameterBlock(parameterBlock);
         }
-#endif
+
+        Dimmer* pDimmer = _pPixels->dimmer();
+        if (pDimmer)
+        {
+            pDimmer->processParameterBlock(parameterBlock);
+        }
     }
 };
 

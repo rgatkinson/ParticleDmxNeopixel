@@ -4,14 +4,14 @@
 #ifndef __DMX_EFFECT_SELECTOR_H__
 #define __DMX_EFFECT_SELECTOR_H__
 
-struct DmxEffectSelector : ReferenceCounted, protected ColorizableHolder
+struct DmxEffectSelector : ReferenceCounted, protected ColorizeableHolder
 {
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 protected:
 
-    DmxEffectSelector(Colorizeable* pColorizeable) : ColorizableHolder(true)
+    DmxEffectSelector(Colorizeable* pColorizeable) : ColorizeableHolder(true)
     {
         setColorizeable(pColorizeable);
     }

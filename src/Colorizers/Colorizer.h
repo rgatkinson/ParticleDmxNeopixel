@@ -9,13 +9,14 @@
 #include "Util/Deadline.h"
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
-#include "ColorizableHolder.h"
+#include "Pixels/ColorizeableHolder.h"
+#include "Peter/DmxParameterBlock.h"
 
 //==================================================================================================
 // Colorizer
 //==================================================================================================
 
-struct Colorizer : Durable, ColorizableHolder
+struct Colorizer : Durable, ColorizeableHolder
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -27,7 +28,8 @@ public:
         None,
         Uniform,
         Rainbow,
-        Sequence
+        Sequence,
+        SelfTest
     };
 
 protected:
@@ -39,7 +41,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizableHolder(false)
+    Colorizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder(false)
     {
         _flavor = flavor;
     }
@@ -67,6 +69,10 @@ protected:
     // Loop
     //----------------------------------------------------------------------------------------------
 public:
+
+    virtual void processParameterBlock(DmxParameterBlock& parameterBlock)
+    {
+    }
 
     virtual void begin()
     {

@@ -53,9 +53,9 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(const DmxParameterBlock& parameterBlock)
+    void processParameterBlock(DmxParameterBlock& parameterBlock)
     {
-        Effect effectDesired = Effect(int(Effect::First) + effectFromDmx(parameterBlock.colorEffect));
+        Effect effectDesired = Effect(int(Effect::First) + effectFromDmx(parameterBlock.colorEffect()));
         if (_currentEffect != effectDesired)
         {
             _currentEffect = effectDesired;

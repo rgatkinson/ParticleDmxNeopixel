@@ -6,11 +6,12 @@
 
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
+#include "Pixels/ColorizeableHolder.h"
+#include "Peter/DmxParameterBlock.h"
 
-typedef byte BRIGHTNESS;
 const BRIGHTNESS MAX_BRIGHTNESS = 255;
 
-struct Dimmer : Durable
+struct Dimmer : Durable, protected ColorizeableHolder
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -23,14 +24,13 @@ public:
         Uniform,
         Sequence,
         Breathing,
-        Twinkle
+        Twinkle,
+        SelfTest
     };
 
 protected:
 
     Flavor _flavor;
-    Colorizeable*  _pColorizeable;
-    int _pixelCount;
     BRIGHTNESS _minBrightness;      // min we ever report
     BRIGHTNESS _maxBrightness;      // max we ever report
     BRIGHTNESS _dimmerBrightness;   // controlled externally
@@ -42,11 +42,9 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Dimmer(Flavor flavor, int msDuration) : Durable(msDuration)
+    Dimmer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder(false)
     {
         _flavor = flavor;
-        _pColorizeable = NULL;
-        _pixelCount = 0;
 
         // We set a non-zero lower bound in recognition that at lower levels
         // the LEDs simply turn off. Perhaps we just need to tune our PWM curves
@@ -145,6 +143,11 @@ protected:
     // Loop
     //----------------------------------------------------------------------------------------------
 public:
+
+    virtual void processParameterBlock(DmxParameterBlock& parameterBlock)
+    {
+        _pColorizeable->setDimmerBrightness(parameterBlock.dimmerBrightness());
+    }
 
     virtual void begin()
     {

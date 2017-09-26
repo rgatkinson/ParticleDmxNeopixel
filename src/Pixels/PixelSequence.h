@@ -76,12 +76,12 @@ protected:
 
 public:
 
-    Dimmer* dimmer()
+    inline Dimmer* dimmer()
     {
         return _pDimmer;
     }
 
-    Colorizer* colorizer()
+    inline Colorizer* colorizer()
     {
         return _pColorizer;
     }
@@ -123,7 +123,7 @@ public:
     }
 
 
-    void setDimmerBrightness(BRIGHTNESS brightness)
+    void setDimmerBrightness(BRIGHTNESS brightness) override
     {
         if (_pDimmer) _pDimmer->setDimmerBrightness(brightness);
     }

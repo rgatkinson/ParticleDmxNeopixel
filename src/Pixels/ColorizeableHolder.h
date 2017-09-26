@@ -1,12 +1,12 @@
 //
-// ColorizableHolder.h
+// ColorizeableHolder.h
 //
 #ifndef __COLORIZABLE_HOLDER_H__
 #define __COLORIZABLE_HOLDER_H__
 
-#include "Pixels/Colorizeable.h"
+#include "Colorizeable.h"
 
-struct ColorizableHolder
+struct ColorizeableHolder
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -22,14 +22,14 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizableHolder(bool refCounted)
+    ColorizeableHolder(bool refCounted)
     {
         _refCounted = refCounted;
         _pColorizeable = NULL;
         _pixelCount = 0;
     }
 
-    virtual ~ColorizableHolder()
+    virtual ~ColorizeableHolder()
     {
         if (_refCounted)
         {

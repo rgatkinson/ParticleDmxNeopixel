@@ -1,8 +1,8 @@
 //
-// DimmerSequence.h
+// BrightnessSequence.h
 //
-#ifndef __DIMMER_SEQUENCE_H__
-#define __DIMMER_SEQUENCE_H__
+#ifndef __BRIGHTNESS_SEQUENCE_H__
+#define __BRIGHTNESS_SEQUENCE_H__
 
 #include "Util/ArrayList.h"
 #include "Dimmer.h"
@@ -12,7 +12,7 @@
 // ColorizerSequence
 //==================================================================================================
 
-struct DimmerSequence : Dimmer
+struct BrightnessSequence : Dimmer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -28,13 +28,13 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    DimmerSequence() : Dimmer(Flavor::Sequence, 0 /*ignored*/)
+    BrightnessSequence(Flavor flavor = Flavor::Sequence) : Dimmer(flavor, 0 /*ignored*/)
     {
         _currentDimmer = 0;
         _looping = false;
     }
 
-    ~DimmerSequence() override
+    ~BrightnessSequence() override
     {
         for (int i = 0; i < _dimmers.count(); i++)
         {
@@ -66,7 +66,7 @@ public:
 
     void setDuration(int msDuration) override
     {
-        Log.error("invalid call: DimmerSequence::setDuration()");
+        Log.error("invalid call: BrightnessSequence::setDuration()");
     }
     int msDuration() override
     {
@@ -115,7 +115,7 @@ public:
         bool result = Dimmer::sameAs(pThemAbstract);
         if (result)
         {
-            DimmerSequence* pThem = static_cast<DimmerSequence*>(pThemAbstract);
+            BrightnessSequence* pThem = static_cast<BrightnessSequence*>(pThemAbstract);
             result = this->count() == pThem->count();
             if (result)
             {
@@ -225,7 +225,7 @@ public:
         _currentDimmer = 0;
         if (_currentDimmer < count())
         {
-            INFO("DimmerSequence: beginning: %d", _currentDimmer);
+            INFO("BrightnessSequence: beginning: %d", _currentDimmer);
             _dimmers[_currentDimmer]->begin();
         }
     }
@@ -260,7 +260,7 @@ public:
                 }
                 if (_currentDimmer < count())
                 {
-                    INFO("DimmerSequence: beginning: %d", _currentDimmer);
+                    INFO("BrightnessSequence: beginning: %d", _currentDimmer);
                     _dimmers[_currentDimmer]->begin();
                 }
             }

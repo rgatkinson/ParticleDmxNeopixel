@@ -28,7 +28,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizerSequence() : Colorizer(Flavor::Sequence, 0 /*ignored*/)
+    ColorizerSequence(Flavor flavor = Flavor::Sequence) : Colorizer(flavor, 0 /*ignored*/)
     {
         _currentColorizer = 0;
         _looping = false;

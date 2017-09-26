@@ -31,6 +31,19 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
+    COLOR_INT color()
+    {
+        return _color;
+    }
+    void setColor(COLOR_INT color)
+    {
+        if (_color != color)
+        {
+            _color = color;
+            begin();
+        }
+    }
+
     bool sameAs(Colorizer* pThem) override
     {
         bool result = Colorizer::sameAs(pThem);
@@ -45,6 +58,13 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 public:
+
+    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    {
+        Colorizer::processParameterBlock(parameterBlock);
+        COLOR_INT colorDesired = parameterBlock.effectiveColor();
+        setColor(colorDesired);
+    }
 
     void begin() override
     {

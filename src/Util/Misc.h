@@ -15,6 +15,9 @@ static const float  PiF = 3.1415926535897932384626433832795f;
 static const double TwoPi  = 2.0 * Pi;
 static const float  TwoPiF = 2.0f * PiF;
 
+// https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html
+#define PACKED __attribute__((__packed__))
+
 //--------------------------------------------------------------------------------------------------
 // Logging / tracing
 //--------------------------------------------------------------------------------------------------
