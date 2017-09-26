@@ -4,6 +4,8 @@
 #ifndef __RAINBOW_COLORS__
 #define __RAINBOW_COLORS__
 
+#include <math.h>
+
 struct RainbowColors : Colorizer
 {
     //----------------------------------------------------------------------------------------------
@@ -13,6 +15,7 @@ protected:
 
     int         _pixelOffset;
     Deadline    _colorUpdateDeadline;
+    float       _wheelFractionVisible = 0.1f;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -46,7 +49,7 @@ public:
 
     override void begin()
     {
-        // TRACE("RainbowColors::begin()");
+        // INFO("RainbowColors::begin()");
         Colorizer::begin();
         _pixelOffset = 0;
         _colorUpdateDeadline.expire();
@@ -57,10 +60,10 @@ public:
         Colorizer::loop();
         if (_colorUpdateDeadline.hasExpired())
             {
-                // TRACE("RainbowColors: pixelOffset=%d", _pixelOffset);
+                // INFO("RainbowColors: pixelOffset=%d", _pixelOffset);
                 for (uint16_t iPixel=0; iPixel < _pixelCount; iPixel++)
                 {
-                    COLOR_INT color = wheel( (iPixel+(_pixelOffset & 255)) & 255);
+                    COLOR_INT color = wheelF((iPixel+_pixelOffset) / float(_pixelCount) * _wheelFractionVisible);
                     setPixelColor(iPixel, color);
                 }
                 _colorUpdateDeadline.reset();
@@ -76,25 +79,63 @@ public:
 
 protected:
 
-    // Input a value 0 to 255 to get a color value.
-    // The colours are a transition r - g - b - back to r.
-    COLOR_INT wheel(byte wheelPos)
+    // For a given (fractional) angle around the color wheel, returns
+    // the color associated therewith. Red is at 0 (and 1); green is
+    // at 1/3, and blue is at 2/3;
+    COLOR_INT wheelF(float f)
     {
-        if (wheelPos < 85)
+        const float oneThird = 1.f / 3.f;
+        const float twoThirds = 2.f / 3.f;
+
+        const float redScale = 1.0f;
+        const float greenScale = 0.5f;
+        const float blueScale = 0.33f;
+
+        f -= floorf(f); // remove integer part
+
+        if (f <= oneThird)
         {
-            return Color::rgb(wheelPos * 3, 255 - wheelPos * 3, 0);
+            return Color::rgb(
+                triDown((f + oneThird) / twoThirds, redScale),
+                triUp(f / twoThirds, greenScale),
+                0);
         }
-        else if (wheelPos < 170)
+        else if (f <= twoThirds)
         {
-            wheelPos -= 85;
-            return Color::rgb(255 - wheelPos * 3, 0, wheelPos * 3);
+            return Color::rgb(
+                0,
+                triDown(f / twoThirds, greenScale),
+                triUp((f-oneThird) / twoThirds, blueScale));
         }
         else
         {
-            wheelPos -= 170;
-            return Color::rgb(0, wheelPos * 3, 255 - wheelPos * 3);
+            return Color::rgb(
+                triUp((f - twoThirds) / twoThirds, redScale),
+                0,
+                triDown((f-oneThird) / twoThirds, blueScale));
         }
     }
+
+    inline float triFUp(float f)
+    {
+        return 2 * f;
+    }
+    inline float triFDown(float f)
+    {
+        return 2 * (1 - f);
+    }
+
+    inline byte triUp(float dx, float scale)
+    {
+        byte result = byte(min(255.0, scale * triFUp(dx) * 256.0f));
+        return result;
+    }
+    inline byte triDown(float dx, float scale)
+    {
+        byte result = byte(min(255, scale * triFDown(dx) * 256.0f));
+        return result;
+    }
+
 
 };
 

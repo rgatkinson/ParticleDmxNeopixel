@@ -13,6 +13,7 @@
 #include "Dimmers/DimmerSequence.h"
 #include "Dimmers/TwinkleBrightness.h"
 #include "Colorizers/ColorizerSequence.h"
+#include "Artnet/DmxColorEffect.h"
 
 struct Amulet : DmxPacketConsumer
 {
@@ -32,7 +33,7 @@ protected:
     PixelRing       _pixels;
     COLOR_INT       _indicatorColor;
     int             _msIdleQuantum          = 1500;
-    float           _idleBrightnessLevel    = 0.1f;
+    float           _idleBrightnessLevel    = 0.3f;
     Demo            _demo                   = DemoShow;
 
 
@@ -70,8 +71,9 @@ public:
             default:
             {
                 ColorizerSequence* pSequence = new ColorizerSequence();
-                pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum));
+                pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum * 2));
                 pSequence->addColorizer(new ConstantColor(_indicatorColor, _msIdleQuantum * 2));
+                pSequence->addColorizer(new RainbowColors(10, _msIdleQuantum * 2));
                 pSequence->addColorizer(new ConstantColor(Color::BLACK, _msIdleQuantum * 6));
                 pSequence->setLooping(true);
                 return pSequence;
@@ -148,6 +150,7 @@ public:
         int b = packet[_dmxAddress+2];
         int i = packet[_dmxAddress+3];
         int m = packet[_dmxAddress+4];
+
         if (r >= 0 && g >= 0 && b >= 0 && i >= 0)
         {
             COLOR_INT color = Color::rgb(r, g, b);
