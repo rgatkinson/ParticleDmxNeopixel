@@ -4,6 +4,8 @@
 #ifndef __COLOR_H_
 #define __COLOR_H_
 
+#include "math.h"
+
 typedef int COLOR_INT;
 
 struct Color
@@ -59,43 +61,112 @@ struct Color
 
     static COLOR_INT temperature(float kelvin)
     {
-        // return rgb(blackBodyRed0(kelvin), blackBodyGreen0(kelvin), blackBodyBlue0(kelvin));
-        return rgb(blackBodyRed1(kelvin), blackBodyGreen1(kelvin), blackBodyBlue1(kelvin));
+        return rgb(blackBodyRed(kelvin), blackBodyGreen(kelvin), blackBodyBlue(kelvin));
     }
 
 protected:
+
     static int clip(int b)
     {
         return min(255, max(0, b));
     }
     static int asByte(float f)
     {
-        return (int)(f * 255.0f + 0.5f);
+        // [0-1) should clearly be [0-255)
+        // Additionally, we assign the pesky 1.0f ALSO to 255
+        return clip(int(f * 256.0f));
     }
 
     //----------------------------------------------------------------------------------------------
-    // curve pieces fitted to black body spectrum data
+    // Color Wheel
     //----------------------------------------------------------------------------------------------
 
-    static float blackBodyRed0(float kelvin)
+public:
+
+    static inline COLOR_INT wheelTri(float f)
     {
-        const float r0 = 6500;
-        if (kelvin <= r0)
+        return wheel<triUp, triDown>(f);
+    }
+
+    static inline COLOR_INT wheelSin(float f)
+    {
+        return wheel<sinUp, sinDown>(f);
+    }
+
+protected:
+
+    typedef float (*PFN)(float);
+
+    // For a given (fractional) angle around the color wheel, returns
+    // the color associated therewith. Red is at 0 (and 1); green is
+    // at 1/3, and blue is at 2/3.
+    template <PFN pfnUp, PFN pfnDown>
+    static COLOR_INT wheel(float f)
+    {
+        const float oneThird = 1.f / 3.f;
+        const float twoThirds = 2.f / 3.f;
+        const float threeHalves = 1.5f;
+
+        // Red appears less intense; we can compensate
+        const float redScale = 1.0f;
+        const float greenScale = 1.0f;
+        const float blueScale = 1.0f;
+
+        f -= floorf(f); // remove integer part
+
+        if (f <= oneThird)
         {
-            return 1;
+            return Color::rgb(
+                scalePfn<pfnDown>((f + oneThird) * threeHalves, redScale),
+                scalePfn<pfnUp>(f * threeHalves, greenScale),
+                0);
+        }
+        else if (f <= twoThirds)
+        {
+            return Color::rgb(
+                0,
+                scalePfn<pfnDown>(f * threeHalves, greenScale),
+                scalePfn<pfnUp>((f-oneThird) * threeHalves, blueScale));
         }
         else
         {
-            kelvin -= r0;
-            const float a = 3.11973f;
-            const float b = -0.000467144f;
-            const float c = 2.16043e-8f;
-            const float d = 0;
-            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
+            return Color::rgb(
+                scalePfn<pfnUp>((f - twoThirds) * threeHalves, redScale),
+                0,
+                scalePfn<pfnDown>((f-oneThird) * threeHalves, blueScale));
         }
     }
 
-    static float blackBodyRed1(float kelvin)
+    inline static float triUp(float f)
+    {
+        return 2 * f;
+    }
+    inline static float triDown(float f)
+    {
+        return 2 * (1 - f);
+    }
+
+    inline static float sinUp(float f)
+    {
+        float result = sinf(f * PiF);
+        return result * result;
+    }
+    inline static float sinDown(float f)
+    {
+        return sinUp(f);
+    }
+
+    template <PFN pfn>
+    inline static byte scalePfn(float f, float scale)
+    {
+        return asByte(scale * pfn(f));
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Black body radiation
+    //----------------------------------------------------------------------------------------------
+
+    static float blackBodyRed(float kelvin)
     {
         const float r0 = 6500;
         if (kelvin <= r0)
@@ -113,34 +184,7 @@ protected:
         }
     }
 
-    //----------------------------------------------------------------------------------------------
-
-    static float blackBodyGreen0(float kelvin)
-    {
-        const float g0 = 1000;
-        const float g1 = 6500;
-
-        if (kelvin <= g1)
-        {
-            kelvin -= g0;
-            const float a = -0.00206477f;
-            const float b = 0.000259848f;
-            const float c = -1.62618e-8f;
-            const float d = 0;
-            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
-        }
-        else
-        {
-            kelvin -= g1;
-            const float a = 0.938026f;
-            const float b = -0.000107892f;
-            const float c = 1.10377e-8f;
-            const float d = 0;
-            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
-        }
-    }
-
-    static float blackBodyGreen1(float kelvin)
+    static float blackBodyGreen(float kelvin)
     {
         const float g0 = 1000;
         const float g2 = 6600;
@@ -164,37 +208,7 @@ protected:
         }
     }
 
-    //----------------------------------------------------------------------------------------------
-
-    static float blackBodyBlue0(float kelvin)
-    {
-        if (kelvin <= 1500.f)
-        {
-            return 0;
-        }
-        else if (kelvin <= 6500.f)
-        {
-            kelvin -= 1500.f;
-            const float a = -0.0026023f;
-            const float b = 5.49685e-6f;
-            const float c = 7.40119e-8f;
-            const float d =-7.13431e-12f;
-            return ((((d * kelvin) + c) * kelvin) + b) * kelvin + a;
-        }
-        else if (kelvin <= 7000.f)
-        {
-            kelvin -= 6500.f;
-            const float a = 0.988f;
-            const float b = 0.000024f;
-            return b * kelvin + a;
-        }
-        else
-        {
-            return 1;
-        }
-    }
-
-    static float blackBodyBlue1(float kelvin)
+    static float blackBodyBlue(float kelvin)
     {
         const float b1 = 1900;
         const float b2 = 6600;
