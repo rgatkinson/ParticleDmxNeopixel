@@ -89,7 +89,7 @@ protected:
 
         const float redScale = 1.0f;
         const float greenScale = 0.5f;
-        const float blueScale = 0.33f;
+        const float blueScale = 0.5f;
 
         f -= floorf(f); // remove integer part
 
@@ -118,11 +118,14 @@ protected:
 
     inline float triFUp(float f)
     {
-        return 2 * f;
+        // return 2 * f;
+        float result = sin(f * PiF);
+        return result * result;
     }
     inline float triFDown(float f)
     {
-        return 2 * (1 - f);
+        // return 2 * (1 - f);
+        return triFUp(f);
     }
 
     inline byte triUp(float dx, float scale)
