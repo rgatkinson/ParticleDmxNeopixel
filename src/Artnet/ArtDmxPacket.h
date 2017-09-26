@@ -10,7 +10,6 @@
 // ArtDmxPacket
 //==================================================================================================
 
-#pragma pack(push, 1)
 struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
 {
     int8_t  _protVerHi;     // 10, 1
@@ -28,7 +27,6 @@ struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
         return offsetof(ArtDmxPacketData, _data) + channelCount * sizeof(byte);
     }
 };
-#pragma pack(pop)
 
 //==================================================================================================
 // DmxPacketConsumer

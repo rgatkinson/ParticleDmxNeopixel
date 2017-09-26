@@ -6,7 +6,6 @@
 // ArtnetPacketHeaderData
 //==================================================================================================
 
-#pragma pack(push, 1)
 struct PACKED ArtnetPacketHeaderData
 {
     static const int cbId = 8;
@@ -15,7 +14,6 @@ struct PACKED ArtnetPacketHeaderData
     uint8_t _rgbId[cbId];   // 0, 8
     int16_t _opMode;        // 8, 2
 };
-#pragma pack(pop)
 
 
 //==================================================================================================

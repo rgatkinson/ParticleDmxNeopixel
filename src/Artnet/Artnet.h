@@ -140,7 +140,7 @@ public:
         }
         else
         {
-            Log.info("not initialized");
+            Log.info("Artnet not yet initialized");
         }
 
         Log.info("sizeof(ArtPollReplyPacketData)==%d", sizeof(ArtPollReplyPacketData));

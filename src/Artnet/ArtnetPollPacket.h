@@ -6,7 +6,6 @@
 // ArtPollPacketData
 //==================================================================================================
 
-#pragma pack(push, 1)
 struct PACKED ArtPollPacketData : ArtnetPacketHeaderData
 {
     int8_t  _protVerHi;
@@ -14,8 +13,6 @@ struct PACKED ArtPollPacketData : ArtnetPacketHeaderData
     int8_t  _talkToMe;
     int8_t  _priority;
 };
-#pragma pack(pop)
-
 
 //==================================================================================================
 // ArtPollPacket

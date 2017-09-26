@@ -9,7 +9,6 @@
 typedef char SHORT_NAME[18];
 typedef char LONG_NAME[64];
 
-#pragma pack(push, 1)
 struct PACKED ArtPollReplyPacketData : ArtnetPacketHeaderData
 {
     uint8_t     _ipAddress[4];   // 3: 10
@@ -45,8 +44,6 @@ struct PACKED ArtPollReplyPacketData : ArtnetPacketHeaderData
     int8_t      _status2;        // 40: 213
     int8_t      _filler[26];     // 41: 214-239
 };
-#pragma pack(pop)
-
 
 //==================================================================================================
 // ArtPollReplyPacket
