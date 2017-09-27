@@ -13,6 +13,7 @@ protected:
 
     int _msQuantum = 1500;
     UniformColor* _pUniformColor = nullptr;
+    RainbowColors* _pRainbow = nullptr;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -22,10 +23,11 @@ public:
     SelfTestColorizer(COLOR_INT color) : ColorizerSequence(Flavor::SelfTest)
     {
         _pUniformColor = new UniformColor(color, _msQuantum * 2);
+        _pRainbow = new RainbowColors(10, _msQuantum * 2);
 
-        addColorizer(new RainbowColors(10,          _msQuantum * 2));
+        addColorizer(new RainbowColors(10, _msQuantum * 2));
         addColorizer(_pUniformColor);
-        addColorizer(new RainbowColors(10,          _msQuantum * 2));
+        addColorizer(_pRainbow);
         addColorizer(new UniformColor(Color::BLACK, _msQuantum * 6));
         setLooping(true);
     }
@@ -37,8 +39,8 @@ public:
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
         Colorizer::processParameterBlock(parameterBlock);
-        COLOR_INT colorDesired = parameterBlock.effectiveColor();
-        _pUniformColor->setColor(colorDesired);
+        _pUniformColor->processParameterBlock(parameterBlock);
+        _pRainbow->processParameterBlock(parameterBlock);
     }
 
 };

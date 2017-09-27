@@ -4,16 +4,13 @@
 #ifndef _MISC_H_
 #define _MISC_H_
 
+#include <math.h>
+
 //--------------------------------------------------------------------------------------------------
 // Misc
 //--------------------------------------------------------------------------------------------------
 
 typedef long long Int64;
-
-static const double Pi  = 3.1415926535897932384626433832795;
-static const float  PiF = 3.1415926535897932384626433832795f;
-static const double TwoPi  = 2.0 * Pi;
-static const float  TwoPiF = 2.0f * PiF;
 
 // https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html
 #define PACKED __attribute__((__packed__))
@@ -56,22 +53,31 @@ inline void* mallocNoFail(size_t cb)
 // Math / numerics
 //--------------------------------------------------------------------------------------------------
 
+static const float Pi  = 3.1415926535897932384626433832795;
+static const float PiF = 3.1415926535897932384626433832795f;
+static const float TwoPi  = 2.0 * Pi;
+static const float TwoPiF = 2.0f * PiF;
+
 template<typename T, T _first, T _last>
 inline int clip(T t)
 {
-    return min(_last, max(_first, t));
+    if (t < _first) return _first;
+    if (t > _last)  return _last;
+    return t;
 }
 
 template<typename T>
-    inline int clip(T t, T _first, T _last)
+inline int clip(T t, T _first, T _last)
 {
-    return min(_last, max(_first, t));
+    if (t < _first) return _first;
+    if (t > _last)  return _last;
+    return t;
 }
 
 template <typename T>
-inline int clipByte(T b)
+inline int clipByte(T t)
 {
-    return min(255, max(0, b));
+    return clip<T, T(0), T(255)>(t);
 }
 
 
@@ -89,6 +95,22 @@ inline int zeroOneToByte(float f)
     return clipByte(int(f * 256.0f));
 }
 
+
+ /**
+   * Scale a number in the range of x1 to x2, to the range of y1 to y2
+   * @param value number to scale
+   * @param x1 lower bound range of value
+   * @param x2 upper bound range of value
+   * @param y1 lower bound of scale
+   * @param y2 upper bound of scale
+   * @return a float scaled to a value between y1 and y2, inclusive
+   */
+inline float scaleRange(float value, float x1, float x2, float y1, float y2)
+{
+    float a = (y1-y2)/(x1-x2);
+    float b = y1 - x1*(y1-y2)/(x1-x2);
+    return a*value+b;
+}
 
 //--------------------------------------------------------------------------------------------------
 // Strings

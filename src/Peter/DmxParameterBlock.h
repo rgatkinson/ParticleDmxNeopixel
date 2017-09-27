@@ -61,9 +61,64 @@ public:
 
     #undef declare
 
+    float colorSpeedLevel()
+    {
+        return speedLevel(colorSpeed());
+    }
+
+    float brightnessSpeedLevel()
+    {
+        return speedLevel(brightnessSpeed());
+    }
+
+private:
+
+    static float speedLevel(byte dmx)   // [-1,1], neg=CW, pos=CCW
+    {
+        if (dmx==0)
+        {
+            return 0;
+        }
+        else
+        {
+            const int dmxFirst  = 1;
+            const int dmxMid    = 128;
+            const int dmxLast   = 255;
+            const int dmxMax    = dmxLast + 1;
+            const int dmxPlateauLength = 5;
+            const int dmxPlateauFirst  = dmxMid - dmxPlateauLength / 2;
+            const int dmxPlateauLast   = dmxMid + dmxPlateauLength / 2;
+            const int dmxPlateauMax    = dmxPlateauLast + 1;
+            if (dmx < dmxPlateauFirst)
+            {
+                // We want fast->slow, so invert
+                dmx = dmxPlateauFirst - 1 - (dmx - dmxFirst);
+                return -fraction(dmx, dmx, dmxPlateauFirst);
+            }
+            else if (dmx <= dmxPlateauLast)
+            {
+                return 0;
+            }
+            else
+            {
+                // slow->fast
+                return fraction(dmx, dmxPlateauMax, dmxMax);
+            }
+        }
+    }
+
+    static inline float fraction(float dmx, float first, float max)
+    {
+        return (dmx - first + 1) / (max - first);
+    }
+
+public:
+
     COLOR_INT effectiveColor()
     {
-        if (colorTemperature() == 0)
+        const byte dmxColorTemperature = colorTemperature();
+
+        if (dmxColorTemperature == 0)
         {
             return Color::rgb(red(), green(), blue());
         }
@@ -74,19 +129,35 @@ public:
             // lies
             // https://en.wikipedia.org/wiki/Color_temperature
 
-            constexpr float kelvinFirst = 1700;   // a flame from a match
-            constexpr float kelvinSweet = 2550;   // soft white incandesent
-            constexpr float kelvinLast = 6500;     // daylight
-            constexpr float kelvinRange = kelvinLast - kelvinFirst + 1;
-            constexpr float plateauFraction = (kelvinSweet - kelvinFirst) / kelvinRange;
+            const float kelvinFirst = 1700;   // a flame from a match
+            const float kelvinSweet = 2550;   // soft white incandesent
+            const float kelvinLast = 6500;     // daylight
+            const float kelvinRange = kelvinLast - kelvinFirst + 1;
+            const float sweetFraction = (kelvinSweet - kelvinFirst) / kelvinRange;
 
-            constexpr int dmxFirst = 1;
-            constexpr int dmxLast  = 255;
-            constexpr int dmxRange = dmxLast - dmxFirst; + 1;
+            const int dmxFirst = 1;
+            const int dmxLast  = 255;
+            const int dmxRange = dmxLast - dmxFirst + 1;
 
-            constexpr int dmxPlateauLength = 4;
+            const int dmxPlateauLength = 5;
+            const int dmxPlateauFirst  = int(sweetFraction * (dmxRange - dmxPlateauLength));
+            const int dmxPlateauMax    = dmxPlateauFirst + dmxPlateauLength;
 
-            float kelvin = 2550;
+            float kelvin;
+
+            if (dmxColorTemperature < dmxPlateauFirst)
+            {
+                kelvin = scaleRange(dmxColorTemperature, dmxFirst, dmxPlateauFirst-1, kelvinFirst, kelvinSweet);
+            }
+            else if (dmxColorTemperature < dmxPlateauMax)
+            {
+                kelvin = kelvinSweet;
+            }
+            else
+            {
+                kelvin = scaleRange(dmxColorTemperature, dmxPlateauMax, dmxLast, kelvinSweet, kelvinLast);
+            }
+
             return Color::temperature(kelvin);
         }
     }
