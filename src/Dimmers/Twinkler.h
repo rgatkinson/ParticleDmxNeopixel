@@ -28,6 +28,7 @@ public:
 
     Twinkler(int msPause, int msBreathe)
     {
+        _breather.setPauseInterval(msPause);
         _breather.setBreatheInterval(msBreathe);
     }
 
@@ -66,6 +67,7 @@ public:
 private:
     void resetTimer()
     {
+        // uniform dist'n centered on msPause
         int msPause = _breather.pauseInterval();
         int dms = msPause / 3;
         msPause = random(msPause - dms, msPause + dms);  // half-open interval, fwiw
