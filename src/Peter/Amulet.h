@@ -15,9 +15,9 @@
 #include "Dimmers/SelfTestBrightness.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "Colorizers/SelfTestColorizer.h"
-#include "DmxParameterBlock.h"
-#include "DmxBrightnessEffectSelector.h"
-#include "DmxColorEffectSelector.h"
+#include "Artnet/DmxParameterBlock.h"
+#include "Artnet/DmxBrightnessEffectSelector.h"
+#include "Artnet/DmxColorEffectSelector.h"
 
 struct Amulet : DmxPacketConsumer
 {

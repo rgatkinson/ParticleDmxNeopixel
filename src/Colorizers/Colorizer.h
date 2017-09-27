@@ -10,7 +10,7 @@
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
 #include "Pixels/ColorizeableHolder.h"
-#include "Peter/DmxParameterBlock.h"
+#include "Artnet/DmxParameterBlock.h"
 
 //==================================================================================================
 // Colorizer
