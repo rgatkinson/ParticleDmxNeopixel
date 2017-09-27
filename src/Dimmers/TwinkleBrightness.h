@@ -17,6 +17,7 @@ struct TwinkleBrightness: Dimmer
     // State
     //----------------------------------------------------------------------------------------------
 
+    int _msPause;
     int _msInterval;
     ArrayList<Twinkler> _twinklers;
 
@@ -24,8 +25,9 @@ struct TwinkleBrightness: Dimmer
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    TwinkleBrightness(float msInterval, int msDuration) : Dimmer(Flavor::Twinkle, msDuration)
+    TwinkleBrightness(float msPause, int msInterval, int msDuration) : Dimmer(Flavor::Twinkle, msDuration)
     {
+        _msPause = msPause;
         _msInterval = msInterval;
     }
 
@@ -35,7 +37,7 @@ struct TwinkleBrightness: Dimmer
         _twinklers = ArrayList<Twinkler>();
         for (int i = 0; i < _pixelCount; i++)
         {
-            _twinklers.addLast(Twinkler(_msInterval));
+            _twinklers.addLast(Twinkler(_msPause, _msInterval));
         }
     }
 

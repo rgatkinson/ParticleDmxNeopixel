@@ -65,7 +65,6 @@ public:
         if (_currentEffect != effectDesired)
         {
             _currentEffect = effectDesired;
-            INFO("switching to color effect %d", effectDesired);
             //
             Colorizer* pColorizer = nullptr;
             switch (effectDesired)
@@ -85,6 +84,7 @@ public:
             if (pColorizer)
             {
                 // TODO: check sameAs
+                INFO("switching to color effect %d", effectDesired);
                 _pColorizeable->setColorizer(pColorizer);
             }
         }

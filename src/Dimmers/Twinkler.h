@@ -26,9 +26,9 @@ public:
     {
     }
 
-    Twinkler(int msInterval)
+    Twinkler(int msPause, int msBreathe)
     {
-        _breather.setBreatheInterval(msInterval);
+        _breather.setBreatheInterval(msBreathe);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -66,13 +66,19 @@ public:
 private:
     void resetTimer()
     {
-        // uniform dist'n centered on msInterval
-        int msInterval = _breather.breathInterval();
-        int dms   = msInterval / 3;
-        int msMin = msInterval - dms;
-        int msMax = msInterval + dms;
-        int msDuration = random(msMin, msMax);      // half-open interval, fwiw
-        _breather.setDuration(msDuration);
+        int msPause = _breather.pauseInterval();
+        int dms = msPause / 3;
+        msPause = random(msPause - dms, msPause + dms);  // half-open interval, fwiw
+        _breather.setPauseInterval(msPause);
+
+        // uniform dist'n centered on msBreathe
+        int msBreathe = _breather.breathInterval();
+        dms = msBreathe / 4;
+        msBreathe = random(msBreathe - dms, msBreathe + dms);
+        _breather.setBreatheInterval(msBreathe);
+
+        // Allow only a small number of breaths before we re-randomize
+        _breather.setDurationAndReset(3 * (msPause + msBreathe));
     }
 };
 

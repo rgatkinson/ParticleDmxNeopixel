@@ -12,6 +12,7 @@ struct Breather
 protected:
 
     Deadline    _timer;
+    int         _msPause;
     int         _msBreathe;
     float       _currentLevel;
 
@@ -22,23 +23,32 @@ public:
 
     Breather(int msDuration = 0)
     {
+        _msPause = 0;
         _msBreathe = 0;
         _currentLevel = 1;
-        setDuration(msDuration);
+        setDurationAndReset(msDuration);
     }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    void setBreatheInterval(int msInterval)
+    void setBreatheInterval(int msBreathe)
     {
-        _msBreathe = msInterval;
+        _msBreathe = msBreathe;
     }
-
     int breathInterval()
     {
         return _msBreathe;
+    }
+
+    void setPauseInterval(int msPause)
+    {
+        _msPause = msPause;
+    }
+    int pauseInterval()
+    {
+        return _msPause;
     }
 
     float currentLevel()
@@ -46,7 +56,7 @@ public:
         return _currentLevel;
     }
 
-    void setDuration(int msDuration)
+    void setDurationAndReset(int msDuration)
     {
         _timer = Deadline(msDuration);
     }
@@ -67,15 +77,23 @@ public:
 
     void loop()
     {
-        int ms = _timer.milliseconds() % _msBreathe;
-        float intervalFraction = float(ms) / float(_msBreathe);
+        int ms = _timer.milliseconds() % (_msPause + _msBreathe);   // [0, _msPause + _msBreathe)
+        if (ms < _msPause)
+        {
+            _currentLevel = 1.0f;
+        }
+        else
+        {
+            ms -= _msPause; // [0, _msBreathe)
+            float intervalFraction = float(ms) / float(_msBreathe-1); // [0.0, 1.0]
 
-        // linear up, linear down: the eye perceives it differently
-        float level = (intervalFraction <= 0.5f)
-            ? (intervalFraction * 2.0f)
-            : 1.0f - ( (intervalFraction - 0.5f) * 2.0f );
+            // linear up, linear down: the eye perceives it differently
+            float level = (intervalFraction <= 0.5f)
+                ? (intervalFraction * 2.0f)
+                : 1.0f - ( (intervalFraction - 0.5f) * 2.0f );
 
-        _currentLevel = level;
+            _currentLevel = level;
+        }
     }
 
 };

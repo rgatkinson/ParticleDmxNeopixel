@@ -71,7 +71,6 @@ public:
         if (_currentEffect != effectDesired)
         {
             _currentEffect = effectDesired;
-            INFO("switching to brightness effect %d", effectDesired);
             //
             Dimmer* pDimmer = nullptr;
             switch (effectDesired)
@@ -85,7 +84,7 @@ public:
                     break;
 
                 case Effect::Twinkle:
-                    pDimmer = new TwinkleBrightness(4000, Deadline::Infinite);
+                    pDimmer = new TwinkleBrightness(4000, 1000, Deadline::Infinite);
                     break;
 
                 case Effect::SelfTest:
@@ -95,6 +94,7 @@ public:
             if (pDimmer)
             {
                 // TODO: check sameAs
+                INFO("switching to brightness effect %d", effectDesired);
                 _pColorizeable->setDimmer(pDimmer);
             }
         }
