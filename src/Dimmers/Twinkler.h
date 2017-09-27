@@ -16,6 +16,8 @@ struct Twinkler
 private:
 
     Breather _breather;
+    int _msPause;
+    int _msBreathe;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -28,6 +30,8 @@ public:
 
     Twinkler(int msPause, int msBreathe)
     {
+        _msPause = msPause;
+        _msBreathe = msBreathe;
         _breather.setPauseInterval(msPause);
         _breather.setBreatheInterval(msBreathe);
     }
@@ -68,13 +72,13 @@ private:
     void resetTimer()
     {
         // uniform dist'n centered on msPause
-        int msPause = _breather.pauseInterval();
+        int msPause = _msPause;
         int dms = msPause / 3;
         msPause = random(msPause - dms, msPause + dms);  // half-open interval, fwiw
         _breather.setPauseInterval(msPause);
 
         // uniform dist'n centered on msBreathe
-        int msBreathe = _breather.breathInterval();
+        int msBreathe = _msBreathe;
         dms = msBreathe / 4;
         msBreathe = random(msBreathe - dms, msBreathe + dms);
         _breather.setBreatheInterval(msBreathe);
