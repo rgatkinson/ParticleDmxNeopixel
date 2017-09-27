@@ -20,12 +20,10 @@ protected:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    virtual int numEffects() = 0;
-
-    int effectFromDmx(byte dmx)
+    static int effectFromDmx(byte dmx, int numEffects)
     {
         // We divy the range [0, 255] up uniformly into [0, numEffects())
-        return zeroOneToInt(float(dmx) / 256, numEffects());
+        return zeroOneToInt(float(dmx) / 256, numEffects);
     }
 };
 

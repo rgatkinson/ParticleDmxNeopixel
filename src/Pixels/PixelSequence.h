@@ -76,12 +76,12 @@ protected:
 
 public:
 
-    inline Dimmer* dimmer()
+    inline Dimmer* dimmer() override
     {
         return _pDimmer;
     }
 
-    inline Colorizer* colorizer()
+    inline Colorizer* colorizer() override
     {
         return _pColorizer;
     }

@@ -25,9 +25,8 @@ public:
 
     BreathingBrightness(int msInterval, int msDuration) : Dimmer(Flavor::Breathing, msDuration)
     {
-        _msInterval = msInterval;
-        _floatIntervalInverse = 1.0f / (float)_msInterval;
         _intervalTimer = ElapsedTime();
+        setInterval(msInterval);
         setMinBrightness(20);    // empiricly determined
     }
 
@@ -39,6 +38,22 @@ protected:
     bool usesGammaCorrection() override
     {
         return false;
+    }
+
+    void setInterval(int msInterval)
+    {
+        _msInterval = msInterval;
+        _floatIntervalInverse = 1.0f / (float)_msInterval;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Dmx
+    //----------------------------------------------------------------------------------------------
+public:
+
+    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    {
+        Dimmer::processParameterBlock(parameterBlock);
     }
 
     //----------------------------------------------------------------------------------------------

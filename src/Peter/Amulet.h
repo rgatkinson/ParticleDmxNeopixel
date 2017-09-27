@@ -102,7 +102,7 @@ public:
             }
             default:
             {
-                return new SelfTestBrightness(_pPixels->colorizer()->msLoopingDuration());
+                return new SelfTestBrightness();
             }
         }
     }

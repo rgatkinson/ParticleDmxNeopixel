@@ -6,6 +6,7 @@
 
 #include "DmxParameterBlock.h"
 #include "DmxEffectSelector.h"
+#include "DmxColorEffectSelector.h"
 
 struct DmxBrightnessEffectSelector : DmxEffectSelector
 {
@@ -19,7 +20,10 @@ public:
         None,
         First,
         Uniform = First,
-        Max
+        Breathing,
+        Twinkle,
+        Max,
+        SelfTest,   // AFTER Max, yes
     };
 
 protected:
@@ -42,7 +46,7 @@ protected:
     {
     }
 
-    int numEffects() override
+    static int numEffects()
     {
         return (int)Effect::Max - (int)Effect::First;
     }
@@ -52,9 +56,18 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
+    static Effect brightnessEffect(DmxParameterBlock& parameterBlock)
+    {
+        return Effect(int(Effect::First) + effectFromDmx(parameterBlock.brightnessEffect(), numEffects()));
+    }
+
     void processParameterBlock(DmxParameterBlock& parameterBlock)
     {
-        Effect effectDesired = Effect(int(Effect::First) + effectFromDmx(parameterBlock.brightnessEffect()));
+        // Use a self test if the COLOR it set to self test
+        Effect effectDesired = DmxColorEffectSelector::Effect::SelfTest == DmxColorEffectSelector::colorEffect(parameterBlock)
+            ? Effect::SelfTest
+            : brightnessEffect(parameterBlock);
+
         if (_currentEffect != effectDesired)
         {
             _currentEffect = effectDesired;
@@ -66,9 +79,22 @@ public:
                 case Effect::Uniform:
                     pDimmer = new UniformBrightness(1.0f, Deadline::Infinite);
                     break;
+
+                case Effect::Breathing:
+                    pDimmer = new BreathingBrightness(4000, Deadline::Infinite);
+                    break;
+
+                case Effect::Twinkle:
+                    pDimmer = new TwinkleBrightness(4000, Deadline::Infinite);
+                    break;
+
+                case Effect::SelfTest:
+                    pDimmer = new SelfTestBrightness();
+                    break;
             }
             if (pDimmer)
             {
+                // TODO: check sameAs
                 _pColorizeable->setDimmer(pDimmer);
             }
         }

@@ -20,6 +20,9 @@ struct Colorizeable : RefCountable
     virtual void setColorizer(Colorizer*) = 0;
     virtual void setDimmer(Dimmer*) = 0;
 
+    virtual Colorizer* colorizer() = 0;
+    virtual Dimmer*    dimmer() = 0;
+
     virtual void setDimmerBrightness(BRIGHTNESS brightness) = 0;
 };
 

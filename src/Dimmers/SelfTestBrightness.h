@@ -11,26 +11,43 @@ struct SelfTestBrightness : BrightnessSequence
     //----------------------------------------------------------------------------------------------
 protected:
 
-    float _brightnessLevel = 0.3f;
+    float _initialBrightnessLevel = 1.0f;
+    float _idleBrightnessLevel = 0.3f;
+    UniformBrightness* _pUniformInitial;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    SelfTestBrightness(int msQuantum) : BrightnessSequence(Flavor::SelfTest)
+    SelfTestBrightness() : BrightnessSequence(Flavor::SelfTest)
     {
-        addDimmer(new UniformBrightness(1.0f, msQuantum));
-        addDimmer(new UniformBrightness(_brightnessLevel, Deadline::Infinite));
+        addDimmer(_pUniformInitial = new UniformBrightness(_initialBrightnessLevel, Deadline::Infinite /* adjusted later */));
+        addDimmer(new UniformBrightness(_idleBrightnessLevel, Deadline::Infinite));
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Dmx
+    //----------------------------------------------------------------------------------------------
+public:
+
+    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    {
+        Dimmer::processParameterBlock(parameterBlock);
     }
 
     //----------------------------------------------------------------------------------------------
     // Looping
     //----------------------------------------------------------------------------------------------
 
-    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    void begin() override
     {
-        Dimmer::processParameterBlock(parameterBlock);
+        if (_pColorizeable)
+        {
+            int ms = _pColorizeable->colorizer()->msLoopingDuration();
+            _pUniformInitial->setDuration(ms);
+        }
+        BrightnessSequence::begin();
     }
 
 };

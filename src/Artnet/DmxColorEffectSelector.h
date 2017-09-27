@@ -20,7 +20,8 @@ public:
         First,
         Uniform = First,
         Rainbow,
-        Max
+        SelfTest,
+        Max,
     };
 
 protected:
@@ -43,7 +44,7 @@ protected:
     {
     }
 
-    int numEffects() override
+    static int numEffects()
     {
         return (int)Effect::Max - (int)Effect::First;
     }
@@ -53,9 +54,14 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
+    static Effect colorEffect(DmxParameterBlock& parameterBlock)
+    {
+        return Effect(int(Effect::First) + effectFromDmx(parameterBlock.colorEffect(), numEffects()));
+    }
+
     void processParameterBlock(DmxParameterBlock& parameterBlock)
     {
-        Effect effectDesired = Effect(int(Effect::First) + effectFromDmx(parameterBlock.colorEffect()));
+        Effect effectDesired = colorEffect(parameterBlock);
         if (_currentEffect != effectDesired)
         {
             _currentEffect = effectDesired;
@@ -71,9 +77,14 @@ public:
                 case Effect::Rainbow:
                     pColorizer = new RainbowColors(10, Deadline::Infinite);
                     break;
+
+                case Effect::SelfTest:
+                    pColorizer = new SelfTestColorizer(Color::WHITE);
+                    break;
             }
             if (pColorizer)
             {
+                // TODO: check sameAs
                 _pColorizeable->setColorizer(pColorizer);
             }
         }
