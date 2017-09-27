@@ -24,7 +24,7 @@ public:
 
     BreathingBrightness(int msInterval, int msDuration) : Dimmer(Flavor::Breathing, msDuration)
     {
-        setInterval(msInterval);
+        setBreatheInterval(msInterval);
         setMinBrightness(20);    // empiricly determined
     }
 
@@ -38,9 +38,9 @@ protected:
         return false;
     }
 
-    void setInterval(int msInterval)
+    void setBreatheInterval(int msInterval)
     {
-        _breather.setInterval(msInterval);
+        _breather.setBreatheInterval(msInterval);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ public:
     void report() override
     {
         Dimmer::report();
-        INFO("BreathingBrightness: interval=%d", _breather.msInterval());
+        INFO("BreathingBrightness: breathe interval=%d", _breather.breathInterval());
     }
 
 };

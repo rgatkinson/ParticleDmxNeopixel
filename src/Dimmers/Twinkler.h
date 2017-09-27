@@ -28,7 +28,7 @@ public:
 
     Twinkler(int msInterval)
     {
-        _breather.setInterval(msInterval);
+        _breather.setBreatheInterval(msInterval);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ private:
     void resetTimer()
     {
         // uniform dist'n centered on msInterval
-        int msInterval = _breather.msInterval();
+        int msInterval = _breather.breathInterval();
         int dms   = msInterval / 3;
         int msMin = msInterval - dms;
         int msMax = msInterval + dms;

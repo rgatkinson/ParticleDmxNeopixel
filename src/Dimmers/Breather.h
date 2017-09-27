@@ -12,7 +12,7 @@ struct Breather
 protected:
 
     Deadline    _timer;
-    int         _msInterval;
+    int         _msBreathe;
     float       _currentLevel;
 
     //----------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ public:
 
     Breather(int msDuration = 0)
     {
-        _msInterval = 0;
+        _msBreathe = 0;
         _currentLevel = 1;
         setDuration(msDuration);
     }
@@ -31,14 +31,14 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    void setInterval(int msInterval)
+    void setBreatheInterval(int msInterval)
     {
-        _msInterval = msInterval;
+        _msBreathe = msInterval;
     }
 
-    int msInterval()
+    int breathInterval()
     {
-        return _msInterval;
+        return _msBreathe;
     }
 
     float currentLevel()
@@ -67,8 +67,8 @@ public:
 
     void loop()
     {
-        int ms = _timer.milliseconds() % _msInterval;
-        float intervalFraction = float(ms) / float(_msInterval);
+        int ms = _timer.milliseconds() % _msBreathe;
+        float intervalFraction = float(ms) / float(_msBreathe);
 
         // linear up, linear down: the eye perceives it differently
         float level = (intervalFraction <= 0.5f)
