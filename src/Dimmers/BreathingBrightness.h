@@ -5,6 +5,7 @@
 #define __BREATHING_BRIGHTNESS_H__
 
 #include "Dimmer.h"
+#include "Breather.h"
 #include <math.h>
 
 struct BreathingBrightness : Dimmer
@@ -14,9 +15,7 @@ struct BreathingBrightness : Dimmer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int         _msInterval;
-    float       _floatIntervalInverse;
-    ElapsedTime _intervalTimer;
+    Breather _breather;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -25,7 +24,6 @@ public:
 
     BreathingBrightness(int msInterval, int msDuration) : Dimmer(Flavor::Breathing, msDuration)
     {
-        _intervalTimer = ElapsedTime();
         setInterval(msInterval);
         setMinBrightness(20);    // empiricly determined
     }
@@ -42,8 +40,7 @@ protected:
 
     void setInterval(int msInterval)
     {
-        _msInterval = msInterval;
-        _floatIntervalInverse = 1.0f / (float)_msInterval;
+        _breather.setInterval(msInterval);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -64,28 +61,20 @@ public:
     void begin() override
     {
         Dimmer::begin();
-        _intervalTimer.reset();
+        _breather.begin();
     }
 
     void loop() override
     {
         Dimmer::loop();
-
-        int ms = _intervalTimer.milliseconds() % _msInterval;
-        float intervalFraction = (float)ms * _floatIntervalInverse;
-
-        // linear up, linear down: the eye perceives it differently
-        float level = (intervalFraction <= 0.5f)
-            ? (intervalFraction * 2.0f)
-            : 1.0f - ( (intervalFraction - 0.5f) * 2.0f );
-
-        setCurrentLevel(level);
+        _breather.loop();
+        setCurrentLevel(_breather.currentLevel());
     }
 
     void report() override
     {
         Dimmer::report();
-        INFO("BreathingBrightness: interval=%d", _msInterval);
+        INFO("BreathingBrightness: interval=%d", _breather.msInterval());
     }
 
 };
