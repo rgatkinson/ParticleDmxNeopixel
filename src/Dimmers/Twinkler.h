@@ -72,15 +72,13 @@ private:
     void resetTimer()
     {
         // uniform dist'n centered on msPause
-        int msPause = _msPause;
-        int dms = msPause / 3;
-        msPause = random(msPause - dms, msPause + dms);  // half-open interval, fwiw
+        int dms = _msPause / 3;
+        int msPause = random(_msPause - dms, _msPause + dms);  // half-open interval, fwiw
         _breather.setPauseInterval(msPause);
 
         // uniform dist'n centered on msBreathe
-        int msBreathe = _msBreathe;
-        dms = msBreathe / 4;
-        msBreathe = random(msBreathe - dms, msBreathe + dms);
+        dms = _msBreathe / 4;
+        int msBreathe = random(_msBreathe - dms, _msBreathe + dms);
         _breather.setBreatheInterval(msBreathe);
 
         // Allow only a small number of breaths before we re-randomize
