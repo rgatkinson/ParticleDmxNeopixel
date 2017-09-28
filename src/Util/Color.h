@@ -139,51 +139,6 @@ protected:
         }
     }
 
-    //-----------------------------------------------------------------------
-    // Triangle height as a function of fraction across the base
-public:
-    inline static float tri(float f, float triangleBase)
-    {
-        return tri(f / triangleBase);
-    }
-    inline static float triUp(float f, float triangleBase)
-    {
-        return triUp(f / triangleBase);
-    }
-    inline static float triDown(float f, float triangleBase)
-    {
-        return triDown(f / triangleBase);
-    }
-
-    inline static float tri(float f)
-    {
-        return f <= 0.5f
-            ? triUp(f)
-            : triDown(f);
-    }
-    inline static float triUp(float f)
-    {
-        return f + f;
-    }
-    inline static float triDown(float f)
-    {
-        float result = (1 - f);
-        return result + result;
-    }
-
-    //-----------------------------------------------------------------------
-    // Similar, but for a sinusoidial shape instead of linear triangle sides
-
-    inline static float sinUp(float f)
-    {
-        float result = sinf(f * PiF);
-        return result * result;
-    }
-    inline static float sinDown(float f)
-    {
-        return sinUp(f);
-    }
-
     //----------------------------------------------------------------------------------------------
     // Black body radiation
     //----------------------------------------------------------------------------------------------

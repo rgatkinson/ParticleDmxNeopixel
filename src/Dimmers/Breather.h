@@ -103,7 +103,7 @@ public:
             ms -= _msPause; // [0, _msBreathe)
 
             // linear down, linear up: the eye perceives it differently
-            _currentLevel = 1.0f - Color::tri(ms, _msBreathe);
+            _currentLevel = 1.0f - tri(ms, _msBreathe);
 
             // don't bottom out
             _currentLevel = _minLevel + (1 - _minLevel) * _currentLevel;

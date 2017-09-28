@@ -82,7 +82,7 @@ private:
         // Allow only a small number of breaths before we re-randomize
         int breaths = random(1,4);
 
-        INFO("msPause=%d msBreathe=%d breaths=%d", msPause, msBreathe, breaths);
+        // INFO("msPause=%d msBreathe=%d breaths=%d", msPause, msBreathe, breaths);
 
         _breather.setPauseInterval(msPause);
         _breather.setBreatheInterval(msBreathe);

@@ -113,6 +113,56 @@ inline float scaleRange(float from, float fromFirst, float fromLast, float toFir
 }
 
 //--------------------------------------------------------------------------------------------------
+// Ups & downs
+//--------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+// Triangle height as a function of fraction across the base
+
+inline float triUp(float f)
+{
+    return f + f;
+}
+inline float triDown(float f)
+{
+    float result = (1 - f);
+    return result + result;
+}
+inline float tri(float f)
+{
+    return f <= 0.5f
+        ? triUp(f)
+        : triDown(f);
+}
+
+inline  float triUp(float f, float triangleBase)
+{
+    return triUp(f / triangleBase);
+}
+inline float triDown(float f, float triangleBase)
+{
+    return triDown(f / triangleBase);
+}
+inline float tri(float f, float triangleBase)
+{
+    return tri(f / triangleBase);
+}
+
+//-----------------------------------------------------------------------
+// Similar, but for a sinusoidial shape instead of linear triangle sides
+
+inline float sinUp(float f)
+{
+    float result = sinf(f * PiF);
+    return result * result;
+}
+inline float sinDown(float f)
+{
+    return sinUp(f);
+}
+
+
+//--------------------------------------------------------------------------------------------------
 // Strings
 //--------------------------------------------------------------------------------------------------
 
