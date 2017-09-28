@@ -32,8 +32,8 @@ public:
     {
         _msPause = msPause;
         _msBreathe = msBreathe;
-        _breather.setPauseInterval(msPause);
-        _breather.setBreatheInterval(msBreathe);
+        setPauseInterval(msPause);
+        setBreatheInterval(msBreathe);
     }
 
     //----------------------------------------------------------------------------------------------

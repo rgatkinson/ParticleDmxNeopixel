@@ -104,7 +104,7 @@ public:
             {
                 return new TwinklingLuminance(
                     TwinklingLuminance::msTwinklePauseDefault,
-                    TwinklingLuminance::msTwinkleIntervalDefault,
+                    TwinklingLuminance::msTwinkleBreatheDefault,
                     Deadline::Infinite);
             }
         }
