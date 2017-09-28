@@ -53,7 +53,7 @@ public:
     void begin()
     {
         resetTimer();
-        _breather.begin();
+        _breather.begin(true); // true helps desychronize twinkling, even initially
     }
 
     void loop()
@@ -74,15 +74,19 @@ private:
         // uniform dist'n centered on msPause
         int dms = _msPause / 3;
         int msPause = random(_msPause - dms, _msPause + dms);  // half-open interval, fwiw
-        _breather.setPauseInterval(msPause);
 
         // uniform dist'n centered on msBreathe
         dms = _msBreathe / 4;
         int msBreathe = random(_msBreathe - dms, _msBreathe + dms);
-        _breather.setBreatheInterval(msBreathe);
 
         // Allow only a small number of breaths before we re-randomize
-        _breather.setDurationAndReset(3 * (msPause + msBreathe));
+        int breaths = random(1,4);
+
+        INFO("msPause=%d msBreathe=%d breaths=%d", msPause, msBreathe, breaths);
+
+        _breather.setPauseInterval(msPause);
+        _breather.setBreatheInterval(msBreathe);
+        _breather.setDurationAndResetTimer(breaths * (msPause + msBreathe));
     }
 };
 

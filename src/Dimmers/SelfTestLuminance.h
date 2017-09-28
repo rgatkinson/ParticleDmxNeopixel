@@ -1,10 +1,10 @@
 //
-// SelfTestLumenizer.h
+// SelfTestLuminance.h
 //
 #ifndef __SELF_TEST_LUMENIZER_H__
 #define __SELF_TEST_LUMENIZER_H__
 
-struct SelfTestLumenizer : LumenizerSequence
+struct SelfTestLuminance : LumenizerSequence
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -20,7 +20,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    SelfTestLumenizer() : LumenizerSequence(Flavor::SelfTest)
+    SelfTestLuminance() : LumenizerSequence(Flavor::SelfTest)
     {
         addLumenizer(_pUniformInitial = new UniformLuminance(_initialBrightnessLevel, Deadline::Infinite /* adjusted later */));
         addLumenizer(new UniformLuminance(_idleBrightnessLevel, Deadline::Infinite));

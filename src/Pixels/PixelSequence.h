@@ -98,31 +98,6 @@ public:
         if (_pColorizer) _pColorizer->begin();
     }
 
-    void setLumenizerIfDifferent(Lumenizer* pLumenizer)
-    {
-        if (_pLumenizer && _pLumenizer->sameAs(pLumenizer))
-        {
-            releaseRef(pLumenizer);
-        }
-        else
-        {
-            setLumenizer(pLumenizer);
-        }
-    }
-
-    void setColorizerIfDifferent(Colorizer* pColorizer)
-    {
-        if (_pColorizer && _pColorizer->sameAs(pColorizer))
-        {
-            releaseRef(pColorizer); // already have 'em
-        }
-        else
-        {
-            setColorizer(pColorizer);
-        }
-    }
-
-
     void setDimmerLevel(float dimmerLevel) override
     {
         if (_pLumenizer) _pLumenizer->setDimmerLevel(dimmerLevel);
@@ -161,8 +136,12 @@ public:
         if (_showDeadline.hasExpired())
         {
             // Only call the brightness when we actually are going to show _neopixels: efficiency
-            if (_pLumenizer) _pLumenizer->loop();
-            BRIGHTNESS brightness = _pLumenizer ? _pLumenizer->currentBrightness() : MAX_BRIGHTNESS;
+            BRIGHTNESS brightness = MAX_BRIGHTNESS;
+            if (_pLumenizer)
+            {
+                _pLumenizer->loop();
+                brightness = _pLumenizer->currentBrightness();
+            }
 
             for (int iPixel = 0; iPixel < _pixelCount; iPixel++)
             {

@@ -56,9 +56,9 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    static Effect brightnessEffect(DmxParameterBlock& parameterBlock)
+    static Effect luminanceEffect(DmxParameterBlock& parameterBlock)
     {
-        return Effect(int(Effect::First) + effectFromDmx(parameterBlock.brightnessEffect(), numEffects()));
+        return Effect(int(Effect::First) + effectFromDmx(parameterBlock.luminanceEffect(), numEffects()));
     }
 
     void processParameterBlock(DmxParameterBlock& parameterBlock)
@@ -66,7 +66,7 @@ public:
         // Use a self test if the COLOR it set to self test
         Effect effectDesired = DmxColorEffectSelector::Effect::SelfTest == DmxColorEffectSelector::colorEffect(parameterBlock)
             ? Effect::SelfTest
-            : brightnessEffect(parameterBlock);
+            : luminanceEffect(parameterBlock);
 
         if (_currentEffect != effectDesired)
         {
@@ -80,22 +80,22 @@ public:
                     break;
 
                 case Effect::Breathing:
-                    pLumenizer = new BreathingLuminance(4000, Deadline::Infinite);
+                    pLumenizer = new BreathingLuminance(0, 4000, Deadline::Infinite);
                     break;
 
                 case Effect::Twinkle:
-                    pLumenizer = new TwinkleLumenizer(4000, 1000, Deadline::Infinite);
+                    pLumenizer = new TwinklingLuminance(4000, 1000, Deadline::Infinite);
                     break;
 
                 case Effect::SelfTest:
-                    pLumenizer = new SelfTestLumenizer();
+                    pLumenizer = new SelfTestLuminance();
                     break;
             }
             if (pLumenizer)
             {
                 if (!pLumenizer->sameAs(_pColorizeable->lumenizer()))
                 {
-                    INFO("switching to brightness effect %d", effectDesired);
+                    INFO("switching to luminance effect %d", effectDesired);
                     _pColorizeable->setLumenizer(pLumenizer);
                 }
                 else

@@ -1,5 +1,5 @@
 //
-// TwinkleLumenizer.h
+// TwinklingLuminance.h
 //
 #ifndef __TWINKLE_LUMENIZER_H__
 #define __TWINKLE_LUMENIZER_H__
@@ -8,27 +8,27 @@
 #include "Twinkler.h"
 
 //==================================================================================================
-// TwinkleLumenizer
+// TwinklingLuminance
 //==================================================================================================
 
-struct TwinkleLumenizer: Lumenizer
+struct TwinklingLuminance: Lumenizer
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 
     int _msPause;
-    int _msInterval;
+    int _msBreathe;
     ArrayList<Twinkler> _twinklers;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    TwinkleLumenizer(float msPause, int msInterval, int msDuration) : Lumenizer(Flavor::Twinkle, msDuration)
+    TwinklingLuminance(float msPause, int msBreathe, int msDuration) : Lumenizer(Flavor::Twinkle, msDuration)
     {
         _msPause = msPause;
-        _msInterval = msInterval;
+        _msBreathe = msBreathe;
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
@@ -37,7 +37,7 @@ struct TwinkleLumenizer: Lumenizer
         _twinklers = ArrayList<Twinkler>();
         for (int i = 0; i < _pixelCount; i++)
         {
-            _twinklers.addLast(Twinkler(_msPause, _msInterval));
+            _twinklers.addLast(Twinkler(_msPause, _msBreathe));
         }
     }
 
@@ -52,7 +52,7 @@ struct TwinkleLumenizer: Lumenizer
 
     bool usesGammaCorrection() override
     {
-        return false;
+        return true;
     }
 
     BRIGHTNESS currentBrightness(int iPixel) override
@@ -64,6 +64,13 @@ struct TwinkleLumenizer: Lumenizer
     // Dmx
     //----------------------------------------------------------------------------------------------
 public:
+
+    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    {
+        Lumenizer::processParameterBlock(parameterBlock);
+
+        float twinkleRate = fabs(parameterBlock.luminanceSpeedLevel());
+    }
 
     //----------------------------------------------------------------------------------------------
     // Loop

@@ -16,9 +16,9 @@ struct PACKED DmxParameterBlockData
     byte    colorEffect;
     byte    colorSpeed;
     byte    colorControl;
-    byte    brightnessEffect;
-    byte    brightnessSpeed;
-    byte    brightnessControl;
+    byte    luminanceEffect;
+    byte    luminanceSpeed;
+    byte    luminanceControl;
 };
 
 struct DmxParameterBlock
@@ -55,9 +55,9 @@ public:
     declare(colorEffect)
     declare(colorSpeed)
     declare(colorControl)
-    declare(brightnessEffect)
-    declare(brightnessSpeed)
-    declare(brightnessControl)
+    declare(luminanceEffect)
+    declare(luminanceSpeed)
+    declare(luminanceControl)
 
     #undef declare
 
@@ -66,9 +66,9 @@ public:
         return speedLevel(colorSpeed());
     }
 
-    float brightnessSpeedLevel()
+    float luminanceSpeedLevel()
     {
-        return speedLevel(brightnessSpeed());
+        return speedLevel(luminanceSpeed());
     }
 
 private:
@@ -117,26 +117,29 @@ public:
     COLOR_INT effectiveColor()
     {
         const byte dmxColorTemperature = colorTemperature();
+        const float kelvinSweet = 2550;   // soft white incandesent
 
         if (dmxColorTemperature == 0)
         {
             return Color::rgb(red(), green(), blue());
         }
+        else if (dmxColorTemperature == 255)
+        {
+            return Color::temperature(kelvinSweet);
+        }
         else
         {
-            // 1-255 map to kelvin. We use a uniform distribution from first to last,
-            // but have a little plateau there in the middle where the warm sweet spot
-            // lies
+            // 1-254 map to kelvin. We use a uniform distribution from first to last,
+            // but have a little plateau there in the middle where the warm sweet spot lies
             // https://en.wikipedia.org/wiki/Color_temperature
 
             const float kelvinFirst = 1700;   // a flame from a match
-            const float kelvinSweet = 2550;   // soft white incandesent
-            const float kelvinLast = 6500;     // daylight
+            const float kelvinLast = 6500;    // daylight
             const float kelvinRange = kelvinLast - kelvinFirst + 1;
             const float sweetFraction = (kelvinSweet - kelvinFirst) / kelvinRange;
 
             const int dmxFirst = 1;
-            const int dmxLast  = 255;
+            const int dmxLast  = 254;
             const int dmxRange = dmxLast - dmxFirst + 1;
 
             const int dmxPlateauLength = 5;

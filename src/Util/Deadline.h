@@ -55,6 +55,12 @@ public:
         return _msDuration;
     }
 
+    void consume(int ms)
+    {
+        _msDeadline -= ms;
+        _msStartTime -= ms;
+    }
+
     TIME msRemaining()
     {
         TIME result = _msDeadline - msNow();

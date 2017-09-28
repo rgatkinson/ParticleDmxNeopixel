@@ -97,19 +97,19 @@ inline int zeroOneToByte(float f)
 
 
  /**
-   * Scale a number in the range of x1 to x2, to the range of y1 to y2
-   * @param value number to scale
-   * @param x1 lower bound range of value
-   * @param x2 upper bound range of value
-   * @param y1 lower bound of scale
-   * @param y2 upper bound of scale
-   * @return a float scaled to a value between y1 and y2, inclusive
+   * Scale a number in the range of fromFirst to fromLast, to the range of toFirst to toLast
+   * @param from number to scale
+   * @param fromFirst lower bound range of value
+   * @param fromLast upper bound range of value
+   * @param toFirst lower bound of scale
+   * @param toLast upper bound of scale
+   * @return a float scaled to a value between toFirst and toLast, inclusive
    */
-inline float scaleRange(float value, float x1, float x2, float y1, float y2)
+inline float scaleRange(float from, float fromFirst, float fromLast, float toFirst, float toLast)
 {
-    float a = (y1-y2)/(x1-x2);
-    float b = y1 - x1*(y1-y2)/(x1-x2);
-    return a*value+b;
+    const float a = (toFirst-toLast) / (fromFirst-fromLast);
+    const float b = toFirst - fromFirst*a;
+    return a*from + b;
 }
 
 //--------------------------------------------------------------------------------------------------

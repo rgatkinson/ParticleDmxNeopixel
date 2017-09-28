@@ -11,8 +11,8 @@
 #include "Util/Color.h"
 #include "Dimmers/BreathingLuminance.h"
 #include "Dimmers/LumenizerSequence.h"
-#include "Dimmers/TwinkleLumenizer.h"
-#include "Dimmers/SelfTestLumenizer.h"
+#include "Dimmers/TwinklingLuminance.h"
+#include "Dimmers/SelfTestLuminance.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "Colorizers/SelfTestColorizer.h"
 #include "Artnet/DmxParameterBlock.h"
@@ -67,8 +67,8 @@ public:
 
     void setDemo()
     {
-        _pPixels->setColorizerIfDifferent(demoColorizer());
-        _pPixels->setLumenizerIfDifferent(demoLumenizer());
+        _pPixels->setColorizer(demoColorizer());
+        _pPixels->setLumenizer(demoLumenizer());
     }
 
     Colorizer* demoColorizer()
@@ -83,12 +83,12 @@ public:
             }
             default:
             {
-                return new SelfTestColorizer(_indicatorColor);
+                return new UniformColor(Color::temperature(2550), Deadline::Infinite);
             }
         }
     }
 
-    LumenizerSequence* demoLumenizer()
+    Lumenizer* demoLumenizer()
     {
         switch (_demo)
         {
@@ -96,13 +96,13 @@ public:
             {
                 LumenizerSequence* pSequence = new LumenizerSequence();
                 pSequence->addLumenizer(new UniformLuminance(1.0f, 5000));
-                pSequence->addLumenizer(new BreathingLuminance(5000, Deadline::Infinite));
+                pSequence->addLumenizer(new BreathingLuminance(0, 5000, Deadline::Infinite));
 
                 return pSequence;
             }
             default:
             {
-                return new SelfTestLumenizer();
+                return new TwinklingLuminance(6000, 6000, Deadline::Infinite);
             }
         }
     }

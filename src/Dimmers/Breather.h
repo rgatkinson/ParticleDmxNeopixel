@@ -14,6 +14,7 @@ protected:
     Deadline    _timer;
     int         _msPause;
     int         _msBreathe;
+    float       _minLevel;
     float       _currentLevel;
 
     //----------------------------------------------------------------------------------------------
@@ -25,13 +26,23 @@ public:
     {
         _msPause = 0;
         _msBreathe = 0;
+        _minLevel = 0.0;
         _currentLevel = 1;
-        setDurationAndReset(msDuration);
+        setDurationAndResetTimer(msDuration);
     }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
+
+    void setMinLevel(float minLevel)
+    {
+        _minLevel = minLevel;
+    }
+    float minLevel()
+    {
+        return _minLevel;
+    }
 
     void setBreatheInterval(int msBreathe)
     {
@@ -56,7 +67,7 @@ public:
         return _currentLevel;
     }
 
-    void setDurationAndReset(int msDuration)
+    void setDurationAndResetTimer(int msDuration)
     {
         _timer = Deadline(msDuration);
     }
@@ -70,9 +81,14 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    void begin()
+    void begin(bool randomize = false)
     {
         _timer.reset();
+        if (randomize)
+        {
+            int ms = random(0, _timer.msDuration());
+            _timer.consume(ms);
+        }
     }
 
     void loop()
@@ -85,14 +101,12 @@ public:
         else
         {
             ms -= _msPause; // [0, _msBreathe)
-            float intervalFraction = float(ms) / float(_msBreathe-1); // [0.0, 1.0]
 
-            // linear up, linear down: the eye perceives it differently
-            float level = (intervalFraction <= 0.5f)
-                ? (intervalFraction * 2.0f)
-                : 1.0f - ( (intervalFraction - 0.5f) * 2.0f );
+            // linear down, linear up: the eye perceives it differently
+            _currentLevel = 1.0f - Color::tri(ms, _msBreathe);
 
-            _currentLevel = level;
+            // don't bottom out
+            _currentLevel = _minLevel + (1 - _minLevel) * _currentLevel;
         }
     }
 

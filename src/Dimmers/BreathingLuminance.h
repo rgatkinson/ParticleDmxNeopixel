@@ -22,9 +22,10 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingLuminance(int msInterval, int msDuration) : Lumenizer(Flavor::Breathing, msDuration)
+    BreathingLuminance(int msPauseInterval, int msBreatheInterval, int msDuration) : Lumenizer(Flavor::Breathing, msDuration)
     {
-        setBreatheInterval(msInterval);
+        setPauseInterval(msPauseInterval);
+        setBreatheInterval(msBreatheInterval);
         setMinBrightness(20);    // empiricly determined
     }
 
@@ -36,6 +37,11 @@ protected:
     bool usesGammaCorrection() override
     {
         return false;
+    }
+
+    void setPauseInterval(int msPauseInterval) // mostly for debugging / development
+    {
+        _breather.setPauseInterval(msPauseInterval);
     }
 
     void setBreatheInterval(int msInterval)
@@ -51,6 +57,12 @@ public:
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
         Lumenizer::processParameterBlock(parameterBlock);
+
+        float breathingRate = fabs(parameterBlock.luminanceSpeedLevel());
+        float ms = breathingRate == 0
+            ? 3000
+            : scaleRange(breathingRate, 0, 1, 750, 5000);
+        setBreatheInterval(int(ms));
     }
 
     //----------------------------------------------------------------------------------------------
