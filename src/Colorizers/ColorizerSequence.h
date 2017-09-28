@@ -107,12 +107,12 @@ public:
         return _colorizers.count();
     }
 
-    bool sameAs(Colorizer* pThemAbstract) override
+    bool sameAs(Colorizer* pThemColorizer) override
     {
-        bool result = Colorizer::sameAs(pThemAbstract);
+        bool result = Colorizer::sameAs(pThemColorizer);
         if (result)
         {
-            ColorizerSequence* pThem = static_cast<ColorizerSequence*>(pThemAbstract);
+            ColorizerSequence* pThem = static_cast<ColorizerSequence*>(pThemColorizer);
             result = this->count() == pThem->count();
             if (result)
             {

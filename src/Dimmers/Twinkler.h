@@ -58,7 +58,7 @@ public:
 
     void loop()
     {
-        // Twinkle; see also BreathingBrightness
+        // Twinkle; see also BreathingLuminance
         _breather.loop();
 
         // Set for the next time

@@ -33,9 +33,9 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    virtual bool sameAs(Durable* pThem)
+    bool sameAs(Durable* pThem)
     {
-        return _duration.msDuration() == pThem->_duration.msDuration();
+        return pThem != nullptr && _duration.msDuration() == pThem->_duration.msDuration();
     }
 
     virtual int msDuration()

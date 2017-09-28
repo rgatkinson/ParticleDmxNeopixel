@@ -8,17 +8,17 @@
 
 struct PACKED DmxParameterBlockData
 {
+    byte    colorTemperature;
     byte    red;
     byte    green;
     byte    blue;
-    byte    dimmerBrightness;
+    byte    dimmer;
     byte    colorEffect;
     byte    colorSpeed;
     byte    colorControl;
     byte    brightnessEffect;
     byte    brightnessSpeed;
     byte    brightnessControl;
-    byte    colorTemperature;
 };
 
 struct DmxParameterBlock
@@ -47,17 +47,17 @@ public:
 
     #define declare(memberName)  inline byte memberName() { return _pData->memberName; }
 
+    declare(colorTemperature)
     declare(red)
     declare(green)
     declare(blue)
-    declare(dimmerBrightness)
+    declare(dimmer)
     declare(colorEffect)
     declare(colorSpeed)
     declare(colorControl)
     declare(brightnessEffect)
     declare(brightnessSpeed)
     declare(brightnessControl)
-    declare(colorTemperature)
 
     #undef declare
 

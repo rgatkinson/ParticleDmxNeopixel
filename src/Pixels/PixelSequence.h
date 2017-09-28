@@ -7,8 +7,8 @@
 #include "neopixel.h"
 #include "Util/Deadline.h"
 #include "Util/Color.h"
-#include "Dimmers/Dimmer.h"
-#include "Dimmers/UniformBrightness.h"
+#include "Dimmers/Lumenizer.h"
+#include "Dimmers/UniformLuminance.h"
 #include "Colorizers/Colorizer.h"
 #include "Colorizers/UniformColor.h"
 #include "Colorizers/RainbowColors.h"
@@ -23,7 +23,7 @@ protected:
     int                 _pixelCount;
     Adafruit_NeoPixel   _neopixels;
     Deadline            _showDeadline;
-    Dimmer*             _pDimmer;
+    Lumenizer*          _pLumenizer;
     Colorizer*          _pColorizer;
     COLOR_INT*          _pixelValues;
 
@@ -37,11 +37,11 @@ public:
           _showDeadline(10)
     {
         _pixelCount = pixelCount;
-        _pDimmer = NULL;
+        _pLumenizer = NULL;
         _pColorizer = NULL;
         _pixelValues = new COLOR_INT[pixelCount];
         setColorizerNoBegin(new UniformColor(Color::BLACK, Deadline::Infinite));
-        setDimmerNoBegin(new UniformBrightness(1.0f, Deadline::Infinite));
+        setLumenizerNoBegin(new UniformLuminance(1.0f, Deadline::Infinite));
     }
 
     DELEGATE_REF_COUNTING
@@ -50,7 +50,7 @@ protected:
 
     virtual ~PixelSequence() override
     {
-        releaseRef(_pDimmer);
+        releaseRef(_pLumenizer);
         releaseRef(_pColorizer);
         delete [] _pixelValues;
     }
@@ -67,18 +67,18 @@ protected:
         if (_pColorizer) _pColorizer->setColorizeable(this);
     }
 
-    void setDimmerNoBegin(Dimmer* pDimmer)
+    void setLumenizerNoBegin(Lumenizer* pLumenizer)
     {
-        releaseRef(_pDimmer);
-        _pDimmer = pDimmer; // takes ownership
-        if (_pDimmer) _pDimmer->setColorizeable(this);
+        releaseRef(_pLumenizer);
+        _pLumenizer = pLumenizer; // takes ownership
+        if (_pLumenizer) _pLumenizer->setColorizeable(this);
     }
 
 public:
 
-    inline Dimmer* dimmer() override
+    inline Lumenizer* lumenizer() override
     {
-        return _pDimmer;
+        return _pLumenizer;
     }
 
     inline Colorizer* colorizer() override
@@ -86,10 +86,10 @@ public:
         return _pColorizer;
     }
 
-    void setDimmer(Dimmer* pDimmer) override
+    void setLumenizer(Lumenizer* pLumenizer) override
     {
-        setDimmerNoBegin(pDimmer);
-        if (_pDimmer) _pDimmer->begin();
+        setLumenizerNoBegin(pLumenizer);
+        if (_pLumenizer) _pLumenizer->begin();
     }
 
     void setColorizer(Colorizer* pColorizer) override
@@ -98,15 +98,15 @@ public:
         if (_pColorizer) _pColorizer->begin();
     }
 
-    void setDimmerIfDifferent(Dimmer* pDimmer)
+    void setLumenizerIfDifferent(Lumenizer* pLumenizer)
     {
-        if (_pDimmer && _pDimmer->sameAs(pDimmer))
+        if (_pLumenizer && _pLumenizer->sameAs(pLumenizer))
         {
-            releaseRef(pDimmer);
+            releaseRef(pLumenizer);
         }
         else
         {
-            setDimmer(pDimmer);
+            setLumenizer(pLumenizer);
         }
     }
 
@@ -123,9 +123,9 @@ public:
     }
 
 
-    void setDimmerBrightness(BRIGHTNESS brightness) override
+    void setDimmerLevel(float dimmerLevel) override
     {
-        if (_pDimmer) _pDimmer->setDimmerBrightness(brightness);
+        if (_pLumenizer) _pLumenizer->setDimmerLevel(dimmerLevel);
     }
 
     void setPixelColor(uint16_t iPixel, COLOR_INT color) override
@@ -149,7 +149,7 @@ public:
         {
             _pixelValues[iPixel] = Color::BLACK;
         }
-        if (_pDimmer) _pDimmer->begin();
+        if (_pLumenizer) _pLumenizer->begin();
         if (_pColorizer) _pColorizer->begin();
         _showDeadline.expire();
     }
@@ -160,16 +160,16 @@ public:
 
         if (_showDeadline.hasExpired())
         {
-            // Only call the dimmer when we actually are going to show _neopixels: efficiency
-            if (_pDimmer) _pDimmer->loop();
-            BRIGHTNESS brightness = _pDimmer ? _pDimmer->currentBrightness() : MAX_BRIGHTNESS;
+            // Only call the brightness when we actually are going to show _neopixels: efficiency
+            if (_pLumenizer) _pLumenizer->loop();
+            BRIGHTNESS brightness = _pLumenizer ? _pLumenizer->currentBrightness() : MAX_BRIGHTNESS;
 
             for (int iPixel = 0; iPixel < _pixelCount; iPixel++)
             {
                 COLOR_INT color = _pixelValues[iPixel];
-                if (_pDimmer && _pDimmer->hasPixelizedBrightness())
+                if (_pLumenizer && _pLumenizer->hasPixelizedBrightness())
                 {
-                    brightness = _pDimmer->currentBrightness(iPixel);
+                    brightness = _pLumenizer->currentBrightness(iPixel);
                 }
                 _neopixels.setColorScaled(iPixel, Color::red(color), Color::green(color), Color::blue(color), brightness);
             }
@@ -182,7 +182,7 @@ public:
     virtual void report()
     {
         if (_pColorizer) _pColorizer->report();
-        if (_pDimmer) _pDimmer->report();
+        if (_pLumenizer) _pLumenizer->report();
     }
 
 

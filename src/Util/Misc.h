@@ -59,7 +59,7 @@ static const float TwoPi  = 2.0 * Pi;
 static const float TwoPiF = 2.0f * PiF;
 
 template<typename T, T _first, T _last>
-inline int clip(T t)
+inline T clip(T t)
 {
     if (t < _first) return _first;
     if (t > _last)  return _last;
@@ -67,7 +67,7 @@ inline int clip(T t)
 }
 
 template<typename T>
-inline int clip(T t, T _first, T _last)
+inline T clip(T t, T _first, T _last)
 {
     if (t < _first) return _first;
     if (t > _last)  return _last;
@@ -75,7 +75,7 @@ inline int clip(T t, T _first, T _last)
 }
 
 template <typename T>
-inline int clipByte(T t)
+inline T clipByte(T t)
 {
     return clip<T, T(0), T(255)>(t);
 }

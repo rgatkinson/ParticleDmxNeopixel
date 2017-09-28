@@ -1,26 +1,26 @@
 //
-// BrightnessSequence.h
+// LumenizerSequence.h
 //
 #ifndef __BRIGHTNESS_SEQUENCE_H__
 #define __BRIGHTNESS_SEQUENCE_H__
 
 #include "Util/ArrayList.h"
-#include "Dimmer.h"
+#include "Lumenizer.h"
 #include "Colorizers/UniformColor.h"
 
 //==================================================================================================
-// ColorizerSequence
+// LumenizerSequence
 //==================================================================================================
 
-struct BrightnessSequence : Dimmer
+struct LumenizerSequence : Lumenizer
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
 
-    ArrayList<Dimmer*> _dimmers;
-    int _currentDimmer;
+    ArrayList<Lumenizer*> _lumenizers;
+    int _currentLumenizer;
     bool _looping;
 
     //----------------------------------------------------------------------------------------------
@@ -28,35 +28,35 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    BrightnessSequence(Flavor flavor = Flavor::Sequence) : Dimmer(flavor, 0 /*ignored*/)
+    LumenizerSequence(Flavor flavor = Flavor::Sequence) : Lumenizer(flavor, 0 /*ignored*/)
     {
-        _currentDimmer = 0;
+        _currentLumenizer = 0;
         _looping = false;
     }
 
-    ~BrightnessSequence() override
+    ~LumenizerSequence() override
     {
-        for (int i = 0; i < _dimmers.count(); i++)
+        for (int i = 0; i < _lumenizers.count(); i++)
         {
-            releaseRef(_dimmers[i]);
+            releaseRef(_lumenizers[i]);
         }
     }
 
-    void addDimmer(Dimmer* pDimmer /*takes ownwership*/)
+    void addLumenizer(Lumenizer* pLumenizer /*takes ownwership*/)
     {
-        pDimmer->setColorizeable(_pColorizeable);
-        pDimmer->setMaxBrightness(_maxBrightness);
-        pDimmer->setMinBrightness(_minBrightness);
-        pDimmer->setDimmerBrightness(_dimmerBrightness);
-        _dimmers.addLast(pDimmer);
+        pLumenizer->setColorizeable(_pColorizeable);
+        pLumenizer->setMaxBrightness(_maxBrightness);
+        pLumenizer->setMinBrightness(_minBrightness);
+        pLumenizer->setDimmerLevel(_dimmerLevel);
+        _lumenizers.addLast(pLumenizer);
     }
 
     void setColorizeable(Colorizeable* pColorizeable) override
     {
-        Dimmer::setColorizeable(pColorizeable);
+        Lumenizer::setColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
         {
-            _dimmers[i]->setColorizeable(pColorizeable);
+            _lumenizers[i]->setColorizeable(pColorizeable);
         }
     }
 
@@ -66,7 +66,7 @@ public:
 
     void setDuration(int msDuration) override
     {
-        Log.error("invalid call: BrightnessSequence::setDuration()");
+        Log.error("invalid call: LumenizerSequence::setDuration()");
     }
     int msDuration() override
     {
@@ -85,7 +85,7 @@ public:
         int ms = 0;
         for (int i = 0; i < count(); i++)
         {
-            ms += _dimmers[i]->msDuration();
+            ms += _lumenizers[i]->msDuration();
         }
         ms = min(ms, Deadline::Infinite);
         return ms;
@@ -102,27 +102,27 @@ public:
 
     bool isEmpty()
     {
-        return _dimmers.isEmpty();
+        return _lumenizers.isEmpty();
     }
 
     int count()
     {
-        return _dimmers.count();
+        return _lumenizers.count();
     }
 
-    bool sameAs(Dimmer* pThemAbstract) override
+    bool sameAs(Lumenizer* pThemBrightness) override
     {
-        bool result = Dimmer::sameAs(pThemAbstract);
+        bool result = Lumenizer::sameAs(pThemBrightness);
         if (result)
         {
-            BrightnessSequence* pThem = static_cast<BrightnessSequence*>(pThemAbstract);
+            LumenizerSequence* pThem = static_cast<LumenizerSequence*>(pThemBrightness);
             result = this->count() == pThem->count();
             if (result)
             {
                 for (int i = 0; i < count(); i++)
                 {
-                    Dimmer* pOurs = this->_dimmers[i];
-                    Dimmer* pTheirs = pThem->_dimmers[i];
+                    Lumenizer* pOurs = this->_lumenizers[i];
+                    Lumenizer* pTheirs = pThem->_lumenizers[i];
                     result = pOurs->sameAs(pTheirs);
                     if (!result)
                     {
@@ -141,76 +141,76 @@ public:
 
     BRIGHTNESS currentBrightness() override
     {
-        if (_currentDimmer < count())
+        if (_currentLumenizer < count())
         {
-            return _dimmers[_currentDimmer]->currentBrightness();
+            return _lumenizers[_currentLumenizer]->currentBrightness();
         }
         else
         {
-            return Dimmer::currentBrightness();
+            return Lumenizer::currentBrightness();
         }
     }
 
     BRIGHTNESS currentBrightness(int iPixel) override
     {
-        if (_currentDimmer < count())
+        if (_currentLumenizer < count())
         {
-            return _dimmers[_currentDimmer]->currentBrightness(iPixel);
+            return _lumenizers[_currentLumenizer]->currentBrightness(iPixel);
         }
         else
         {
-            return Dimmer::currentBrightness(iPixel);
+            return Lumenizer::currentBrightness(iPixel);
         }
     }
 
     bool hasPixelizedBrightness() override
     {
-        if (_currentDimmer < count())
+        if (_currentLumenizer < count())
         {
-            return _dimmers[_currentDimmer]->hasPixelizedBrightness();
+            return _lumenizers[_currentLumenizer]->hasPixelizedBrightness();
         }
         else
         {
-            return Dimmer::hasPixelizedBrightness();
+            return Lumenizer::hasPixelizedBrightness();
         }
     }
 
     bool usesGammaCorrection() override
     {
-        if (_currentDimmer < count())
+        if (_currentLumenizer < count())
         {
-            return _dimmers[_currentDimmer]->usesGammaCorrection();
+            return _lumenizers[_currentLumenizer]->usesGammaCorrection();
         }
         else
         {
-            return Dimmer::usesGammaCorrection();
+            return Lumenizer::usesGammaCorrection();
         }
     }
 
     void setMaxBrightness(BRIGHTNESS brightness) override
     {
-        Dimmer::setMaxBrightness(brightness);
+        Lumenizer::setMaxBrightness(brightness);
         for (int i = 0; i < count(); i++)
         {
-            _dimmers[i]->setMaxBrightness(brightness);
+            _lumenizers[i]->setMaxBrightness(brightness);
         }
     }
     void setMinBrightness(BRIGHTNESS brightness) override
     {
-        Dimmer::setMinBrightness(brightness);
+        Lumenizer::setMinBrightness(brightness);
         for (int i = 0; i < count(); i++)
         {
-            _dimmers[i]->setMinBrightness(brightness);
+            _lumenizers[i]->setMinBrightness(brightness);
         }
     }
 
     // Controlled by external faders etc
-    void setDimmerBrightness(BRIGHTNESS dimmerBrightness) override
+    void setDimmerLevel(float dimmerLevel) override
     {
-        Dimmer::setDimmerBrightness(dimmerBrightness);
+        Lumenizer::setDimmerLevel(dimmerLevel);
         for (int i = 0; i < count(); i++)
         {
-            _dimmers[i]->setDimmerBrightness(dimmerBrightness);
+            _lumenizers[i]->setDimmerLevel(dimmerLevel);
         }
     }
 
@@ -221,7 +221,7 @@ public:
 
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
-        Dimmer::processParameterBlock(parameterBlock);
+        Lumenizer::processParameterBlock(parameterBlock);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -231,12 +231,12 @@ public:
 
     void begin() override
     {
-        Dimmer::begin();
-        _currentDimmer = 0;
-        if (_currentDimmer < count())
+        Lumenizer::begin();
+        _currentLumenizer = 0;
+        if (_currentLumenizer < count())
         {
-            INFO("BrightnessSequence: beginning: %d", _currentDimmer);
-            _dimmers[_currentDimmer]->begin();
+            INFO("LumenizerSequence: beginning: %d", _currentLumenizer);
+            _lumenizers[_currentLumenizer]->begin();
         }
     }
 
@@ -248,30 +248,30 @@ public:
         }
         else
         {
-            return _currentDimmer >= count();
+            return _currentLumenizer >= count();
         }
     }
 
     void loop() override
     {
-        Dimmer::loop();
-        if (_currentDimmer < count())
+        Lumenizer::loop();
+        if (_currentLumenizer < count())
         {
             // Run the current guy
-            _dimmers[_currentDimmer]->loop();
+            _lumenizers[_currentLumenizer]->loop();
 
             // If we're done running him, move on to the next
-            if (_dimmers[_currentDimmer]->hasExpired())
+            if (_lumenizers[_currentLumenizer]->hasExpired())
             {
-                _currentDimmer++;
-                if (_currentDimmer == count() && _looping)
+                _currentLumenizer++;
+                if (_currentLumenizer == count() && _looping)
                 {
-                    _currentDimmer = 0;
+                    _currentLumenizer = 0;
                 }
-                if (_currentDimmer < count())
+                if (_currentLumenizer < count())
                 {
-                    INFO("BrightnessSequence: beginning: %d", _currentDimmer);
-                    _dimmers[_currentDimmer]->begin();
+                    INFO("LumenizerSequence: beginning: %d", _currentLumenizer);
+                    _lumenizers[_currentLumenizer]->begin();
                 }
             }
         }
@@ -279,11 +279,11 @@ public:
 
     void report() override
     {
-        Dimmer::report();
-        INFO("Dimmer: #dimmers=%d cur=%d", count(), _currentDimmer);
+        Lumenizer::report();
+        INFO("LumenizerSequence: count=%d cur=%d", count(), _currentLumenizer);
         for (int i = 0; i < count(); i++)
         {
-            _dimmers[i]->report();
+            _lumenizers[i]->report();
         }
     }
 

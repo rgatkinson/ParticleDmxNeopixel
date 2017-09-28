@@ -6,7 +6,7 @@
 
 #include "Util/ReferenceCounted.h"
 struct Colorizer;
-struct Dimmer;
+struct Lumenizer;
 typedef byte BRIGHTNESS;
 
 //==================================================================================================
@@ -18,12 +18,12 @@ struct Colorizeable : RefCountable
     virtual void setPixelColor(uint16_t iPixel, COLOR_INT color) = 0;
     virtual int  numberOfPixels() = 0;
     virtual void setColorizer(Colorizer*) = 0;
-    virtual void setDimmer(Dimmer*) = 0;
+    virtual void setLumenizer(Lumenizer*) = 0;
 
     virtual Colorizer* colorizer() = 0;
-    virtual Dimmer*    dimmer() = 0;
+    virtual Lumenizer* lumenizer() = 0;
 
-    virtual void setDimmerBrightness(BRIGHTNESS brightness) = 0;
+    virtual void setDimmerLevel(float dimmerLevel) = 0;
 };
 
 #endif

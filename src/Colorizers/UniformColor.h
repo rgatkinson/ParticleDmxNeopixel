@@ -44,16 +44,6 @@ public:
         }
     }
 
-    bool sameAs(Colorizer* pThem) override
-    {
-        bool result = Colorizer::sameAs(pThem);
-        if (result)
-        {
-            result = _color == static_cast<UniformColor*>(pThem)->_color;
-        }
-        return result;
-    }
-
     //----------------------------------------------------------------------------------------------
     // Dmx
     //----------------------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //
-// DmxBrightnessEffectSelector.h
+// DmxLuminanceEffectSelector.h
 //
 #ifndef __DMX_BRIGHTNESS_EFFECT_SELECTOR_H__
 #define __DMX_BRIGHTNESS_EFFECT_SELECTOR_H__
@@ -8,7 +8,7 @@
 #include "DmxEffectSelector.h"
 #include "DmxColorEffectSelector.h"
 
-struct DmxBrightnessEffectSelector : DmxEffectSelector
+struct DmxLuminanceEffectSelector : DmxEffectSelector
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -35,14 +35,14 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    DmxBrightnessEffectSelector(Colorizeable* pColorizeable) : DmxEffectSelector(pColorizeable)
+    DmxLuminanceEffectSelector(Colorizeable* pColorizeable) : DmxEffectSelector(pColorizeable)
     {
         _currentEffect = Effect::None;
     }
 
 protected:
 
-    ~DmxBrightnessEffectSelector() override
+    ~DmxLuminanceEffectSelector() override
     {
     }
 
@@ -72,30 +72,36 @@ public:
         {
             _currentEffect = effectDesired;
             //
-            Dimmer* pDimmer = nullptr;
+            Lumenizer* pLumenizer = nullptr;
             switch (effectDesired)
             {
                 case Effect::Uniform:
-                    pDimmer = new UniformBrightness(1.0f, Deadline::Infinite);
+                    pLumenizer = new UniformLuminance(1.0f, Deadline::Infinite);
                     break;
 
                 case Effect::Breathing:
-                    pDimmer = new BreathingBrightness(4000, Deadline::Infinite);
+                    pLumenizer = new BreathingLuminance(4000, Deadline::Infinite);
                     break;
 
                 case Effect::Twinkle:
-                    pDimmer = new TwinkleBrightness(4000, 1000, Deadline::Infinite);
+                    pLumenizer = new TwinkleLumenizer(4000, 1000, Deadline::Infinite);
                     break;
 
                 case Effect::SelfTest:
-                    pDimmer = new SelfTestBrightness();
+                    pLumenizer = new SelfTestLumenizer();
                     break;
             }
-            if (pDimmer)
+            if (pLumenizer)
             {
-                // TODO: check sameAs
-                INFO("switching to brightness effect %d", effectDesired);
-                _pColorizeable->setDimmer(pDimmer);
+                if (!pLumenizer->sameAs(_pColorizeable->lumenizer()))
+                {
+                    INFO("switching to brightness effect %d", effectDesired);
+                    _pColorizeable->setLumenizer(pLumenizer);
+                }
+                else
+                {
+                    releaseRef(pLumenizer);
+                }
             }
         }
     }

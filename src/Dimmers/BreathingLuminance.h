@@ -1,14 +1,14 @@
 //
-// BreathingBrightness.h
+// BreathingLumenizer.h
 //
-#ifndef __BREATHING_BRIGHTNESS_H__
-#define __BREATHING_BRIGHTNESS_H__
+#ifndef __BREATHING_LUMENIZER_H__
+#define __BREATHING_LUMENIZER_H__
 
-#include "Dimmer.h"
+#include "Lumenizer.h"
 #include "Breather.h"
 #include <math.h>
 
-struct BreathingBrightness : Dimmer
+struct BreathingLuminance : Lumenizer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -22,7 +22,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingBrightness(int msInterval, int msDuration) : Dimmer(Flavor::Breathing, msDuration)
+    BreathingLuminance(int msInterval, int msDuration) : Lumenizer(Flavor::Breathing, msDuration)
     {
         setBreatheInterval(msInterval);
         setMinBrightness(20);    // empiricly determined
@@ -50,7 +50,7 @@ public:
 
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
-        Dimmer::processParameterBlock(parameterBlock);
+        Lumenizer::processParameterBlock(parameterBlock);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -60,21 +60,21 @@ public:
 
     void begin() override
     {
-        Dimmer::begin();
+        Lumenizer::begin();
         _breather.begin();
     }
 
     void loop() override
     {
-        Dimmer::loop();
+        Lumenizer::loop();
         _breather.loop();
         setCurrentLevel(_breather.currentLevel());
     }
 
     void report() override
     {
-        Dimmer::report();
-        INFO("BreathingBrightness: breathe interval=%d", _breather.breathInterval());
+        Lumenizer::report();
+        INFO("BreathingLuminance: breathe interval=%d", _breather.breathInterval());
     }
 
 };

@@ -1,10 +1,10 @@
 //
-// SelfTestBrightness.h
+// SelfTestLumenizer.h
 //
-#ifndef __SELF_TEST_BRIGHTNESS_H__
-#define __SELF_TEST_BRIGHTNESS_H__
+#ifndef __SELF_TEST_LUMENIZER_H__
+#define __SELF_TEST_LUMENIZER_H__
 
-struct SelfTestBrightness : BrightnessSequence
+struct SelfTestLumenizer : LumenizerSequence
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -13,17 +13,17 @@ protected:
 
     float _initialBrightnessLevel = 1.0f;
     float _idleBrightnessLevel = 0.3f;
-    UniformBrightness* _pUniformInitial;
+    UniformLuminance* _pUniformInitial;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    SelfTestBrightness() : BrightnessSequence(Flavor::SelfTest)
+    SelfTestLumenizer() : LumenizerSequence(Flavor::SelfTest)
     {
-        addDimmer(_pUniformInitial = new UniformBrightness(_initialBrightnessLevel, Deadline::Infinite /* adjusted later */));
-        addDimmer(new UniformBrightness(_idleBrightnessLevel, Deadline::Infinite));
+        addLumenizer(_pUniformInitial = new UniformLuminance(_initialBrightnessLevel, Deadline::Infinite /* adjusted later */));
+        addLumenizer(new UniformLuminance(_idleBrightnessLevel, Deadline::Infinite));
     }
 
     //----------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ public:
 
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
-        Dimmer::processParameterBlock(parameterBlock);
+        Lumenizer::processParameterBlock(parameterBlock);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ public:
             int ms = _pColorizeable->colorizer()->msLoopingDuration();
             _pUniformInitial->setDuration(ms);
         }
-        BrightnessSequence::begin();
+        LumenizerSequence::begin();
     }
 
 };

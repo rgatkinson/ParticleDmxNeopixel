@@ -53,6 +53,7 @@ public:
 
     virtual bool sameAs(Colorizer* pThem)
     {
+        // Do NOT include parameters that will be adjusted by DMX control
         return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
 

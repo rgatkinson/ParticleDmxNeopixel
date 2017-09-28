@@ -33,16 +33,7 @@ public:
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
-
-    bool sameAs(Colorizer* pThem) override
-    {
-        bool result = Colorizer::sameAs(pThem);
-        if (result)
-        {
-            result = this->_colorUpdateDeadline.msDuration() == static_cast<RainbowColors*>(pThem)->_colorUpdateDeadline.msDuration();
-        }
-        return result;
-    }
+public:
 
     //----------------------------------------------------------------------------------------------
     // Dmx

@@ -1,17 +1,17 @@
 //
-// TwinkleBrightness.h
+// TwinkleLumenizer.h
 //
-#ifndef __TWINKLE_BRIGHTNESS_H__
-#define __TWINKLE_BRIGHTNESS_H__
+#ifndef __TWINKLE_LUMENIZER_H__
+#define __TWINKLE_LUMENIZER_H__
 
 #include "Util/Deadline.h"
 #include "Twinkler.h"
 
 //==================================================================================================
-// TwinkleBrightness
+// TwinkleLumenizer
 //==================================================================================================
 
-struct TwinkleBrightness: Dimmer
+struct TwinkleLumenizer: Lumenizer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -25,7 +25,7 @@ struct TwinkleBrightness: Dimmer
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    TwinkleBrightness(float msPause, int msInterval, int msDuration) : Dimmer(Flavor::Twinkle, msDuration)
+    TwinkleLumenizer(float msPause, int msInterval, int msDuration) : Lumenizer(Flavor::Twinkle, msDuration)
     {
         _msPause = msPause;
         _msInterval = msInterval;
@@ -33,17 +33,12 @@ struct TwinkleBrightness: Dimmer
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
     {
-        Dimmer::setColorizeable(pColorizeable);
+        Lumenizer::setColorizeable(pColorizeable);
         _twinklers = ArrayList<Twinkler>();
         for (int i = 0; i < _pixelCount; i++)
         {
             _twinklers.addLast(Twinkler(_msPause, _msInterval));
         }
-    }
-
-    bool sameAs(Dimmer* pThem) override
-    {
-        return Dimmer::sameAs(pThem) && _msInterval == static_cast<TwinkleBrightness*>(pThem)->_msInterval;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -76,7 +71,7 @@ public:
 
     void begin() override
     {
-        Dimmer::begin();
+        Lumenizer::begin();
         for (int i = 0; i < _twinklers.count(); i++)
         {
             _twinklers[i].begin();
@@ -85,7 +80,7 @@ public:
 
     void loop() override
     {
-        Dimmer::loop();
+        Lumenizer::loop();
         for (int i = 0; i < _twinklers.count(); i++)
         {
             _twinklers[i].loop();
@@ -94,7 +89,7 @@ public:
 
     void report() override
     {
-        Dimmer::report();
+        Lumenizer::report();
     }
 
 };

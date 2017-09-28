@@ -1,12 +1,12 @@
 //
-// UniformBrightness.h
+// UniformLuminance.h
 //
-#ifndef _CONSTANT_BRIGHTNESS_H_
-#define _CONSTANT_BRIGHTNESS_H_
+#ifndef _CONSTANT_LUMENIZER_H_
+#define _CONSTANT_LUMENIZER_H_
 
-#include "Dimmer.h"
+#include "Lumenizer.h"
 
-struct UniformBrightness : Dimmer
+struct UniformLuminance : Lumenizer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -18,7 +18,7 @@ struct UniformBrightness : Dimmer
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    UniformBrightness(float level, int msDuration) : Dimmer(Flavor::Uniform, msDuration)
+    UniformLuminance(float level, int msDuration) : Lumenizer(Flavor::Uniform, msDuration)
     {
         _level = level;
     }
@@ -35,18 +35,18 @@ public:
 
     void begin() override
     {
-        Dimmer::begin();
+        Lumenizer::begin();
         setCurrentLevel(_level);
     }
 
     void loop() override
     {
-        Dimmer::loop();
+        Lumenizer::loop();
     }
 
     void report() override
     {
-        Dimmer::report();
+        Lumenizer::report();
     }
 
 };

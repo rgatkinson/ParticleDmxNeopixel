@@ -9,14 +9,14 @@
 #include "Artnet/Artnet.h"
 #include "Pixels/PixelRing.h"
 #include "Util/Color.h"
-#include "Dimmers/BreathingBrightness.h"
-#include "Dimmers/BrightnessSequence.h"
-#include "Dimmers/TwinkleBrightness.h"
-#include "Dimmers/SelfTestBrightness.h"
+#include "Dimmers/BreathingLuminance.h"
+#include "Dimmers/LumenizerSequence.h"
+#include "Dimmers/TwinkleLumenizer.h"
+#include "Dimmers/SelfTestLumenizer.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "Colorizers/SelfTestColorizer.h"
 #include "Artnet/DmxParameterBlock.h"
-#include "Artnet/DmxBrightnessEffectSelector.h"
+#include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 
 struct Amulet : DmxPacketConsumer
@@ -34,11 +34,11 @@ protected:
 
     DMX_ADDRESS                     _dmxAddress;
     ArtnetDevice                    _artnet;
-    DmxBrightnessEffectSelector*    _pBrightnessEffectSelector;
+    DmxLuminanceEffectSelector*     _pLuminanceEffectSelector;
     DmxColorEffectSelector*         _pColorEffectSelector;
     PixelRing*                      _pPixels;
     COLOR_INT                       _indicatorColor;
-    Demo                            _demo                   = DemoShow;
+    Demo                            _demo = DemoShow;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -49,7 +49,7 @@ public:
         : _artnet(this)
     {
         _pPixels = new PixelRing();
-        _pBrightnessEffectSelector = new DmxBrightnessEffectSelector(_pPixels);
+        _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
         _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
         _dmxAddress = dmxAddress;
         _indicatorColor = indicatorColor;
@@ -60,7 +60,7 @@ public:
 
     ~Amulet()
     {
-        releaseRef(_pBrightnessEffectSelector);
+        releaseRef(_pLuminanceEffectSelector);
         releaseRef(_pColorEffectSelector);
         releaseRef(_pPixels);
     }
@@ -68,7 +68,7 @@ public:
     void setDemo()
     {
         _pPixels->setColorizerIfDifferent(demoColorizer());
-        _pPixels->setDimmerIfDifferent(demoDimmer());
+        _pPixels->setLumenizerIfDifferent(demoLumenizer());
     }
 
     Colorizer* demoColorizer()
@@ -88,21 +88,21 @@ public:
         }
     }
 
-    BrightnessSequence* demoDimmer()
+    LumenizerSequence* demoLumenizer()
     {
         switch (_demo)
         {
             case DemoWhite:
             {
-                BrightnessSequence* pSequence = new BrightnessSequence();
-                pSequence->addDimmer(new UniformBrightness(1.0f, 5000));
-                pSequence->addDimmer(new BreathingBrightness(5000, Deadline::Infinite));
+                LumenizerSequence* pSequence = new LumenizerSequence();
+                pSequence->addLumenizer(new UniformLuminance(1.0f, 5000));
+                pSequence->addLumenizer(new BreathingLuminance(5000, Deadline::Infinite));
 
                 return pSequence;
             }
             default:
             {
-                return new SelfTestBrightness();
+                return new SelfTestLumenizer();
             }
         }
     }
@@ -146,7 +146,7 @@ public:
         DmxParameterBlock parameterBlock = DmxParameterBlock(packet.pDmx(_dmxAddress));
 
         _pColorEffectSelector->processParameterBlock(parameterBlock);
-        _pBrightnessEffectSelector->processParameterBlock(parameterBlock);
+        _pLuminanceEffectSelector->processParameterBlock(parameterBlock);
 
         Colorizer* pColorizer = _pPixels->colorizer();
         if (pColorizer)
@@ -154,10 +154,10 @@ public:
             pColorizer->processParameterBlock(parameterBlock);
         }
 
-        Dimmer* pDimmer = _pPixels->dimmer();
-        if (pDimmer)
+        Lumenizer* pLumenizer = _pPixels->lumenizer();
+        if (pLumenizer)
         {
-            pDimmer->processParameterBlock(parameterBlock);
+            pLumenizer->processParameterBlock(parameterBlock);
         }
     }
 };

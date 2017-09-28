@@ -1,8 +1,8 @@
 //
-// Brightness.h
+// Lumenizer.h
 //
-#ifndef __BRIGHTNESS_H_
-#define __BRIGHTNESS_H_
+#ifndef __LUMENIZER_H_
+#define __LUMENIZER_H_
 
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
@@ -11,7 +11,7 @@
 
 const BRIGHTNESS MAX_BRIGHTNESS = 255;
 
-struct Dimmer : Durable, protected ColorizeableHolder
+struct Lumenizer : Durable, protected ColorizeableHolder
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -33,7 +33,6 @@ protected:
     Flavor _flavor;
     BRIGHTNESS _minBrightness;      // min we ever report
     BRIGHTNESS _maxBrightness;      // max we ever report
-    BRIGHTNESS _dimmerBrightness;   // controlled externally
     float _currentLevel;            // controlled by us
     float _dimmerLevel;             // controlled externally
 
@@ -42,7 +41,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Dimmer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder(false)
+    Lumenizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder(false)
     {
         _flavor = flavor;
 
@@ -52,7 +51,7 @@ public:
         _maxBrightness = 255;
         _minBrightness = 0;
         setCurrentLevel(1.0f);
-        setDimmerBrightness(MAX_BRIGHTNESS);
+        setDimmerLevel(1.0f);
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
@@ -66,8 +65,9 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual bool sameAs(Dimmer* pThem)
+    virtual bool sameAs(Lumenizer* pThem)
     {
+        // Do NOT include parameters that will be adjusted by DMX control
         return Durable::sameAs(pThem) && _flavor == pThem->_flavor;
     }
 
@@ -86,15 +86,9 @@ public:
     }
 
     // Controlled by external faders etc
-    virtual void setDimmerBrightness(BRIGHTNESS dimmerBrightness)
+    virtual void setDimmerLevel(float dimmerLevel)
     {
-        _dimmerBrightness = dimmerBrightness;
-
-        float dimmerLevel = (float)dimmerBrightness / (float)MAX_BRIGHTNESS;
-        dimmerLevel = max(0, dimmerLevel);
-        dimmerLevel = min(1.0f, dimmerLevel);
-        _dimmerLevel = dimmerLevel;
-        // Log.info("_dimmerLevel=%f brightness=%d", _dimmerLevel, currentBrightness());
+        _dimmerLevel = clip(dimmerLevel, 0.0f, 1.0f);
     }
 
     virtual BRIGHTNESS currentBrightness()
@@ -146,7 +140,8 @@ public:
 
     virtual void processParameterBlock(DmxParameterBlock& parameterBlock)
     {
-        _pColorizeable->setDimmerBrightness(parameterBlock.dimmerBrightness());
+        float dimmerLevel = scaleRange(parameterBlock.dimmer(), 0, 255, 0, 1);
+        _pColorizeable->setDimmerLevel(dimmerLevel);
     }
 
     //----------------------------------------------------------------------------------------------

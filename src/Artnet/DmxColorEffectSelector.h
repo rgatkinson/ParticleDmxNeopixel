@@ -83,9 +83,15 @@ public:
             }
             if (pColorizer)
             {
-                // TODO: check sameAs
-                INFO("switching to color effect %d", effectDesired);
-                _pColorizeable->setColorizer(pColorizer);
+                if (!pColorizer->sameAs(_pColorizeable->colorizer()))
+                {
+                    INFO("switching to color effect %d", effectDesired);
+                    _pColorizeable->setColorizer(pColorizer);
+                }
+                else
+                {
+                    releaseRef(pColorizer);
+                }
             }
         }
     }
