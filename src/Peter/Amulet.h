@@ -96,7 +96,7 @@ public:
             {
                 LumenizerSequence* pSequence = new LumenizerSequence();
                 pSequence->addLumenizer(new UniformLuminance(1.0f, 5000));
-                pSequence->addLumenizer(new BreathingLuminance(0, 5000, Deadline::Infinite));
+                pSequence->addLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault, Deadline::Infinite));
 
                 return pSequence;
             }

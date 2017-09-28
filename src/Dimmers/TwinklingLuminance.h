@@ -28,7 +28,8 @@ protected:
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
-
+public:
+    
     TwinklingLuminance(float msPause, int msBreathe, int msDuration) : Lumenizer(Flavor::Twinkle, msDuration)
     {
         _msPause = -1;

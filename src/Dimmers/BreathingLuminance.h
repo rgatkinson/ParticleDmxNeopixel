@@ -13,8 +13,15 @@ struct BreathingLuminance : Lumenizer
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
+public:
+    static const int msPauseDefault = 0;
+    static const int msBreatheMin = 750;
+    static const int msBreatheDefault = 5000;
+
 protected:
 
+    int _msPause;
+    int _msBreathe;
     Breather<> _breather;
 
     //----------------------------------------------------------------------------------------------
@@ -24,6 +31,9 @@ public:
 
     BreathingLuminance(int msPauseInterval, int msBreatheInterval, int msDuration) : Lumenizer(Flavor::Breathing, msDuration)
     {
+        _msPause = -1;
+        _msBreathe = -1;
+
         setPauseInterval(msPauseInterval);
         setBreatheInterval(msBreatheInterval);
         setMinBrightness(20);    // empiricly determined
@@ -41,12 +51,20 @@ protected:
 
     void setPauseInterval(int msPauseInterval) // mostly for debugging / development
     {
-        _breather.setPauseInterval(msPauseInterval);
+        if (_msPause != msPauseInterval)
+        {
+            _msPause = msPauseInterval;
+            _breather.setPauseInterval(msPauseInterval);
+        }
     }
 
-    void setBreatheInterval(int msInterval)
+    void setBreatheInterval(int msBreatheInterval)
     {
-        _breather.setBreatheInterval(msInterval);
+        if (_msBreathe != msBreatheInterval)
+        {
+            _msBreathe = msBreatheInterval;
+            _breather.setBreatheInterval(msBreatheInterval);
+        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -60,8 +78,8 @@ public:
 
         float breathingRate = fabs(parameterBlock.luminanceSpeedLevel());
         float ms = breathingRate == 0
-            ? 3000
-            : scaleRange(breathingRate, 0, 1, 750, 5000);
+            ? msBreatheDefault
+            : scaleRange(breathingRate, 0, 1, msBreatheMin, 2 * msBreatheDefault);
         setBreatheInterval(int(ms));
     }
 

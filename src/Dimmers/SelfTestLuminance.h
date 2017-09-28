@@ -34,6 +34,7 @@ public:
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
         Lumenizer::processParameterBlock(parameterBlock);
+        // Nothing special to do
     }
 
     //----------------------------------------------------------------------------------------------
