@@ -119,47 +119,65 @@ inline float scaleRange(float from, float fromFirst, float fromLast, float toFir
 //-----------------------------------------------------------------------
 // Triangle height as a function of fraction across the base
 
-inline float triUp(float f)
+inline float triWaveUp(float f)
 {
     return f + f;
 }
-inline float triDown(float f)
+inline float triWaveDown(float f)
 {
     float result = (1 - f);
     return result + result;
 }
-inline float tri(float f)
+inline float triWave(float f)
 {
     return f <= 0.5f
-        ? triUp(f)
-        : triDown(f);
+        ? triWaveUp(f)
+        : triWaveDown(f);
 }
 
-inline  float triUp(float f, float triangleBase)
+inline  float triWaveUp(float f, float triangleBase)
 {
-    return triUp(f / triangleBase);
+    return triWaveUp(f / triangleBase);
 }
-inline float triDown(float f, float triangleBase)
+inline float triWaveDown(float f, float triangleBase)
 {
-    return triDown(f / triangleBase);
+    return triWaveDown(f / triangleBase);
 }
-inline float tri(float f, float triangleBase)
+inline float triWave(float f, float triangleBase)
 {
-    return tri(f / triangleBase);
+    return triWave(f / triangleBase);
 }
 
 //-----------------------------------------------------------------------
 // Similar, but for a sinusoidial shape instead of linear triangle sides
 
-inline float sinUp(float f)
+inline float sinWaveUp(float f)
 {
     float result = sinf(f * PiF);
     return result * result;
 }
-inline float sinDown(float f)
+inline float sinWaveDown(float f)
 {
-    return sinUp(f);
+    return sinWaveUp(f);
 }
+inline float sinWave(float f)
+{
+    return sinWaveUp(f);    // up and down are same
+}
+
+inline  float sinWaveUp(float f, float triangleBase)
+{
+    return sinWaveUp(f / triangleBase);
+}
+inline float sinWaveDown(float f, float triangleBase)
+{
+    return sinWaveDown(f / triangleBase);
+}
+inline float sinWave(float f, float triangleBase)
+{
+    return sinWave(f / triangleBase);
+}
+
 
 
 //--------------------------------------------------------------------------------------------------

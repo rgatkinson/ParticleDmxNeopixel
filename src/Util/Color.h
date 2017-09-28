@@ -73,12 +73,12 @@ struct Color
 
     static inline COLOR_INT wheelTri(float f)
     {
-        return wheel<triUp, triDown>(f);
+        return wheel<triWaveUp, triWaveDown>(f);
     }
 
     static inline COLOR_INT wheelSin(float f)
     {
-        return wheel<sinUp, sinDown>(f);
+        return wheel<sinWaveUp, sinWaveDown>(f);
     }
 
     //----------------------------------------------------------------------------------------------
