@@ -15,7 +15,7 @@ struct Twinkler
     //----------------------------------------------------------------------------------------------
 private:
 
-    Breather _breather;
+    Breather<sinWave> _breather;
     int _msPause;
     int _msBreathe;
 
@@ -43,6 +43,16 @@ public:
     float currentLevel()
     {
         return _breather.currentLevel();
+    }
+
+    void setPauseInterval(int msPause)
+    {
+        _breather.setPauseInterval(msPause);
+    }
+
+    void setBreatheInterval(int msBreathe)
+    {
+        _breather.setBreatheInterval(msBreathe);
     }
 
     //----------------------------------------------------------------------------------------------

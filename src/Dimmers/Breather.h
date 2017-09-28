@@ -4,6 +4,9 @@
 #ifndef __BREATHER_H__
 #define __BREATHER_H__
 
+typedef float (*PFN_WAVE)(float, float);
+
+template <PFN_WAVE pfnWave=triWave>
 struct Breather
 {
     //----------------------------------------------------------------------------------------------
@@ -103,7 +106,7 @@ public:
             ms -= _msPause; // [0, _msBreathe)
 
             // linear down, linear up: the eye perceives it differently
-            _currentLevel = 1.0f - triWave(ms, _msBreathe);
+            _currentLevel = 1.0f - pfnWave(ms, _msBreathe);
 
             // don't bottom out
             _currentLevel = _minLevel + (1 - _minLevel) * _currentLevel;

@@ -102,7 +102,10 @@ public:
             }
             default:
             {
-                return new TwinklingLuminance(6000, 6000, Deadline::Infinite);
+                return new TwinklingLuminance(
+                    TwinklingLuminance::msTwinklePauseDefault,
+                    TwinklingLuminance::msTwinkleIntervalDefault,
+                    Deadline::Infinite);
             }
         }
     }

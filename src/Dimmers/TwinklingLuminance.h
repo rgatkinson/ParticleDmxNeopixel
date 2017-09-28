@@ -52,7 +52,7 @@ struct TwinklingLuminance: Lumenizer
 
     bool usesGammaCorrection() override
     {
-        return true;
+        return false;
     }
 
     BRIGHTNESS currentBrightness(int iPixel) override
@@ -65,11 +65,24 @@ struct TwinklingLuminance: Lumenizer
     //----------------------------------------------------------------------------------------------
 public:
 
+    static const int msTwinklePauseDefault = 60000;
+    static const int msTwinkleIntervalDefault = 6000;
+
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
         Lumenizer::processParameterBlock(parameterBlock);
 
-        float twinkleRate = fabs(parameterBlock.luminanceSpeedLevel());
+        int msTwinklePause = msTwinklePauseDefault;
+        if (parameterBlock.luminanceSpeed()!=0)
+        {
+            float speed = parameterBlock.luminanceSpeedLevel(false);
+            msTwinklePause = scaleRange(speed, 0, 1, 0, 2 * msTwinklePauseDefault);
+        }
+        for (int i = 0; i < _twinklers.count(); i++)
+        {
+            _twinklers[i].setPauseInterval(msTwinklePause);
+            _twinklers[i].begin();  // make interval take effect right away
+        }
     }
 
     //----------------------------------------------------------------------------------------------

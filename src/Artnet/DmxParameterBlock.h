@@ -61,19 +61,19 @@ public:
 
     #undef declare
 
-    float colorSpeedLevel()
+    float colorSpeedLevel(bool directional = true)
     {
-        return speedLevel(colorSpeed());
+        return speedLevel(directional, colorSpeed());
     }
 
-    float luminanceSpeedLevel()
+    float luminanceSpeedLevel(bool directional = true)
     {
-        return speedLevel(luminanceSpeed());
+        return speedLevel(directional, luminanceSpeed());
     }
 
 private:
 
-    static float speedLevel(byte dmx)   // [-1,1], neg=CW, pos=CCW
+    static float speedLevel(bool directional, byte dmx)   // [-1,1], neg=CW, pos=CCW
     {
         if (dmx==0)
         {
@@ -85,31 +85,40 @@ private:
             const int dmxMid    = 128;
             const int dmxLast   = 255;
             const int dmxMax    = dmxLast + 1;
-            const int dmxPlateauLength = 5;
-            const int dmxPlateauFirst  = dmxMid - dmxPlateauLength / 2;
-            const int dmxPlateauLast   = dmxMid + dmxPlateauLength / 2;
-            const int dmxPlateauMax    = dmxPlateauLast + 1;
-            if (dmx < dmxPlateauFirst)
+
+            if (directional)
             {
-                // We want fast->slow, so invert
-                dmx = dmxPlateauFirst - 1 - (dmx - dmxFirst);
-                return -fraction(dmx, dmx, dmxPlateauFirst);
-            }
-            else if (dmx <= dmxPlateauLast)
-            {
-                return 0;
+                const int dmxPlateauLength = 5;
+                const int dmxPlateauFirst  = dmxMid - dmxPlateauLength / 2;
+                const int dmxPlateauLast   = dmxMid + dmxPlateauLength / 2;
+                const int dmxPlateauMax    = dmxPlateauLast + 1;
+                if (dmx < dmxPlateauFirst)
+                {
+                    // We want [-1,0), so invert
+                    dmx = dmxPlateauFirst - 1 - (dmx - dmxFirst);
+                    return -fraction(dmx, dmxFirst, dmxPlateauFirst);
+                }
+                else if (dmx <= dmxPlateauLast)
+                {
+                    // on the plateau
+                    return 0;
+                }
+                else
+                {
+                    // (0,1]
+                    return fraction(dmx, dmxPlateauMax, dmxMax);
+                }
             }
             else
             {
-                // slow->fast
-                return fraction(dmx, dmxPlateauMax, dmxMax);
+                return scaleRange(dmx, dmxFirst, dmxLast, 0, 1);
             }
         }
     }
 
-    static inline float fraction(float dmx, float first, float max)
+    static inline float fraction(float position, float first, float max)
     {
-        return (dmx - first + 1) / (max - first);
+        return (position - first + 1) / (max - first);
     }
 
 public:
