@@ -24,6 +24,8 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
+    static const int msIntervalDefault = 10;
+
     RainbowColors(int msInterval, int msDuration) : Colorizer(Flavor::Rainbow, msDuration)
     {
         _timer = Deadline(msInterval);

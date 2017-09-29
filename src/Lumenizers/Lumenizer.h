@@ -9,7 +9,8 @@
 #include "Pixels/ColorizeableHolder.h"
 #include "Artnet/DmxParameterBlock.h"
 
-const BRIGHTNESS MAX_BRIGHTNESS = 256;
+const BRIGHTNESS BRIGHTNESS_MIN = 0;
+const BRIGHTNESS BRIGHTNESS_MAX = 256;
 
 struct Lumenizer : Durable, protected ColorizeableHolder
 {
@@ -46,8 +47,8 @@ public:
 protected:
 
     Flavor      _flavor;
-    BRIGHTNESS  _minBrightness;      // min we ever report
-    BRIGHTNESS  _maxBrightness;      // max we ever report
+    BRIGHTNESS  _brightnessMin;      // min we ever report
+    BRIGHTNESS  _brightnessMax;      // max we ever report
     float       _currentLevel;       // controlled by us
     float       _dimmerLevel;        // controlled externally
 
@@ -63,8 +64,8 @@ public:
         // We set a non-zero lower bound in recognition that at lower levels
         // the LEDs simply turn off. Perhaps we just need to tune our PWM curves
         // better, for for the moment, we do this. [old comment]
-        _maxBrightness = 255;
-        _minBrightness = 0;
+        _brightnessMax = BRIGHTNESS_MAX;
+        _brightnessMin = 0;
         setCurrentLevel(1.0f);
         setDimmerLevel(1.0f);
     }
@@ -91,13 +92,13 @@ public:
         return msDuration();
     }
 
-    virtual void setMaxBrightness(BRIGHTNESS brightness)
+    virtual void setBrightnessMax(BRIGHTNESS brightness)
     {
-        _maxBrightness = clip(brightness, 0, MAX_BRIGHTNESS-1);
+        _brightnessMax = clip(brightness, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
     }
-    virtual void setMinBrightness(BRIGHTNESS brightness)
+    virtual void setBrightnessMin(BRIGHTNESS brightness)
     {
-        _minBrightness = clip(brightness, 0, MAX_BRIGHTNESS-1);
+        _brightnessMin = clip(brightness, BRIGHTNESS_MIN, BRIGHTNESS_MAX-1);
     }
 
     // Controlled by external faders etc
@@ -141,10 +142,12 @@ protected:
         }
         else
         {
-            return clip(
-                (BRIGHTNESS)scaleRange(currentLevel * _dimmerLevel, 0, 1, _minBrightness, _maxBrightness),
-                _minBrightness,
-                _maxBrightness-1);
+            BRIGHTNESS result= clip(
+                (BRIGHTNESS)scaleRange(currentLevel * _dimmerLevel, 0, 1, _brightnessMin, _brightnessMax),
+                _brightnessMin,
+                _brightnessMax-1);
+            // INFO("cur=%f dim=%f min=%d max=%d: %d", currentLevel, _dimmerLevel, _brightnessMin, _brightnessMax, result);
+            return result;
         }
     }
 
@@ -180,7 +183,7 @@ public:
 
     virtual void report()
     {
-        INFO("Lumenizer(%s): level=%f max=%d", nameOf(_flavor), _currentLevel, _maxBrightness);
+        INFO("Lumenizer(%s): level=%f max=%d", nameOf(_flavor), _currentLevel, _brightnessMax);
     }
 
     //----------------------------------------------------------------------------------------------

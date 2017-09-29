@@ -87,7 +87,7 @@ public:
                     break;
 
                 case Effect::SelfTest:
-                    pLumenizer = new SelfTestLuminance();
+                    pLumenizer = new SelfTestLuminance(_pColorizeable->colorizer());
                     break;
             }
             if (pLumenizer)

@@ -11,7 +11,7 @@ struct SelfTestColorizer : ColorizerSequence
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int _msQuantum = 1500;
+    int _msQuantum = 3000;
     UniformColor* _pUniform = nullptr;
     RainbowColors* _pRainbow = nullptr;
 
@@ -24,8 +24,7 @@ public:
     {
         addColorizer(new RainbowColors(10, _msQuantum * 2));
         addColorizer(_pUniform = new UniformColor(color, _msQuantum * 2));
-        addColorizer(_pRainbow = new RainbowColors(10, _msQuantum * 2));
-        addColorizer(new UniformColor(Color::BLACK, _msQuantum * 6));
+        addColorizer(new UniformColor(Color::BLACK, _msQuantum * 3));
         setLooping(true);
     }
 

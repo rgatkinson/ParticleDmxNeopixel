@@ -45,8 +45,8 @@ public:
     void addLumenizer(Lumenizer* pLumenizer /*takes ownwership*/)
     {
         pLumenizer->setColorizeable(_pColorizeable);
-        pLumenizer->setMaxBrightness(_maxBrightness);
-        pLumenizer->setMinBrightness(_minBrightness);
+        pLumenizer->setBrightnessMin(_brightnessMin);
+        pLumenizer->setBrightnessMax(_brightnessMax);
         pLumenizer->setDimmerLevel(_dimmerLevel);
         _lumenizers.addLast(pLumenizer);
     }
@@ -187,20 +187,20 @@ public:
         }
     }
 
-    void setMaxBrightness(BRIGHTNESS brightness) override
+    void setBrightnessMax(BRIGHTNESS brightness) override
     {
-        Lumenizer::setMaxBrightness(brightness);
+        Lumenizer::setBrightnessMax(brightness);
         for (int i = 0; i < count(); i++)
         {
-            _lumenizers[i]->setMaxBrightness(brightness);
+            _lumenizers[i]->setBrightnessMax(brightness);
         }
     }
-    void setMinBrightness(BRIGHTNESS brightness) override
+    void setBrightnessMin(BRIGHTNESS brightness) override
     {
-        Lumenizer::setMinBrightness(brightness);
+        Lumenizer::setBrightnessMin(brightness);
         for (int i = 0; i < count(); i++)
         {
-            _lumenizers[i]->setMinBrightness(brightness);
+            _lumenizers[i]->setBrightnessMin(brightness);
         }
     }
 

@@ -7,7 +7,7 @@
 #include "Util/ReferenceCounted.h"
 struct Colorizer;
 struct Lumenizer;
-typedef byte BRIGHTNESS;
+typedef int BRIGHTNESS;
 
 //==================================================================================================
 // Colorizeable

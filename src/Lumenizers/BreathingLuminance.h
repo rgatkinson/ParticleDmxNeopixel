@@ -36,7 +36,7 @@ public:
 
         setPauseInterval(msPauseInterval);
         setBreatheInterval(msBreatheInterval);
-        setMinBrightness(20);    // empiricly determined
+        setBrightnessMin(20);    // empiricly determined
     }
 
     //----------------------------------------------------------------------------------------------

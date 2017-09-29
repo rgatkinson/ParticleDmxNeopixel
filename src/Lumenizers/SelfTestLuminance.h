@@ -12,17 +12,16 @@ struct SelfTestLuminance : LumenizerSequence
 protected:
 
     float _initialBrightnessLevel = 1.0f;
-    float _idleBrightnessLevel = 0.3f;
-    UniformLuminance* _pUniformInitial;
+    float _idleBrightnessLevel = 0.25f;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    SelfTestLuminance() : LumenizerSequence(Flavor::SelfTest)
+    SelfTestLuminance(Colorizer* pColorizer) : LumenizerSequence(Flavor::SelfTest)
     {
-        addLumenizer(_pUniformInitial = new UniformLuminance(_initialBrightnessLevel, Deadline::Infinite /* adjusted later */));
+        addLumenizer(new UniformLuminance(_initialBrightnessLevel, pColorizer->msLoopingDuration()));
         addLumenizer(new UniformLuminance(_idleBrightnessLevel, Deadline::Infinite));
     }
 
@@ -43,12 +42,13 @@ public:
 
     void begin() override
     {
-        if (_pColorizeable)
-        {
-            int ms = _pColorizeable->colorizer()->msLoopingDuration();
-            _pUniformInitial->setDuration(ms);
-        }
         LumenizerSequence::begin();
+    }
+
+    void report() override
+    {
+        LumenizerSequence::report();
+        INFO("SelfTestLuminance: first=%d ms", _lumenizers[0]->msDuration());
     }
 
 };

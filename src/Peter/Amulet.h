@@ -13,6 +13,7 @@
 #include "Lumenizers/LumenizerSequence.h"
 #include "Lumenizers/TwinklingLuminance.h"
 #include "Lumenizers/SelfTestLuminance.h"
+#include "Lumenizers/MorseCodeLuminance.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "Colorizers/SelfTestColorizer.h"
 #include "Artnet/DmxParameterBlock.h"
@@ -28,8 +29,6 @@ public:
 
     static const int DMX_ADDRESS_COUNT = sizeof(DmxParameterBlock);
 
-    enum Demo { DemoNone, DemoFirst, DemoShow=DemoFirst, DemoWhite, DemoMax };
-
 protected:
 
     DMX_ADDRESS                     _dmxAddress;
@@ -38,7 +37,7 @@ protected:
     DmxColorEffectSelector*         _pColorEffectSelector;
     PixelRing*                      _pPixels;
     COLOR_INT                       _indicatorColor;
-    Demo                            _demo = DemoShow;
+    DmxEffectSelector::Demo         _demo = DmxEffectSelector::Demo::Default;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -67,47 +66,7 @@ public:
 
     void setDemo()
     {
-        _pPixels->setColorizer(demoColorizer());
-        _pPixels->setLumenizer(demoLumenizer());
-    }
-
-    Colorizer* demoColorizer()
-    {
-        switch (_demo)
-        {
-            case DemoWhite:
-            {
-                COLOR_INT color = Color::temperature(2550);
-                Log.info("demo white: r=%d g=%d b=%d", Color::red(color), Color::green(color), Color::blue(color));
-                return new UniformColor(color, Deadline::Infinite);
-            }
-            default:
-            {
-                return new UniformColor(Color::temperature(2550), Deadline::Infinite);
-            }
-        }
-    }
-
-    Lumenizer* demoLumenizer()
-    {
-        switch (_demo)
-        {
-            case DemoWhite:
-            {
-                LumenizerSequence* pSequence = new LumenizerSequence();
-                pSequence->addLumenizer(new UniformLuminance(1.0f, 5000));
-                pSequence->addLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault, Deadline::Infinite));
-
-                return pSequence;
-            }
-            default:
-            {
-                return new TwinklingLuminance(
-                    TwinklingLuminance::msTwinklePauseDefault,
-                    TwinklingLuminance::msTwinkleBreatheDefault,
-                    Deadline::Infinite);
-            }
-        }
+        DmxEffectSelector::setDemo(_pPixels, _demo, _indicatorColor);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -135,8 +94,8 @@ public:
 
     void cycleDemo()
     {
-        _demo = Demo(_demo + 1);
-        if (_demo >= DemoMax) _demo = DemoFirst;
+        _demo = DmxEffectSelector::Demo(int(_demo) + 1);
+        if (_demo >= DmxEffectSelector::Demo::Max) _demo = DmxEffectSelector::Demo::First;
         setDemo();
     }
 
