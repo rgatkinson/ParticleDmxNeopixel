@@ -13,7 +13,7 @@ struct RainbowColors : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    Deadline    _colorUpdateDeadline;
+    Deadline    _timer;
     int         _pixelOffset = 0;
     int         _pixelIncrement = 1;
     float       _wheelFractionVisible = 0.1f;
@@ -26,7 +26,7 @@ public:
 
     RainbowColors(int msInterval, int msDuration) : Colorizer(Flavor::Rainbow, msDuration)
     {
-        _colorUpdateDeadline = Deadline(msInterval);
+        _timer = Deadline(msInterval);
         _msOriginalInterval = msInterval;
     }
 
@@ -52,11 +52,11 @@ public:
         const float perSecond = scaleRange(fabs(speed), 0, 1, minPerSecond, maxPerSecond);
         const int msInterval = 1000 / perSecond;
 
-        if (pixelIncrement != _pixelIncrement || msInterval != _colorUpdateDeadline.msDuration())
+        if (pixelIncrement != _pixelIncrement || msInterval != _timer.msDuration())
         {
             _pixelIncrement = pixelIncrement;
-            _colorUpdateDeadline = Deadline(msInterval);
-            _colorUpdateDeadline.expire();
+            _timer = Deadline(msInterval);
+            _timer.expire();
         }
     }
 
@@ -71,14 +71,14 @@ public:
         Colorizer::begin();
         _pixelOffset = 0;
         _pixelIncrement = 1;
-        _colorUpdateDeadline = Deadline(_msOriginalInterval);
-        _colorUpdateDeadline.expire();
+        _timer = Deadline(_msOriginalInterval);
+        _timer.expire();
     }
 
     void loop() override
     {
         Colorizer::loop();
-        if (_colorUpdateDeadline.hasExpired())
+        if (_timer.hasExpired())
             {
                 // INFO("RainbowColors: pixelOffset=%d", _pixelOffset);
                 for (uint16_t iPixel=0; iPixel < _pixelCount; iPixel++)
@@ -86,7 +86,7 @@ public:
                     COLOR_INT color = Color::wheelSin((iPixel+_pixelOffset) / float(_pixelCount) * _wheelFractionVisible);
                     setPixelColor(iPixel, color);
                 }
-                _colorUpdateDeadline.reset();
+                _timer.reset();
                 _pixelOffset += _pixelIncrement;
             }
     }
