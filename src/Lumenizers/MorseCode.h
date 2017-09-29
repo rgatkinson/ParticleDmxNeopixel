@@ -20,7 +20,7 @@ protected:
     // The length of a dash is three units
     // The space between parts of the same letter is one unit
     // The space between letters is three units
-    // The space between words i seven units
+    // The space between words is seven units
     enum class Duration
     {
         Dot = 1,
