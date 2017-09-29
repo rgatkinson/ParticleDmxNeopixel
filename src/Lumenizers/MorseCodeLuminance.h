@@ -18,23 +18,23 @@ protected:
     enum class Message
     {
         None,
-        First,
-        DavidByrne = First,
         QueensTrunk,            // p34
         Parrots,                // p34
         Pirates,                // p34
         HardISound,             // p34
         DontLetMeDown,          // p35
         IWill,                  // p36
-        Last = IWill,
+        DavidByrne,
+        First   = QueensTrunk,
+        Last    = DavidByrne,
         Default = DavidByrne,
     };
 
     // https://en.wikipedia.org/wiki/Morse_code#Speed_in_words_per_minute
+    static constexpr int msDotLengthMin     = 50;
     static constexpr int msDotLengthDefault = 200;
-    static constexpr int msDotLengthMin = 50;
-    static constexpr int msDotLengthLast = 500;
-    static constexpr float onLevel = 1.0f;
+    static constexpr int msDotLengthLast    = 500;
+    static constexpr float onLevel  = 1.0f;
     static constexpr float offLevel = 0.0f;
 
     int                 _msDotLength     = 0;
@@ -87,7 +87,7 @@ protected:
     {
         switch (message)
         {
-            case Message::DavidByrne:   return "Hello, David Byrne! How are you today?" MESSAGE_LOOP;
+            case Message::DavidByrne:   return "Hello, David Byrne!" MESSAGE_LOOP;
             case Message::QueensTrunk:  return "Daddy, the Queen's trunk is here, on board the Neverland!" MESSAGE_LOOP;
             case Message::Parrots:      return "Parrots? A flock of parrots?" MESSAGE_LOOP;
             case Message::Pirates:      return "PIRATES! We've been taken over by pirates!" MESSAGE_LOOP;
