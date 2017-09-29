@@ -44,40 +44,47 @@ public:
         Default=SelfTest
     };
 
-    static void setDemo(Colorizeable* pPixels, Demo demo, COLOR_INT indicatorColor)
+    static void setDemo(Colorizeable* pPixels, Demo demo, Colorizer* pSelfTestColor, Lumenizer* pSelfTestLuminance) // nb: _usual_ ref counting rules
     {
-        Colorizer* pColorizer;
-        pPixels->setColorizer(pColorizer = DmxEffectSelector::demoColorizer(demo, indicatorColor));
-        pPixels->setLumenizer(DmxEffectSelector::demoLumenizer(demo, pColorizer));
+        pPixels->setColorizer(DmxEffectSelector::demoColorizer(demo, pSelfTestColor));
+        pPixels->setLumenizer(DmxEffectSelector::demoLumenizer(demo, pSelfTestLuminance));
     }
 
-    static Colorizer* demoColorizer(Demo demo, COLOR_INT indicatorColor)
+    static Colorizer* demoColorizer(Demo demo, Colorizer* pSelfTest)
     {
+        Colorizer* pResult = nullptr;
         switch (demo)
         {
             case Demo::Twinkle:
             case Demo::White:
             {
-                return new UniformColor(Color::temperature(2550), Deadline::Infinite);
+                pResult = new UniformColor(Color::temperature(2550), Deadline::Infinite);
+                break;
             }
             case Demo::Rainbow:
             {
-                return new RainbowColors(RainbowColors::msIntervalDefault, Deadline::Infinite);
+                pResult = new RainbowColors(RainbowColors::msIntervalDefault, Deadline::Infinite);
+                break;
             }
             case Demo::Morse:
             {
-                return new UniformColor(Color::YELLOW, Deadline::Infinite);
+                pResult = new UniformColor(Color::YELLOW, Deadline::Infinite);
+                break;
             }
             case Demo::SelfTest:
             default:
             {
-                return new AmuletSelfTestColorizer(indicatorColor);
+                pResult = pSelfTest;
+                pSelfTest->addRef();
+                break;
             }
         }
+        return pResult;
     }
 
-    static Lumenizer* demoLumenizer(Demo demo, Colorizer* pColorizer)
+    static Lumenizer* demoLumenizer(Demo demo, Lumenizer* pSelfTest)
     {
+        Lumenizer* pResult = nullptr;
         switch (demo)
         {
             case Demo::White:
@@ -85,30 +92,36 @@ public:
                 LumenizerSequence* pSequence = new LumenizerSequence();
                 pSequence->addLumenizer(new UniformLuminance(1.0f, 5000));
                 pSequence->addLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault, Deadline::Infinite));
-                return pSequence;
+                pResult = pSequence;
+                break;
             }
             case Demo::Twinkle:
             {
-                return new TwinklingLuminance(
+                pResult = new TwinklingLuminance(
                     TwinklingLuminance::msTwinklePauseDefault,
                     TwinklingLuminance::msTwinkleBreatheDefault,
                     Deadline::Infinite);
-
+                break;
             }
             case Demo::Morse:
             {
-                return new MorseCodeLuminance(Deadline::Infinite);
+                pResult = new MorseCodeLuminance(Deadline::Infinite);
+                break;
             }
             case Demo::Rainbow:
             {
-                return new UniformLuminance(1.0f, Deadline::Infinite);
+                pResult = new UniformLuminance(1.0f, Deadline::Infinite);
+                break;
             }
             case Demo::SelfTest:
             default:
             {
-                return new AmuletSelfTestLuminance(pColorizer);
+                pResult = pSelfTest;
+                pSelfTest->addRef();
+                break;
             }
         }
+        return pResult;
     }
 
 
