@@ -7,4 +7,4 @@
 
 const int DMX_ADDRESS_FIRST = 300;
 const int DMX_ADDRESS_AmuletOne = DMX_ADDRESS_FIRST;
-const int DMX_ADDRESS_AmuletTwo = DMX_ADDRESS_AmuletOne + Amulet::DMX_ADDRESS_COUNT;
+const int DMX_ADDRESS_StardropOne = DMX_ADDRESS_AmuletOne + Amulet::DMX_ADDRESS_COUNT;

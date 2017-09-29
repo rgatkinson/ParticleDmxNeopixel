@@ -1,8 +1,8 @@
 //
-// Amulet.h
+// Stardrop.h
 //
-#ifndef __AMULET_H_
-#define __AMULET_H_
+#ifndef _STARDROP_H_
+#define _STARDROP_H_
 
 #include "Artnet/Artnet.h"
 #include "Pixels/PixelRing.h"
@@ -18,7 +18,7 @@
 #include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 
-struct Amulet : DmxPacketConsumer
+struct Stardrop : DmxPacketConsumer
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -42,7 +42,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Amulet(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
+    Stardrop(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
         : _artnet(this)
     {
         _pPixels = new PixelRing();
@@ -55,7 +55,7 @@ public:
         setDemo();
     }
 
-    ~Amulet()
+    ~Stardrop()
     {
         releaseRef(_pLuminanceEffectSelector);
         releaseRef(_pColorEffectSelector);
