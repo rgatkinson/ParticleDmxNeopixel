@@ -32,6 +32,20 @@ public:
         SelfTest
     };
 
+    static LPCSTR nameOf(Flavor flavor)
+    {
+        switch (flavor)
+        {
+            case Flavor::None:      return "None";
+            case Flavor::Uniform:   return "Uniform";
+            case Flavor::Sequence:  return "Sequence";
+            case Flavor::Rainbow:   return "Rainbow";
+            case Flavor::SelfTest:  return "SelfTest";
+            default:                return "<unknown>";
+        }
+    }
+
+
 protected:
 
     Flavor _flavor;
@@ -91,6 +105,7 @@ public:
 
     virtual void report()
     {
+        INFO("Colorizer(%s)", nameOf(_flavor));
     }
 };
 

@@ -21,7 +21,7 @@ public:
         Uniform = First,
         Rainbow,
         SelfTest,
-        Max,
+        Last=SelfTest,
     };
 
 protected:
@@ -44,11 +44,6 @@ protected:
     {
     }
 
-    static int numEffects()
-    {
-        return (int)Effect::Max - (int)Effect::First;
-    }
-
     //----------------------------------------------------------------------------------------------
     // Operations
     //----------------------------------------------------------------------------------------------
@@ -56,7 +51,7 @@ public:
 
     static Effect colorEffect(DmxParameterBlock& parameterBlock)
     {
-        return Effect(int(Effect::First) + effectFromDmx(parameterBlock.colorEffect(), numEffects()));
+        return scaleRangeDiscrete(parameterBlock.colorEffect(), 0, 255, Effect::First, Effect::Last);
     }
 
     void processParameterBlock(DmxParameterBlock& parameterBlock)

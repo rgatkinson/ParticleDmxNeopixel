@@ -7,6 +7,10 @@
 #include "DmxParameterBlock.h"
 #include "DmxEffectSelector.h"
 #include "DmxColorEffectSelector.h"
+#include "Lumenizers/UniformLuminance.h"
+#include "Lumenizers/BreathingLuminance.h"
+#include "Lumenizers/SelfTestLuminance.h"
+#include "Lumenizers/MorseCodeLuminance.h"
 
 struct DmxLuminanceEffectSelector : DmxEffectSelector
 {
@@ -22,7 +26,7 @@ public:
         Uniform = First,
         Breathing,
         Twinkle,
-        Max,
+        Last=Twinkle,
         SelfTest,   // AFTER Max, yes
     };
 
@@ -46,11 +50,6 @@ protected:
     {
     }
 
-    static int numEffects()
-    {
-        return (int)Effect::Max - (int)Effect::First;
-    }
-
     //----------------------------------------------------------------------------------------------
     // Operations
     //----------------------------------------------------------------------------------------------
@@ -58,7 +57,7 @@ public:
 
     static Effect luminanceEffect(DmxParameterBlock& parameterBlock)
     {
-        return Effect(int(Effect::First) + effectFromDmx(parameterBlock.luminanceEffect(), numEffects()));
+        return scaleRangeDiscrete(parameterBlock.luminanceEffect(), 0, 255, Effect::First, Effect::Last);
     }
 
     void processParameterBlock(DmxParameterBlock& parameterBlock)

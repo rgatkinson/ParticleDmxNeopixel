@@ -136,7 +136,7 @@ public:
         if (_showDeadline.hasExpired())
         {
             // Only call the brightness when we actually are going to show _neopixels: efficiency
-            BRIGHTNESS brightness = MAX_BRIGHTNESS;
+            BRIGHTNESS brightness = MAX_BRIGHTNESS-1;
             if (_pLumenizer)
             {
                 _pLumenizer->loop();

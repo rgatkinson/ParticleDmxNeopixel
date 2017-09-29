@@ -9,7 +9,7 @@
 #include "Pixels/ColorizeableHolder.h"
 #include "Artnet/DmxParameterBlock.h"
 
-const BRIGHTNESS MAX_BRIGHTNESS = 255;
+const BRIGHTNESS MAX_BRIGHTNESS = 256;
 
 struct Lumenizer : Durable, protected ColorizeableHolder
 {
@@ -25,16 +25,31 @@ public:
         Sequence,
         Breathing,
         Twinkle,
+        MorseCode,
         SelfTest
     };
 
+    static LPCSTR nameOf(Flavor flavor)
+    {
+        switch (flavor)
+        {
+            case Flavor::None:      return "None";
+            case Flavor::Uniform:   return "Uniform";
+            case Flavor::Sequence:  return "Sequence";
+            case Flavor::Breathing: return "Breathing";
+            case Flavor::Twinkle:   return "Twinkle";
+            case Flavor::SelfTest:  return "SelfTest";
+            default:                return "<unknown>";
+        }
+    }
+
 protected:
 
-    Flavor _flavor;
-    BRIGHTNESS _minBrightness;      // min we ever report
-    BRIGHTNESS _maxBrightness;      // max we ever report
-    float _currentLevel;            // controlled by us
-    float _dimmerLevel;             // controlled externally
+    Flavor      _flavor;
+    BRIGHTNESS  _minBrightness;      // min we ever report
+    BRIGHTNESS  _maxBrightness;      // max we ever report
+    float       _currentLevel;       // controlled by us
+    float       _dimmerLevel;        // controlled externally
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -78,17 +93,17 @@ public:
 
     virtual void setMaxBrightness(BRIGHTNESS brightness)
     {
-        _maxBrightness = brightness;
+        _maxBrightness = clip(brightness, 0, MAX_BRIGHTNESS-1);
     }
     virtual void setMinBrightness(BRIGHTNESS brightness)
     {
-        _minBrightness = brightness;
+        _minBrightness = clip(brightness, 0, MAX_BRIGHTNESS-1);
     }
 
     // Controlled by external faders etc
     virtual void setDimmerLevel(float dimmerLevel)
     {
-        _dimmerLevel = clip(dimmerLevel, 0.0f, 1.0f);
+        _dimmerLevel = clip(dimmerLevel, 0, 1);
     }
 
     virtual BRIGHTNESS currentBrightness()
@@ -121,16 +136,21 @@ protected:
     BRIGHTNESS rawCurrentBrightness(float currentLevel)
     {
         if (_dimmerLevel==0.0f)
+        {
             return 0;   // honor blackout
+        }
         else
-            return (BRIGHTNESS)(currentLevel * _dimmerLevel * (float)(_maxBrightness-_minBrightness) + (float)_minBrightness + 0.5f);
+        {
+            return clip(
+                (BRIGHTNESS)scaleRange(currentLevel * _dimmerLevel, 0, 1, _minBrightness, _maxBrightness),
+                _minBrightness,
+                _maxBrightness-1);
+        }
     }
 
     void setCurrentLevel(float level)
     {
-        level = max(0, level);
-        level = min(1.0f, level);
-        _currentLevel = level;
+        _currentLevel = clip(level, 0, 1);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -160,7 +180,7 @@ public:
 
     virtual void report()
     {
-        Log.info("brightness: cur=%f max=%d", _currentLevel, _maxBrightness);
+        INFO("Lumenizer(%s): level=%f max=%d", nameOf(_flavor), _currentLevel, _maxBrightness);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -170,11 +190,12 @@ protected:
 
     BRIGHTNESS gammaCorrect(BRIGHTNESS brightness)
     {
-        // from: https://learn.adafruit.com/led-tricks-gamma-correction/the-quick-fix
+        // from: https://learn.adafruit.com/led-tricks-gamma-correction/the-quick-fix, hand tweaked
         // gamma=2.1
         static const byte gammaCorrection[256] =
         {
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+        //  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
             2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, \
             7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 14, 14, \
             14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 20, 20, 21, 21, 22, 22, 23, \

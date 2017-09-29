@@ -20,11 +20,6 @@ protected:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    static int effectFromDmx(byte dmx, int numEffects)
-    {
-        // We divy the range [0, 255] up uniformly into [0, numEffects())
-        return zeroOneToInt(float(dmx) / 256, numEffects);
-    }
 };
 
 #endif

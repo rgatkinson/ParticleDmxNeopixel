@@ -74,6 +74,15 @@ inline T clip(T t, T _first, T _last)
     return t;
 }
 
+template<typename T, typename U, typename V>
+inline T clip(T t, U _first, V _last)
+{
+    if (t < _first) return T(_first);
+    if (t > _last)  return T(_last);
+    return t;
+}
+
+
 template <typename T>
 inline T clipByte(T t)
 {
@@ -110,6 +119,21 @@ inline float scaleRange(float from, float fromFirst, float fromLast, float toFir
     const float a = (toFirst-toLast) / (fromFirst-fromLast);
     const float b = toFirst - fromFirst*a;
     return a*from + b;
+}
+
+template<typename T>
+inline T scaleRangeDiscrete(float from, float fromFirst, float fromLast, T toFirst, T toLast)
+{
+    // We want (toLast - toFirst + 1) equally sized intervals, since the bounds are inclusive.
+    // Conceptually each interval should be half-open. All of them are, 'cept the last one, which
+    // is closed, so we clip to accomodate.
+    float scaled = scaleRange(from, fromFirst, fromLast, int(toFirst), int(toLast)+1);
+    return clip(T((int)(scaled)), toFirst, toLast);
+}
+
+inline int round(float f)
+{
+    return f < 0 ? -round(-f) : (int)(f + 0.5f);
 }
 
 //--------------------------------------------------------------------------------------------------
