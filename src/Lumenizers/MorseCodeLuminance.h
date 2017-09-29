@@ -31,9 +31,9 @@ protected:
     };
 
     // https://en.wikipedia.org/wiki/Morse_code#Speed_in_words_per_minute
-    static constexpr int msDotLengthDefault = 50;
+    static constexpr int msDotLengthDefault = 200;
     static constexpr float onLevel = 1.0f;
-    static constexpr float offLevel = 0.2f;
+    static constexpr float offLevel = 0.0f;
 
     int                 _msDotLength     = msDotLengthDefault;
     Message             _message         = Message::None;
@@ -50,6 +50,7 @@ public:
     MorseCodeLuminance(int msDuration) : Lumenizer(Flavor::MorseCode, msDuration)
     {
         setMessage(Message::Default);
+        _timer = Deadline(_msDotLength);
     }
 
     //----------------------------------------------------------------------------------------------

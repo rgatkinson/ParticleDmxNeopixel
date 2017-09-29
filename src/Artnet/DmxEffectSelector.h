@@ -38,8 +38,8 @@ public:
         SelfTest=First,
         Rainbow,
         White,
-        Twinkle,
         Morse,
+        Twinkle,
         Max,
         Default=SelfTest
     };

@@ -58,19 +58,21 @@ protected:
         }
     }
 
-    static void appendSymbol(bool atStartOfWord, std::vector<bool>& result, const Symbol* pSymbol)
+    static void appendSymbol(int ch, bool atStartOfWord, std::vector<bool>& result, const Symbol& symbol)
     {
+        report(ch, symbol);
+
         if (!atStartOfWord)
         {
             appendUnits(result, Duration::InterLetter, false);
         }
-        for (int iPip = 0; iPip < pSymbol->_count; iPip++)
+        for (int iPip = 0; iPip < symbol._count; iPip++)
         {
             if (iPip > 0)
             {
                 appendUnits(result, Duration::IntraLetter, false);
             }
-            switch (pSymbol->_pips[iPip])
+            switch (symbol._pips[iPip])
             {
                 case Dot:  appendUnits(result, Duration::Dot, true);  break;
                 case Dash: appendUnits(result, Duration::Dash, true); break;
@@ -92,26 +94,51 @@ public:
             const char ch = *pch;
             if ('a' <= ch && ch <= 'z')
             {
-                appendSymbol(atStartOfWord, result, letters[ch - 'a']);
+                appendSymbol(ch, atStartOfWord, result, *letters[ch - 'a']);
                 atStartOfWord = false;
             }
             else if ('A' <= ch && ch <= 'Z')
             {
-                appendSymbol(atStartOfWord, result, letters[ch - 'Z']);
+                appendSymbol(ch, atStartOfWord, result, *letters[ch - 'A']);
                 atStartOfWord = false;
             }
             else if ('0' <= ch && ch <= '9')
             {
-                appendSymbol(atStartOfWord, result, digits[ch - '0']);
+                appendSymbol(ch, atStartOfWord, result, *digits[ch - '0']);
                 atStartOfWord = false;
             }
             else if (' ' == ch)
             {
+                INFO("ch=' '");
                 appendUnits(result, Duration::InterWord, false);
                 atStartOfWord = true;
             }
         }
         return result;
+    }
+
+    static void report()
+    {
+        for (int ch = 'a'; ch <= 'z'; ch++)
+        {
+            report(ch, *letters[ch - 'a']);
+        }
+        for (int ch = '0'; ch <= '9'; ch++)
+        {
+            report(ch, *digits[ch - '0']);
+        }
+    }
+
+    static void report(int ch, const Symbol& symbol)
+    {
+        char buffer[32], *pch = &buffer[0];
+        for (int iPip = 0; iPip < symbol._count; iPip++)
+        {
+            *pch = symbol._pips[iPip] ? '+' : '.';
+            pch++;
+        }
+        *pch = '\0';
+        INFO("ch='%c' %s", ch, &buffer[0]);
     }
 
 };
