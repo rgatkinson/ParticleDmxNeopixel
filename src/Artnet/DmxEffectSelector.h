@@ -43,6 +43,12 @@ public:
         Max,
         Default=SelfTest
     };
+    static Demo cycle(Demo demo)
+    {
+        demo = increment(demo);
+        if (demo >= Demo::Max) demo = Demo::First;
+        return demo;
+    }
 
     static void setDemo(Colorizeable* pPixels, Demo demo, Colorizer* pSelfTestColor, Lumenizer* pSelfTestLuminance) // nb: _usual_ ref counting rules
     {

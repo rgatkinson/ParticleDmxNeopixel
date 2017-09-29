@@ -34,7 +34,6 @@ protected:
     DmxLuminanceEffectSelector*     _pLuminanceEffectSelector;
     DmxColorEffectSelector*         _pColorEffectSelector;
     PixelRing*                      _pPixels;
-    COLOR_INT                       _indicatorColor;
     DmxEffectSelector::Demo         _demo = DmxEffectSelector::Demo::Default;
 
     //----------------------------------------------------------------------------------------------
@@ -42,14 +41,13 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Stardrop(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
+    Stardrop(DMX_ADDRESS dmxAddress, LPCSTR shortName)
         : _artnet(this)
     {
         _pPixels = new PixelRing();
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
         _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
         _dmxAddress = dmxAddress;
-        _indicatorColor = indicatorColor;
 
         _artnet.setShortName(shortName);
         setDemo();
@@ -64,8 +62,12 @@ public:
 
     void setDemo()
     {
-        Colorizer* pColorizer = new AmuletSelfTestColorizer(_indicatorColor);
-        Lumenizer* pLumenizer = new AmuletSelfTestLuminance(pColorizer);
+        Colorizer* pColorizer = new UniformColor(Color::temperature(2550), Deadline::Infinite);
+        Lumenizer* pLumenizer = new TwinklingLuminance(
+            TwinklingLuminance::msTwinklePauseDefault,
+            TwinklingLuminance::msTwinkleBreatheDefault,
+            Deadline::Infinite);
+        pLumenizer->setDimmerLevel(0.75f);
         DmxEffectSelector::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
         releaseRef(pColorizer);
         releaseRef(pLumenizer);
@@ -96,7 +98,7 @@ public:
 
     void cycleDemo()
     {
-        _demo = DmxEffectSelector::Demo(int(_demo) + 1);
+        _demo = DmxEffectSelector::cycle(_demo);
         if (_demo >= DmxEffectSelector::Demo::Max) _demo = DmxEffectSelector::Demo::First;
         setDemo();
     }

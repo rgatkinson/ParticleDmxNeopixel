@@ -96,8 +96,7 @@ public:
 
     void cycleDemo()
     {
-        _demo = DmxEffectSelector::Demo(int(_demo) + 1);
-        if (_demo >= DmxEffectSelector::Demo::Max) _demo = DmxEffectSelector::Demo::First;
+        _demo = DmxEffectSelector::cycle(_demo);
         setDemo();
     }
 
