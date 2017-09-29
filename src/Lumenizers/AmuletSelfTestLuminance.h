@@ -1,10 +1,10 @@
 //
-// SelfTestLuminance.h
+// AmuletSelfTestLuminance.h
 //
-#ifndef __SELF_TEST_LUMENIZER_H__
-#define __SELF_TEST_LUMENIZER_H__
+#ifndef __AMULET_SELF_TEST_LUMENIZER_H__
+#define __AMULET_SELF_TEST_LUMENIZER_H__
 
-struct SelfTestLuminance : LumenizerSequence
+struct AmuletSelfTestLuminance : LumenizerSequence
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -19,7 +19,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    SelfTestLuminance(Colorizer* pColorizer) : LumenizerSequence(Flavor::SelfTest)
+    AmuletSelfTestLuminance(Colorizer* pColorizer) : LumenizerSequence(Flavor::SelfTest)
     {
         addLumenizer(new UniformLuminance(_initialBrightnessLevel, pColorizer->msLoopingDuration()));
         addLumenizer(new UniformLuminance(_idleBrightnessLevel, Deadline::Infinite));
@@ -48,7 +48,7 @@ public:
     void report() override
     {
         LumenizerSequence::report();
-        INFO("SelfTestLuminance: first=%d ms", _lumenizers[0]->msDuration());
+        INFO("AmuletSelfTestLuminance: first=%d ms", _lumenizers[0]->msDuration());
     }
 
 };

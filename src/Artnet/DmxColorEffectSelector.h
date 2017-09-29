@@ -73,7 +73,7 @@ public:
                     break;
 
                 case Effect::SelfTest:
-                    pColorizer = new SelfTestColorizer(Color::WHITE);
+                    pColorizer = new AmuletSelfTestColorizer(Color::WHITE);
                     break;
             }
             if (pColorizer)

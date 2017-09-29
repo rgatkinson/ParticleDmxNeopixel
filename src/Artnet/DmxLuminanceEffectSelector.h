@@ -9,7 +9,7 @@
 #include "DmxColorEffectSelector.h"
 #include "Lumenizers/UniformLuminance.h"
 #include "Lumenizers/BreathingLuminance.h"
-#include "Lumenizers/SelfTestLuminance.h"
+#include "Lumenizers/AmuletSelfTestLuminance.h"
 #include "Lumenizers/MorseCodeLuminance.h"
 
 struct DmxLuminanceEffectSelector : DmxEffectSelector
@@ -87,7 +87,7 @@ public:
                     break;
 
                 case Effect::SelfTest:
-                    pLumenizer = new SelfTestLuminance(_pColorizeable->colorizer());
+                    pLumenizer = new AmuletSelfTestLuminance(_pColorizeable->colorizer());
                     break;
             }
             if (pLumenizer)

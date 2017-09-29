@@ -8,10 +8,10 @@
 #include "Lumenizers/BreathingLuminance.h"
 #include "Lumenizers/LumenizerSequence.h"
 #include "Lumenizers/TwinklingLuminance.h"
-#include "Lumenizers/SelfTestLuminance.h"
+#include "Lumenizers/AmuletSelfTestLuminance.h"
 #include "Lumenizers/MorseCodeLuminance.h"
 #include "Colorizers/ColorizerSequence.h"
-#include "Colorizers/SelfTestColorizer.h"
+#include "Colorizers/AmuletSelfTestColorizer.h"
 #include "Pixels/Colorizeable.h"
 
 struct DmxEffectSelector : ReferenceCounted, protected ColorizeableHolder
@@ -71,7 +71,7 @@ public:
             case Demo::SelfTest:
             default:
             {
-                return new SelfTestColorizer(indicatorColor);
+                return new AmuletSelfTestColorizer(indicatorColor);
             }
         }
     }
@@ -106,7 +106,7 @@ public:
             case Demo::SelfTest:
             default:
             {
-                return new SelfTestLuminance(pColorizer);
+                return new AmuletSelfTestLuminance(pColorizer);
             }
         }
     }

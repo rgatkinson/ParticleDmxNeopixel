@@ -1,10 +1,10 @@
 //
-// SelfTestColorizer.h
+// AmuletSelfTestColorizer.h
 //
-#ifndef __SELF_TEST_COLORIZER_H__
-#define __SELF_TEST_COLORIZER_H__
+#ifndef __AMULET_ELF_TEST_COLORIZER_H__
+#define __AMULET_ELF_TEST_COLORIZER_H__
 
-struct SelfTestColorizer : ColorizerSequence
+struct AmuletSelfTestColorizer : ColorizerSequence
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -20,7 +20,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    SelfTestColorizer(COLOR_INT color) : ColorizerSequence(Flavor::SelfTest)
+    AmuletSelfTestColorizer(COLOR_INT color) : ColorizerSequence(Flavor::SelfTest)
     {
         addColorizer(new RainbowColors(10, _msQuantum * 2));
         addColorizer(_pUniform = new UniformColor(color, _msQuantum * 2));
