@@ -26,16 +26,18 @@ protected:
         HardISound,             // p34
         DontLetMeDown,          // p35
         IWill,                  // p36
-        Last = DavidByrne,
+        Last = IWill,
         Default = DavidByrne,
     };
 
     // https://en.wikipedia.org/wiki/Morse_code#Speed_in_words_per_minute
     static constexpr int msDotLengthDefault = 200;
+    static constexpr int msDotLengthMin = 50;
+    static constexpr int msDotLengthLast = 500;
     static constexpr float onLevel = 1.0f;
     static constexpr float offLevel = 0.0f;
 
-    int                 _msDotLength     = msDotLengthDefault;
+    int                 _msDotLength     = 0;
     Message             _message         = Message::None;
     LPCSTR              _messageString   = nullptr;
     int                 _encodingIndex   = 0;
@@ -50,7 +52,7 @@ public:
     MorseCodeLuminance(int msDuration) : Lumenizer(Flavor::MorseCode, msDuration)
     {
         setMessage(Message::Default);
-        _timer = Deadline(_msDotLength);
+        setDotLength(msDotLengthDefault);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -67,6 +69,16 @@ protected:
             _encodedMessage = MorseCode::encode(_messageString);
             INFO("MorseCode: message=\"%s\"", _messageString);
             resetMessage();
+        }
+    }
+
+    void setDotLength(int msDotLength)
+    {
+        if (_msDotLength != msDotLength)
+        {
+            INFO("_msDotLength = %d", msDotLength);
+            _msDotLength = msDotLength;
+            _timer = Deadline(_msDotLength);
         }
     }
 
@@ -94,6 +106,27 @@ public:
     void processParameterBlock(DmxParameterBlock& parameterBlock) override
     {
         Lumenizer::processParameterBlock(parameterBlock);
+
+        if (parameterBlock.luminanceSpeed() == 0)
+        {
+            setDotLength(msDotLengthDefault);
+        }
+        else
+        {
+            float speed = parameterBlock.luminanceSpeedLevel(false); // not directional
+            int msDotLength = scaleRangeDiscrete(1-speed, 0, 1, msDotLengthMin, msDotLengthLast+1);
+            setDotLength(msDotLength);
+        }
+
+        if (parameterBlock.luminanceControl() == 0)
+        {
+            setMessage(Message::Default);
+        }
+        else
+        {
+            Message message = scaleRangeDiscrete(parameterBlock.luminanceControl(), 1, 255, Message::First, Message::Last);
+            setMessage(message);
+        }
     }
 
     //----------------------------------------------------------------------------------------------
