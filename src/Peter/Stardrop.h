@@ -29,12 +29,24 @@ public:
 
 protected:
 
+    enum class Demo
+    {
+        None,
+        First,
+        Second,
+        Third,
+        Fourth,
+        Fifth,
+        Max,
+        Default=First
+    };
+
     DMX_ADDRESS                     _dmxAddress;
     ArtnetDevice                    _artnet;
     DmxLuminanceEffectSelector*     _pLuminanceEffectSelector;
     DmxColorEffectSelector*         _pColorEffectSelector;
     StardropPixels*                 _pPixels;
-    DmxEffectSelector::Demo         _demo = DmxEffectSelector::Demo::Default;
+    Demo                            _demo = Demo::Default;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -60,19 +72,6 @@ public:
         releaseRef(_pPixels);
     }
 
-    void setDemo()
-    {
-        Colorizer* pColorizer = new UniformColor(Color::temperature(2550), Deadline::Infinite);
-        Lumenizer* pLumenizer = new TwinklingLuminance(
-            TwinklingLuminance::msTwinklePauseDefault,
-            TwinklingLuminance::msTwinkleBreatheDefault,
-            Deadline::Infinite);
-        pLumenizer->setDimmerLevel(0.75f);
-        DmxEffectSelector::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
-        releaseRef(pColorizer);
-        releaseRef(pLumenizer);
-    }
-
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
@@ -96,10 +95,37 @@ public:
         INFO("offsetof(ArtDmxPacketData, _data)=%d", offsetof(ArtDmxPacketData, _data));
     }
 
+    //----------------------------------------------------------------------------------------------
+    // Demo
+    //----------------------------------------------------------------------------------------------
+
+    void setDemo()
+    {
+        float kelvin;
+        switch (_demo)
+        {
+            case Demo::First:   kelvin = 2000; break;
+            default:
+            case Demo::Second:  kelvin = 2550; break;
+            case Demo::Third:   kelvin = 3000; break;
+            case Demo::Fourth:  kelvin = 4000; break;
+            case Demo::Fifth:   kelvin = 5000; break;
+        }
+
+        Colorizer* pColorizer = new UniformColor(Color::temperature(kelvin), Deadline::Infinite);
+        Lumenizer* pLumenizer = new TwinklingLuminance(
+            TwinklingLuminance::msTwinklePauseDefault,
+            TwinklingLuminance::msTwinkleBreatheDefault,
+            Deadline::Infinite);
+        pLumenizer->setDimmerLevel(0.75f);
+        //
+        _pPixels->ownColorizer(pColorizer);
+        _pPixels->ownLumenizer(pLumenizer);
+    }
+
     void cycleDemo()
     {
-        _demo = DmxEffectSelector::cycle(_demo);
-        if (_demo >= DmxEffectSelector::Demo::Max) _demo = DmxEffectSelector::Demo::First;
+        _demo = ::cycle(_demo, Demo::First, Demo::Max);
         setDemo();
     }
 
