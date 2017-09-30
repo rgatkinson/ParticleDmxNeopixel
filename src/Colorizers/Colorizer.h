@@ -16,7 +16,7 @@
 // Colorizer
 //==================================================================================================
 
-struct Colorizer : Durable, ColorizeableHolder
+struct Colorizer : Durable, protected ColorizeableHolder
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -55,9 +55,14 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder(false)
+    Colorizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder()
     {
         _flavor = flavor;
+    }
+
+    virtual void noteColorizeable(Colorizeable* pColorizeable)
+    {
+        ColorizeableHolder::noteColorizeable(pColorizeable);
     }
 
     //----------------------------------------------------------------------------------------------

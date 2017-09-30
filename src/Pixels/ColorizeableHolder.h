@@ -22,32 +22,43 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizeableHolder(bool refCounted)
+    ColorizeableHolder()
     {
-        _refCounted = refCounted;
+        _refCounted = false;
         _pColorizeable = NULL;
         _pixelCount = 0;
     }
 
     virtual ~ColorizeableHolder()
     {
+        releaseColorizable();
+    }
+
+    void releaseColorizable()
+    {
         if (_refCounted)
         {
-            releaseRef(_pColorizeable);
+            ::releaseRef(_pColorizeable);
         }
+        else
+        {
+            _pColorizeable = nullptr;
+        }
+    }
+
+    virtual void noteColorizeable(Colorizeable* pColorizeable)
+    {
+        releaseColorizable();
+        _refCounted = false;
+        _pColorizeable = pColorizeable;
+        _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
     }
 
     virtual void setColorizeable(Colorizeable* pColorizeable)
     {
-        if (_refCounted)
-        {
-            setRef(_pColorizeable, pColorizeable);
-        }
-        else
-        {
-            _pColorizeable = pColorizeable;
-        }
-
+        releaseColorizable();
+        _refCounted = true;
+        setRef(_pColorizeable, pColorizeable);
         _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
     }
 };
