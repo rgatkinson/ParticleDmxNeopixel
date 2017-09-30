@@ -57,7 +57,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Lumenizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder(false)
+    Lumenizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder()
     {
         _flavor = flavor;
 
@@ -70,10 +70,9 @@ public:
         setDimmerLevel(1.0f);
     }
 
-    virtual void setColorizeable(Colorizeable* pColorizeable)
+    virtual void noteColorizeable(Colorizeable* pColorizeable)
     {
-        _pColorizeable = pColorizeable;
-        _pixelCount = pColorizeable==NULL ? 0 : pColorizeable->numberOfPixels();
+        ColorizeableHolder::noteColorizeable(pColorizeable);
     }
 
     //----------------------------------------------------------------------------------------------

@@ -38,25 +38,25 @@ public:
     {
         for (int i = 0; i < _lumenizers.count(); i++)
         {
-            releaseRef(_lumenizers[i]);
+            ::releaseRef(_lumenizers[i]);
         }
     }
 
-    void addLumenizer(Lumenizer* pLumenizer /*takes ownwership*/)
+    void ownLumenizer(Lumenizer* pLumenizer /*takes ownwership*/)
     {
-        pLumenizer->setColorizeable(_pColorizeable);
+        pLumenizer->noteColorizeable(_pColorizeable);
         pLumenizer->setBrightnessMin(_brightnessMin);
         pLumenizer->setBrightnessMax(_brightnessMax);
         pLumenizer->setDimmerLevel(_dimmerLevel);
-        _lumenizers.addLast(pLumenizer);
+        _lumenizers.addLast(pLumenizer);    // takes ownership
     }
 
-    void setColorizeable(Colorizeable* pColorizeable) override
+    void noteColorizeable(Colorizeable* pColorizeable) override
     {
-        Lumenizer::setColorizeable(pColorizeable);
+        Lumenizer::noteColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
         {
-            _lumenizers[i]->setColorizeable(pColorizeable);
+            _lumenizers[i]->noteColorizeable(pColorizeable);
         }
     }
 

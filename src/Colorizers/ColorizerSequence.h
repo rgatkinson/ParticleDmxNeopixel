@@ -38,22 +38,22 @@ public:
     {
         for (int i = 0; i < _colorizers.count(); i++)
         {
-            releaseRef(_colorizers[i]);
+            ::releaseRef(_colorizers[i]);
         }
     }
 
-    void addColorizer(Colorizer* pColorizer /*takes ownwership*/)
+    void ownColorizer(Colorizer* pColorizer /*takes ownwership*/)
     {
-        pColorizer->setColorizeable(_pColorizeable);
+        pColorizer->noteColorizeable(_pColorizeable);
         _colorizers.addLast(pColorizer);
     }
 
-    void setColorizeable(Colorizeable* pColorizeable) override
+    void noteColorizeable(Colorizeable* pColorizeable) override
     {
-        Colorizer::setColorizeable(pColorizeable);
+        Colorizer::noteColorizeable(pColorizeable);
         for (int i = 0; i < count(); i++)
         {
-            _colorizers[i]->setColorizeable(pColorizeable);
+            _colorizers[i]->noteColorizeable(pColorizeable);
         }
     }
 

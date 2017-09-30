@@ -29,7 +29,7 @@ protected:
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
-    
+
     TwinklingLuminance(float msPause, int msBreathe, int msDuration) : Lumenizer(Flavor::Twinkle, msDuration)
     {
         _msPause = -1;
@@ -38,9 +38,9 @@ public:
         setTwinklePause(msPause);
     }
 
-    virtual void setColorizeable(Colorizeable* pColorizeable)
+    void noteColorizeable(Colorizeable* pColorizeable) override
     {
-        Lumenizer::setColorizeable(pColorizeable);
+        Lumenizer::noteColorizeable(pColorizeable);
         _twinklers = ArrayList<Twinkler>();
         for (int i = 0; i < _pixelCount; i++)
         {

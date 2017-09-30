@@ -95,11 +95,11 @@ public:
                 if (!pLumenizer->sameAs(_pColorizeable->lumenizer()))
                 {
                     INFO("switching to luminance effect %d", effectDesired);
-                    _pColorizeable->setLumenizer(pLumenizer);
+                    _pColorizeable->ownLumenizer(pLumenizer);
                 }
                 else
                 {
-                    releaseRef(pLumenizer);
+                    ::releaseRef(pLumenizer);
                 }
             }
         }

@@ -40,8 +40,8 @@ public:
         _pLumenizer = NULL;
         _pColorizer = NULL;
         _pixelValues = new COLOR_INT[pixelCount];
-        setColorizerNoBegin(new UniformColor(Color::BLACK, Deadline::Infinite));
-        setLumenizerNoBegin(new UniformLuminance(1.0f, Deadline::Infinite));
+        ownColorizerNoBegin(new UniformColor(Color::BLACK, Deadline::Infinite));
+        ownColorizerNoBegin(new UniformLuminance(1.0f, Deadline::Infinite));
     }
 
     DELEGATE_REF_COUNTING
@@ -60,18 +60,18 @@ protected:
     //----------------------------------------------------------------------------------------------
 protected:
 
-    void setColorizerNoBegin(Colorizer* pColorizer)
+    void ownColorizerNoBegin(Colorizer* pColorizer)
     {
         releaseRef(_pColorizer);
         _pColorizer = pColorizer; // takes ownwership
-        if (_pColorizer) _pColorizer->setColorizeable(this);
+        if (_pColorizer) _pColorizer->noteColorizeable(this);
     }
 
-    void setLumenizerNoBegin(Lumenizer* pLumenizer)
+    void ownColorizerNoBegin(Lumenizer* pLumenizer)
     {
         releaseRef(_pLumenizer);
         _pLumenizer = pLumenizer; // takes ownership
-        if (_pLumenizer) _pLumenizer->setColorizeable(this);
+        if (_pLumenizer) _pLumenizer->noteColorizeable(this);
     }
 
 public:
@@ -86,15 +86,15 @@ public:
         return _pColorizer;
     }
 
-    void setLumenizer(Lumenizer* pLumenizer) override
+    void ownLumenizer(Lumenizer* pLumenizer) override
     {
-        setLumenizerNoBegin(pLumenizer);
+        ownColorizerNoBegin(pLumenizer);
         if (_pLumenizer) _pLumenizer->begin();
     }
 
-    void setColorizer(Colorizer* pColorizer) override
+    void ownColorizer(Colorizer* pColorizer) override
     {
-        setColorizerNoBegin(pColorizer);
+        ownColorizerNoBegin(pColorizer);
         if (_pColorizer) _pColorizer->begin();
     }
 

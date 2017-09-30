@@ -21,8 +21,8 @@ public:
 
     AmuletSelfTestLuminance(Colorizer* pColorizer) : LumenizerSequence(Flavor::SelfTest)
     {
-        addLumenizer(new UniformLuminance(_initialBrightnessLevel, pColorizer->msLoopingDuration()));
-        addLumenizer(new UniformLuminance(_idleBrightnessLevel, Deadline::Infinite));
+        ownLumenizer(new UniformLuminance(_initialBrightnessLevel, pColorizer->msLoopingDuration()));
+        ownLumenizer(new UniformLuminance(_idleBrightnessLevel, Deadline::Infinite));
     }
 
     //----------------------------------------------------------------------------------------------

@@ -81,11 +81,11 @@ public:
                 if (!pColorizer->sameAs(_pColorizeable->colorizer()))
                 {
                     INFO("switching to color effect %d", effectDesired);
-                    _pColorizeable->setColorizer(pColorizer);
+                    _pColorizeable->ownColorizer(pColorizer);
                 }
                 else
                 {
-                    releaseRef(pColorizer);
+                    ::releaseRef(pColorizer);
                 }
             }
         }

@@ -21,9 +21,9 @@ struct DmxEffectSelector : ReferenceCounted, protected ColorizeableHolder
     //----------------------------------------------------------------------------------------------
 protected:
 
-    DmxEffectSelector(Colorizeable* pColorizeable) : ColorizeableHolder(true)
+    DmxEffectSelector(Colorizeable* pColorizeable) : ColorizeableHolder()
     {
-        setColorizeable(pColorizeable);
+        ColorizeableHolder::setColorizeable(pColorizeable);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -52,8 +52,8 @@ public:
 
     static void setDemo(Colorizeable* pPixels, Demo demo, Colorizer* pSelfTestColor, Lumenizer* pSelfTestLuminance) // nb: _usual_ ref counting rules
     {
-        pPixels->setColorizer(DmxEffectSelector::demoColorizer(demo, pSelfTestColor));
-        pPixels->setLumenizer(DmxEffectSelector::demoLumenizer(demo, pSelfTestLuminance));
+        pPixels->ownColorizer(DmxEffectSelector::demoColorizer(demo, pSelfTestColor));
+        pPixels->ownLumenizer(DmxEffectSelector::demoLumenizer(demo, pSelfTestLuminance));
     }
 
     static Colorizer* demoColorizer(Demo demo, Colorizer* pSelfTest)
@@ -96,8 +96,8 @@ public:
             case Demo::White:
             {
                 LumenizerSequence* pSequence = new LumenizerSequence();
-                pSequence->addLumenizer(new UniformLuminance(1.0f, 5000));
-                pSequence->addLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault, Deadline::Infinite));
+                pSequence->ownLumenizer(new UniformLuminance(1.0f, 5000));
+                pSequence->ownLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault, Deadline::Infinite));
                 pResult = pSequence;
                 break;
             }

@@ -17,8 +17,8 @@ struct Colorizeable : RefCountable
 {
     virtual void setPixelColor(uint16_t iPixel, COLOR_INT color) = 0;
     virtual int  numberOfPixels() = 0;
-    virtual void setColorizer(Colorizer*) = 0;
-    virtual void setLumenizer(Lumenizer*) = 0;
+    virtual void ownColorizer(Colorizer*) = 0;
+    virtual void ownLumenizer(Lumenizer*) = 0;
 
     virtual Colorizer* colorizer() = 0;
     virtual Lumenizer* lumenizer() = 0;
