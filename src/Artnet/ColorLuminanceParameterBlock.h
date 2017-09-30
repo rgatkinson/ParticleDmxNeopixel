@@ -2,7 +2,7 @@
 // ColorLuminanceParameterBlock.h
 //
 #ifndef __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
-#ifndef __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
+#define __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
 
 #include "Util/Misc.h"
 
