@@ -37,6 +37,9 @@ protected:
         Third,
         Fourth,
         Fifth,
+        Sixth,
+        Seventh,
+        Eigth,
         Max,
         Default=First
     };
@@ -107,9 +110,12 @@ public:
             case Demo::First:   kelvin = 2000; break;
             default:
             case Demo::Second:  kelvin = 2550; break;
-            case Demo::Third:   kelvin = 3000; break;
-            case Demo::Fourth:  kelvin = 4000; break;
-            case Demo::Fifth:   kelvin = 5000; break;
+            case Demo::Third:   kelvin = 2800; break;
+            case Demo::Fourth:  kelvin = 3000; break;
+            case Demo::Fifth:   kelvin = 3500; break;
+            case Demo::Sixth:   kelvin = 4000; break;
+            case Demo::Seventh: kelvin = 4500; break;
+            case Demo::Eigth:   kelvin = 5000; break;
         }
 
         Colorizer* pColorizer = new UniformColor(Color::temperature(kelvin), Deadline::Infinite);
