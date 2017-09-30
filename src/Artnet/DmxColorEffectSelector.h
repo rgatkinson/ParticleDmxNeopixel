@@ -4,7 +4,7 @@
 #ifndef __DMX_COLOR_EFFECT_SELECTOR_H__
 #define __DMX_COLOR_EFFECT_SELECTOR_H__
 
-#include "DmxParameterBlock.h"
+#include "ColorLuminanceParameterBlock.h"
 #include "DmxEffectSelector.h"
 
 struct DmxColorEffectSelector : DmxEffectSelector
@@ -49,12 +49,12 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    static Effect colorEffect(DmxParameterBlock& parameterBlock)
+    static Effect colorEffect(ColorLuminanceParameterBlock& parameterBlock)
     {
         return scaleRangeDiscrete(parameterBlock.colorEffect(), 0, 255, Effect::First, Effect::Last);
     }
 
-    void processParameterBlock(DmxParameterBlock& parameterBlock)
+    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock)
     {
         Effect effectDesired = colorEffect(parameterBlock);
         if (_currentEffect != effectDesired)

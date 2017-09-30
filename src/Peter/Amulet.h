@@ -5,7 +5,7 @@
 #define __AMULET_H_
 
 #include "Artnet/Artnet.h"
-#include "Pixels/PixelRing.h"
+#include "Pixels/ParticleRing.h"
 #include "Util/Color.h"
 #include "Lumenizers/BreathingLuminance.h"
 #include "Lumenizers/LumenizerSequence.h"
@@ -14,7 +14,7 @@
 #include "Lumenizers/MorseCodeLuminance.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"
-#include "Artnet/DmxParameterBlock.h"
+#include "Artnet/ColorLuminanceParameterBlock.h"
 #include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 
@@ -25,7 +25,7 @@ struct Amulet : DmxPacketConsumer
     //----------------------------------------------------------------------------------------------
 public:
 
-    static const int DMX_ADDRESS_COUNT = sizeof(DmxParameterBlock);
+    static const int DMX_ADDRESS_COUNT = sizeof(ColorLuminanceParameterBlock);
 
 protected:
 
@@ -33,7 +33,7 @@ protected:
     ArtnetDevice                    _artnet;
     DmxLuminanceEffectSelector*     _pLuminanceEffectSelector;
     DmxColorEffectSelector*         _pColorEffectSelector;
-    PixelRing*                      _pPixels;
+    ParticleRing*                      _pPixels;
     COLOR_INT                       _indicatorColor;
     DmxEffectSelector::Demo         _demo = DmxEffectSelector::Demo::Default;
 
@@ -45,7 +45,7 @@ public:
     Amulet(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
         : _artnet(this)
     {
-        _pPixels = new PixelRing();
+        _pPixels = new ParticleRing();
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
         _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
         _dmxAddress = dmxAddress;
@@ -106,7 +106,7 @@ public:
 
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        DmxParameterBlock parameterBlock = DmxParameterBlock(packet.pDmx(_dmxAddress));
+        ColorLuminanceParameterBlock parameterBlock = ColorLuminanceParameterBlock(packet.pDmx(_dmxAddress));
 
         _pColorEffectSelector->processParameterBlock(parameterBlock);
         _pLuminanceEffectSelector->processParameterBlock(parameterBlock);

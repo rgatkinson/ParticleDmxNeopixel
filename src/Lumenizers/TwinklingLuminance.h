@@ -86,7 +86,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
     {
         Lumenizer::processParameterBlock(parameterBlock);
 

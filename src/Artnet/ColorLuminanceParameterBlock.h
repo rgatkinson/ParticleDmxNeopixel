@@ -1,12 +1,12 @@
 //
-// DmxParameterBlock.h
+// ColorLuminanceParameterBlock.h
 //
-#ifndef __DMX_PARAMTER_BLOCK_H__
-#define __DMX_PARAMTER_BLOCK_H__
+#ifndef __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
+#ifndef __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
 
 #include "Util/Misc.h"
 
-struct PACKED DmxParameterBlockData
+struct PACKED ColorLuminanceParameterBlockData
 {
     byte    colorTemperature;
     byte    red;
@@ -21,23 +21,23 @@ struct PACKED DmxParameterBlockData
     byte    luminanceControl;
 };
 
-struct DmxParameterBlock
+struct ColorLuminanceParameterBlock
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
 
-    DmxParameterBlockData* _pData;
+    ColorLuminanceParameterBlockData* _pData;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    DmxParameterBlock(void* pv)
+    ColorLuminanceParameterBlock(void* pv)
     {
-        _pData = reinterpret_cast<DmxParameterBlockData*>(pv);
+        _pData = reinterpret_cast<ColorLuminanceParameterBlockData*>(pv);
     }
 
     //----------------------------------------------------------------------------------------------

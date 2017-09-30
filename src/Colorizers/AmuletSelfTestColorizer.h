@@ -33,7 +33,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(DmxParameterBlock& parameterBlock) override
+    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
     {
         Colorizer::processParameterBlock(parameterBlock);
         _pUniform->processParameterBlock(parameterBlock);
