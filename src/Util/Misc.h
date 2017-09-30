@@ -142,6 +142,14 @@ inline T increment(T t, int delta=1)
     return T(int(t) + delta);
 }
 
+template <typename T>
+inline T cycle(T t, T tFirst, T tMax)
+{
+    T result = increment(t);
+    if (result >= tMax) result = tFirst;
+    return result;
+}
+
 //--------------------------------------------------------------------------------------------------
 // Ups & downs
 //--------------------------------------------------------------------------------------------------
