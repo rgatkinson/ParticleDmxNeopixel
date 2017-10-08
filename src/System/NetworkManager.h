@@ -117,7 +117,6 @@ public:
 
     void begin()
     {
-        delay(500); // allow the Log to become ready for output
         INFO("NetworkManager::begin");
 
         WiFi.on();  // must be on first before we call setCredentials()

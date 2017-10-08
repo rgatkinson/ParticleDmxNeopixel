@@ -6,6 +6,7 @@
 
 #include "ArtnetConstants.h"
 #include "System/PersistentSettings.h"
+#include "System/CloudVariables.h"
 
 struct ArtnetDevice
 {
@@ -21,18 +22,21 @@ protected:
     ArtnetReportCode    _reportCode = ArtnetReportCode::PowerOk;
     int                 _pollReplyCount  = 0;
 
-    PersistentValueSetting<int>                     _dmxAddress;
-    PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _shortName;
-    PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _longName;
+    PersistentIntSetting                            _dmxAddress;
+    PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
+    PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
+
+    CloudVariable<int>                              _dmxAddressCloudVariable;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
-    ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, LPCSTR shortName="", LPCSTR longName="")
+    ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, LPCSTR name="<name>", LPCSTR description="<description>")
         : _dmxAddress(dmxAddress),
-          _shortName(shortName),
-          _longName(longName)
+          _name(name),
+          _description(description),
+          _dmxAddressCloudVariable("dmxAddress", &_dmxAddress)
     {
         _pOwner = pOwner;
         _initialized = false;
@@ -62,20 +66,20 @@ public:
 
     void setShortName(LPCSTR sz)
     {
-        _shortName.setValue(sz);
+        _name.setValue(sz);
     }
     LPCSTR shortName()
     {
-        return _shortName.value();
+        return _name.value();
     }
 
     void setLongName(LPCSTR sz)
     {
-        _longName.setValue(sz);
+        _description.setValue(sz);
     }
     LPCSTR longName()
     {
-        return _longName.value();
+        return _description.value();
     }
 
     ArtnetReportCode reportCode()
@@ -98,7 +102,7 @@ public:
 public:
     void begin()
     {
-        // nothing to do
+        _dmxAddressCloudVariable.begin();
     }
 
     void loop()

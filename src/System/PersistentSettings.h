@@ -15,8 +15,16 @@ struct PersistentSetting
 {
     virtual int     size() = 0;
     virtual void*   pointer() = 0;
-    virtual void    loadDefault() = 0;
-    virtual void    load(void* pv, int cb) = 0;
+    virtual bool    loadDefault() = 0;
+    virtual bool    load(void* pv, int cb) = 0;
+};
+
+template <typename T>
+struct PersistentSettingTyped : PersistentSetting
+{
+    virtual T           value() = 0;
+    virtual String      valueAsString() = 0;
+    virtual void        setValue(const T& value) = 0;
 };
 
 //==================================================================================================
@@ -167,7 +175,7 @@ public:
 //==================================================================================================
 
 template <typename T>
-struct PersistentValueSetting : PersistentSetting
+struct PersistentValueSetting : PersistentSettingTyped<T>
 {
     T _value;
     T _default;
@@ -180,14 +188,18 @@ struct PersistentValueSetting : PersistentSetting
         loadDefault();
         PersistentSettings::theInstance->add(this);    // note: we lay out in declaration order!
     }
-    T& value()
+    T value() override
     {
         return _value;
     }
-    void setValue(const T& value)
+    void setValue(const T& value) override
     {
         _value = value;
-        PersistentSettings::theInstance->save(this);
+        save();
+    }
+    virtual String valueAsString() override
+    {
+        return String("<subclass responsibility>");
     }
 
     int size() override
@@ -198,20 +210,48 @@ struct PersistentValueSetting : PersistentSetting
     {
         return &_value;
     }
-    void loadDefault() override
+    bool loadDefault() override
     {
         _value = _default;
+        INFO("PersistentValueSetting: loaded default: %s", valueAsString().c_str());
+        return true;
     }
-    void load(void* pv, int cb) override
+    bool load(void* pv, int cb) override
     {
         if (cb == size())
         {
             memcpy(pointer(), pv, cb);
+            INFO("PersistentValueSetting: loaded: %s", valueAsString().c_str());
+            return true;
         }
         else
         {
-            ERROR("invalid setting size: %d", cb);
+            ERROR("PersistentValueSetting: invalid size: %d", cb);
+            return false;
         }
+    }
+    void save()
+    {
+        PersistentSettings::theInstance->save(this);
+    }
+};
+
+//==================================================================================================
+// PersistentIntSetting
+//==================================================================================================
+
+struct PersistentIntSetting : PersistentValueSetting<int>
+{
+    PersistentIntSetting() : PersistentIntSetting(0)
+    {
+    }
+    PersistentIntSetting(int defaultValue) : PersistentValueSetting<int>(defaultValue)
+    {
+    }
+
+    virtual String valueAsString() override
+    {
+        return String::format("%d", value());
     }
 };
 
@@ -219,11 +259,11 @@ struct PersistentValueSetting : PersistentSetting
 // PersistentStringSetting
 //==================================================================================================
 
-template <int _cchBuffer>
-struct PersistentStringSetting : PersistentSetting
+template <int _cchValue>
+struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
 {
-    String _default;
-    char _rgchBuffer[_cchBuffer];
+    String _defaultValue;
+    char _rgchValue[_cchValue];
 
     PersistentStringSetting() : PersistentStringSetting("")
     {
@@ -231,7 +271,7 @@ struct PersistentStringSetting : PersistentSetting
     PersistentStringSetting(const String& defaultValue) : PersistentStringSetting(defaultValue.c_str())
     {
     }
-    PersistentStringSetting(LPCSTR defaultValue) : _default(defaultValue)
+    PersistentStringSetting(LPCSTR defaultValue) : _defaultValue(defaultValue)
     {
         zero();
         loadDefault();
@@ -239,37 +279,49 @@ struct PersistentStringSetting : PersistentSetting
     }
     void zero()
     {
-        ::zero(&_rgchBuffer[0], _cchBuffer);
+        ::zero(&_rgchValue[0], _cchValue);
     }
 
-    LPCSTR value()
+    String valueAsString() override
     {
-        return &_rgchBuffer[0];
+        return String::format("%s", value());
     }
-    void setValue(LPCSTR sz)
+    LPCSTR value() override
+    {
+        return &_rgchValue[0];
+    }
+    void setValue(const LPCSTR& sz) override
     {
         zero();
-        safeStrncpy(_rgchBuffer, _cchBuffer, sz);
-        PersistentSettings::theInstance->save(this);
+        safeStrncpy(_rgchValue, _cchValue, sz);
+        save();
     }
 
     int size() override
     {
-        return _cchBuffer;
+        return _cchValue;
     }
     void* pointer() override
     {
-        return &_rgchBuffer[0];
+        return &_rgchValue[0];
     }
-    void loadDefault() override
+    bool loadDefault() override
     {
         zero();
-        safeStrncpy(_rgchBuffer, _cchBuffer, _default.c_str());
+        safeStrncpy(_rgchValue, _cchValue, _defaultValue.c_str());
+        INFO("PersistentStringSetting: loaded default: %s", valueAsString().c_str());
+        return true;
     }
-    void load(void* pv, int cb) override
+    bool load(void* pv, int cb) override
     {
         zero();
-        memcpy(&_rgchBuffer[0], pv, min(cb, _cchBuffer-1));  // ALWAYS null terminate
+        memcpy(&_rgchValue[0], pv, min(cb, _cchValue-1));  // ALWAYS null terminate
+        INFO("PersistentStringSetting: loaded: %s", valueAsString().c_str());
+        return true;
+    }
+    void save()
+    {
+        PersistentSettings::theInstance->save(this);
     }
 };
 

@@ -11,22 +11,20 @@
 
 struct Globals
 {
+public:
     static Globals* theInstance;
 
-    SerialLogHandler        logHandler;
-    SystemEventRegistrar    systemEventRegistrar;
-    PersistentSettings      persistentSettings;
-    NetworkManager          networkManager;
+private:
+    SerialLogHandler        _logHandler;
+    SystemEventRegistrar    _systemEventRegistrar;
+    PersistentSettings      _persistentSettings;
+    NetworkManager          _networkManager;
 
+public:
     Globals()
     {
         theInstance = this;
-        startup();
-    }
 
-private:
-    void startup()
-    {
         Serial.begin(115200);
         if (System.resetReason() == RESET_REASON_PANIC)
         {
@@ -37,22 +35,24 @@ private:
 public:
     void begin()
     {
+        delay(500); // try to allow the Log to become ready for output
+
         ElapsedTime::begin();
-        persistentSettings.begin();
-        networkManager.begin();
+        _persistentSettings.begin();
+        _networkManager.begin();
     }
 
     void loop()
     {
         ElapsedTime::loop();
-        persistentSettings.loop();
-        networkManager.loop();
+        _persistentSettings.loop();
+        _networkManager.loop();
     }
 
     void report()
     {
-        persistentSettings.report();
-        networkManager.report();
+        _persistentSettings.report();
+        _networkManager.report();
     }
 };
 
