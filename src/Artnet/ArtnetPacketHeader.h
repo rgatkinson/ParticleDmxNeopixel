@@ -83,6 +83,6 @@ public:
 
     void setArtnetOpMode(ArtnetOpMode artnetOpMode)
     {
-        TypeConversion::intToBytes(artnetOpMode, &pData->_opMode, 2, LittleEndian);
+        TypeConversion::intToBytes((int)artnetOpMode, &pData->_opMode, 2, LittleEndian);
     }
 };

@@ -5,15 +5,27 @@
 #define __GLOBALS_H__
 
 #include "SystemEventRegistrar.h"
+#include "PersistentSettings.h"
 #include "NetworkManager.h"
 #include "Util/ElapsedTime.h"
 
 struct Globals
 {
+    static Globals* theInstance;
+
+    SerialLogHandler        logHandler;
     SystemEventRegistrar    systemEventRegistrar;
+    PersistentSettings      persistentSettings;
     NetworkManager          networkManager;
 
-    static void setup()
+    Globals()
+    {
+        theInstance = this;
+        startup();
+    }
+
+private:
+    void startup()
     {
         Serial.begin(115200);
         if (System.resetReason() == RESET_REASON_PANIC)
@@ -22,14 +34,25 @@ struct Globals
         }
     }
 
-    static void startup()
+public:
+    void begin()
     {
         ElapsedTime::begin();
+        persistentSettings.begin();
+        networkManager.begin();
     }
 
-    static void loop()
+    void loop()
     {
         ElapsedTime::loop();
+        persistentSettings.loop();
+        networkManager.loop();
+    }
+
+    void report()
+    {
+        persistentSettings.report();
+        networkManager.report();
     }
 };
 

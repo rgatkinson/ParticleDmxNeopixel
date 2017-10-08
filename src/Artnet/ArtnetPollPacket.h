@@ -32,7 +32,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ArtPollPacket() : ArtnetPacketHeader(sizeof(ArtPollPacketData), ArtnetOpModePoll)
+    ArtPollPacket() : ArtnetPacketHeader(sizeof(ArtPollPacketData), ArtnetOpMode::Poll)
     {
         pData = reinterpret_cast<ArtPollPacketData*>(ArtnetPacketHeader::pData);
     }
@@ -44,7 +44,7 @@ public:
 
     void initialize()
     {
-        ArtnetPacketHeader::initialize(ArtnetOpModePoll);
+        ArtnetPacketHeader::initialize(ArtnetOpMode::Poll);
         setProtocolVersion(ARTNET_PROTOCOL_VERSION);
     }
 

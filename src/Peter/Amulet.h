@@ -29,11 +29,10 @@ public:
 
 protected:
 
-    DMX_ADDRESS                     _dmxAddress;
     ArtnetDevice                    _artnet;
     DmxLuminanceEffectSelector*     _pLuminanceEffectSelector;
     DmxColorEffectSelector*         _pColorEffectSelector;
-    ParticleRing*                      _pPixels;
+    ParticleRing*                   _pPixels;
     COLOR_INT                       _indicatorColor;
     DmxEffectSelector::Demo         _demo = DmxEffectSelector::Demo::Default;
 
@@ -42,13 +41,12 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Amulet(DMX_ADDRESS dmxAddress, LPCSTR shortName, COLOR_INT indicatorColor)
-        : _artnet(this)
+    Amulet(LPCSTR shortName, COLOR_INT indicatorColor)
+        : _artnet(this, DMX_ADDRESS_DEFAULT, shortName)
     {
         _pPixels = new ParticleRing();
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
         _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
-        _dmxAddress = dmxAddress;
         _indicatorColor = indicatorColor;
 
         _artnet.setShortName(shortName);
@@ -106,7 +104,7 @@ public:
 
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        ColorLuminanceParameterBlock parameterBlock = ColorLuminanceParameterBlock(packet.pDmx(_dmxAddress));
+        ColorLuminanceParameterBlock parameterBlock = ColorLuminanceParameterBlock(packet.pDmx(_artnet.dmxAddress()));
 
         _pColorEffectSelector->processParameterBlock(parameterBlock);
         _pLuminanceEffectSelector->processParameterBlock(parameterBlock);

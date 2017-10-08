@@ -6,9 +6,6 @@
 // ArtPollReplyPacketData
 //==================================================================================================
 
-typedef char SHORT_NAME[18];
-typedef char LONG_NAME[64];
-
 struct PACKED ArtPollReplyPacketData : ArtnetPacketHeaderData
 {
     uint8_t     _ipAddress[4];   // 3: 10
@@ -23,9 +20,9 @@ struct PACKED ArtPollReplyPacketData : ArtnetPacketHeaderData
     int8_t      _status1;        // 12: 23=0x17
     int8_t      _estaManLo;      // 13: 24=0x18
     int8_t      _estaManHi;      // 14: 25=0x19
-    SHORT_NAME  _shortName;      // 15: 26=0x1a
-    LONG_NAME   _longName;       // 16: 44=0x2c
-    LONG_NAME   _nodeReport;     // 17: 108=0x6c
+    ARTNET_SHORT_NAME  _shortName;      // 15: 26=0x1a
+    ARTNET_LONG_NAME   _longName;       // 16: 44=0x2c
+    ARTNET_LONG_NAME   _nodeReport;     // 17: 108=0x6c
     int8_t      _numPortsHi;     // 18: 172=0xac
     int8_t      _numPortsLo;     // 19: 173=0xad
     int8_t      _portTypes[4];   // 20: 174=0xae
@@ -63,7 +60,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ArtPollReplyPacket() : ArtnetPacketHeader(sizeof(ArtPollReplyPacketData), ArtnetOpModePollReply)
+    ArtPollReplyPacket() : ArtnetPacketHeader(sizeof(ArtPollReplyPacketData), ArtnetOpMode::PollReply)
     {
         pData = reinterpret_cast<ArtPollReplyPacketData*>(ArtnetPacketHeader::pData);
     }
@@ -75,14 +72,14 @@ public:
 
     void initialize()
     {
-        ArtnetPacketHeader::initialize(ArtnetOpModePollReply);
+        ArtnetPacketHeader::initialize(ArtnetOpMode::PollReply);
 
         HAL_IPAddress& halIpAddress = WiFi.localIP().raw();
         memcpy(&pData->_ipAddress[0], &halIpAddress, 4);
         setPort(ARTNET_PORT);
-        pData->_versInfoH = FIRMWARE_MAJOR;
-        pData->_versInfoL = FIRMWARE_MINOR;
-        setOemCode(OemUnknown);
+        pData->_versInfoH = ARTNET_FIRMWARE_MAJOR;
+        pData->_versInfoL = ARTNET_FIRMWARE_MINOR;
+        setOemCode(ArtnetOemCode::Unknown);
         WiFi.macAddress(pData->_macAddress);
     }
 
@@ -116,13 +113,13 @@ public:
         TypeConversion::intToBytes(port, &pData->_port, 2, LittleEndian);
     }
 
-    OemCode oemCode()
+    ArtnetOemCode oemCode()
     {
-        return (OemCode)TypeConversion::bytesToInt(&pData->_oemHi, 2, BigEndian);
+        return (ArtnetOemCode)TypeConversion::bytesToInt(&pData->_oemHi, 2, BigEndian);
     }
-    void setOemCode(OemCode oemCode)
+    void setOemCode(ArtnetOemCode oemCode)
     {
-        TypeConversion::intToBytes(oemCode, &pData->_oemHi, 2, BigEndian);
+        TypeConversion::intToBytes((int)oemCode, &pData->_oemHi, 2, BigEndian);
     }
 
     LPSTR shortName()
@@ -131,7 +128,7 @@ public:
     }
     void setShortName(LPCSTR sz)
     {
-        safeStrNCpy(&pData->_shortName[0], sizeof(pData->_shortName), sz);
+        safeStrncpy(&pData->_shortName[0], sizeof(pData->_shortName), sz);
     }
 
     LPSTR longName()
@@ -140,7 +137,7 @@ public:
     }
     void setLongName(LPCSTR sz)
     {
-        safeStrNCpy(&pData->_longName[0], sizeof(pData->_longName), sz);
+        safeStrncpy(&pData->_longName[0], sizeof(pData->_longName), sz);
     }
 
     LPSTR nodeReport()
@@ -149,9 +146,9 @@ public:
     }
     void setNodeReport(LPCSTR sz)
     {
-        safeStrNCpy(&pData->_nodeReport[0], sizeof(pData->_nodeReport), sz);
+        safeStrncpy(&pData->_nodeReport[0], sizeof(pData->_nodeReport), sz);
     }
-    void setNodeReport(ReportCode reportCode, int counter)
+    void setNodeReport(ArtnetReportCode reportCode, int counter)
     {
         char sz[sizeof(pData->_nodeReport)];
         snprintf(&sz[0], sizeof(sz), "#%04x [%d] Detailed status not provided", reportCode, counter);

@@ -24,13 +24,13 @@ bool ArtnetPacketHeader::validate()
         {
             switch (artnetOpMode())
             {
-                case ArtnetOpModePoll:
+                case ArtnetOpMode::Poll:
                     {
                         ArtPollPacket pollPacket(pData, cbData);
                         result = pollPacket.validate();
                     }
                     break;
-                case ArtnetOpModeDmx:
+                case ArtnetOpMode::Dmx:
                     {
                         ArtDmxPacket dmxPacket(pData, cbData);
                         result = dmxPacket.validate();

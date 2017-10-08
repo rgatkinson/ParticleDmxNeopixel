@@ -49,6 +49,16 @@ inline void* mallocNoFail(size_t cb)
     return result;
 }
 
+inline void zero(void* pv, int cb)
+{
+    memset(pv, 0, cb);
+}
+
+template <typename T> inline void zero(T* pt)
+{
+    zero(pt, sizeof(T));
+}
+
 //--------------------------------------------------------------------------------------------------
 // Math / numerics
 //--------------------------------------------------------------------------------------------------
@@ -225,20 +235,28 @@ inline float sinWave(float f, float triangleBase)
 typedef char* LPSTR;
 typedef const char* LPCSTR;
 
-inline void safeStrNCpy(char*rgchBuffer, int cchBuffer, LPCSTR sz)
+inline void safeStrncpy(char*rgchBuffer, int cchBuffer, LPCSTR sz)
 {
-    const char* pchFrom = &sz[0];
-    char* pchTo         = &rgchBuffer[0];
-    char* pchToLast     = &rgchBuffer[cchBuffer-1];
-    while (pchTo < pchToLast)
+    if (sz)
     {
-        if ('\0' == *pchFrom) break;
-        *pchTo++ = *pchFrom++;
+        const char* pchFrom = &sz[0];
+        char* pchTo         = &rgchBuffer[0];
+        char* pchToLast     = &rgchBuffer[cchBuffer-1];
+        while (pchTo < pchToLast)
+        {
+            if ('\0' == *pchFrom) break;
+            *pchTo++ = *pchFrom++;
+        }
+        zero(pchTo, pchToLast - pchTo + 1);
     }
-    while (pchTo <= pchToLast)
+    else
     {
-        *pchTo++ = '\0';
+        zero(rgchBuffer, cchBuffer);
     }
+}
+inline void safeStrncpy(char*rgchBuffer, int cchBuffer, const String& string)
+{
+    safeStrncpy(rgchBuffer, cchBuffer, string.c_str());
 }
 
 inline void strfree(LPSTR& sz)

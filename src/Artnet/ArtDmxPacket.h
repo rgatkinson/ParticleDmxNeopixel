@@ -47,7 +47,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ArtDmxPacket(int channelCount) : ArtnetPacketHeader(ArtDmxPacketData::cb(channelCount), ArtnetOpModePoll)
+    ArtDmxPacket(int channelCount) : ArtnetPacketHeader(ArtDmxPacketData::cb(channelCount), ArtnetOpMode::Poll)
     {
         pData = reinterpret_cast<ArtDmxPacketData*>(ArtnetPacketHeader::pData);
     }
@@ -59,7 +59,7 @@ public:
 
     void initialize()
     {
-        ArtnetPacketHeader::initialize(ArtnetOpModePoll);
+        ArtnetPacketHeader::initialize(ArtnetOpMode::Poll);
     }
 
     //----------------------------------------------------------------------------------------------

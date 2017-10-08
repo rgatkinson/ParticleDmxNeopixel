@@ -16,5 +16,6 @@ SYSTEM_MODE(MANUAL);
 STARTUP(System.enableFeature(FEATURE_RESET_INFO));
 
 SystemEventRegistrar*   SystemEventRegistrar::theInstance = nullptr;
+PersistentSettings*     PersistentSettings::theInstance = nullptr;
 NetworkManager*         NetworkManager::theInstance = nullptr;
-Globals                 globals;
+Globals*                Globals::theInstance = nullptr;
