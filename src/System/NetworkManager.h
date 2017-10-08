@@ -6,6 +6,7 @@
 
 #include "Util/Misc.h"
 #include "Util/ArrayList.h"
+#include "SystemEventRegistrar.h"
 
 //==================================================================================================
 // WiFiPassword
@@ -40,7 +41,7 @@ struct WiFiPassword
 // NetworkManager
 //==================================================================================================
 
-struct NetworkManager
+struct NetworkManager : SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -51,7 +52,8 @@ protected:
     bool _clearCredentials = false;
     ArrayList<WiFiPassword> _passwords;
 
-    static NetworkManager* _pTheInstance;
+public:
+    static NetworkManager* theInstance;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -59,9 +61,9 @@ protected:
 public:
     NetworkManager()
     {
-        _pTheInstance = this;
+        theInstance = this;
         WiFi.selectAntenna(ANT_INTERNAL);   // persistently remembered
-        registerSystemEvents();
+        SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
 
     void addPassword(WiFiPassword& password)
@@ -83,17 +85,7 @@ public:
     // System Events
     //----------------------------------------------------------------------------------------------
 
-    void registerSystemEvents()
-    {
-        System.on(network_status, &staticOnNetworkStatus);
-    }
-
-    static void staticOnNetworkStatus(system_event_t event, int eventParam)
-    {
-        _pTheInstance->onNetworkStatus(event, eventParam);
-    }
-
-    void onNetworkStatus(system_event_t ignored, int netStatus)
+    void onNetworkStatus(system_event_t ignored, int netStatus) override
     {
         switch (netStatus)
         {
@@ -105,6 +97,17 @@ public:
             case network_status_connected:      INFO("network: connected"); break;      // DHCP acquired
             case network_status_disconnecting:  INFO("network: disconnecting"); break;
             case network_status_disconnected:   INFO("network: disconnected"); break;
+        }
+    }
+
+    void onCloudStatus(system_event_t event, int cloudStatus) override
+    {
+        switch (cloudStatus)
+        {
+            case cloud_status_connecting:    INFO("cloud: connecting"); break;
+            case cloud_status_connected:     INFO("cloud: connected"); break;
+            case cloud_status_disconnecting: INFO("cloud: disconnecting"); break;
+            case cloud_status_disconnected:  INFO("cloud: disconnected"); break;
         }
     }
 

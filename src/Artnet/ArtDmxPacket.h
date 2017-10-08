@@ -5,6 +5,7 @@
 #define _ARTDMXPACKET_H_
 
 #include "Util/Color.h"
+#include "DmxPacketConsumer.h"
 
 //==================================================================================================
 // ArtDmxPacket
@@ -26,15 +27,6 @@ struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
     {
         return offsetof(ArtDmxPacketData, _data) + channelCount * sizeof(byte);
     }
-};
-
-//==================================================================================================
-// DmxPacketConsumer
-//==================================================================================================
-
-struct DmxPacketConsumer
-{
-    virtual void onDmxPacket(ArtDmxPacket& packet) = 0;
 };
 
 //==================================================================================================
