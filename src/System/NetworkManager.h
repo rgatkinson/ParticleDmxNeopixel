@@ -111,6 +111,15 @@ public:
         }
     }
 
+    void onTimeChanged(system_event_t event, int timeStatus) override
+    {
+        switch (timeStatus)
+        {
+            case time_changed_manually:     INFO("time: manual change"); break;
+            case time_changed_sync:         INFO("time: synhcronized"); break;
+        }
+    }
+
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------

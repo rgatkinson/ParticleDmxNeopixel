@@ -20,6 +20,7 @@ struct CloudVariable : SystemEventNotifications
     String   _name;
     bool     _begun = false;
     bool     _connected = false;
+    bool     _timeSync = false;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -52,14 +53,22 @@ struct CloudVariable : SystemEventNotifications
             announce();
         }
     }
+    void onTimeChanged(system_event_t event, int timeStatus) override
+    {
+        if (timeStatus == time_changed_sync)
+        {
+            _timeSync = true;
+            announce();
+        }
+    }
 
     //----------------------------------------------------------------------------------------------
     // Cloud
     //----------------------------------------------------------------------------------------------
 
-    const VALUE& value()
+    const VALUE& valueRef()
     {
-        return _persistentSetting->value();
+        return _persistentSetting->valueRef();
     }
     void setValue(const VALUE& value)
     {
@@ -71,7 +80,7 @@ struct CloudVariable : SystemEventNotifications
         if (_begun && _connected)
         {
             INFO("announcing clound variable name=%s value=%s", _name.c_str(), _persistentSetting->valueAsString().c_str());
-            bool success = Particle.variable(_name, &value(), INT);
+            bool success = Particle.variable(_name, this->valueRef());
             if (!success)
             {
                 ERROR("announcing clound variable FAILED: %s", _name.c_str());

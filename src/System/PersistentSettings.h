@@ -23,6 +23,7 @@ template <typename T>
 struct PersistentSettingTyped : PersistentSetting
 {
     virtual T           value() = 0;
+    virtual const T&    valueRef() = 0;
     virtual String      valueAsString() = 0;
     virtual void        setValue(const T& value) = 0;
 };
@@ -192,6 +193,10 @@ struct PersistentValueSetting : PersistentSettingTyped<T>
     {
         return _value;
     }
+    const T& valueRef() override
+    {
+        return _value;
+    }
     void setValue(const T& value) override
     {
         _value = value;
@@ -262,8 +267,9 @@ struct PersistentIntSetting : PersistentValueSetting<int>
 template <int _cchValue>
 struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
 {
-    String _defaultValue;
-    char _rgchValue[_cchValue];
+    String  _defaultValue;
+    LPCSTR  _value;
+    char    _rgchValue[_cchValue];
 
     PersistentStringSetting() : PersistentStringSetting("")
     {
@@ -271,7 +277,9 @@ struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
     PersistentStringSetting(const String& defaultValue) : PersistentStringSetting(defaultValue.c_str())
     {
     }
-    PersistentStringSetting(LPCSTR defaultValue) : _defaultValue(defaultValue)
+    PersistentStringSetting(LPCSTR defaultValue)
+        : _defaultValue(defaultValue),
+          _value(&_rgchValue[0])
     {
         zero();
         loadDefault();
@@ -288,7 +296,11 @@ struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
     }
     LPCSTR value() override
     {
-        return &_rgchValue[0];
+        return _value;
+    }
+    const LPCSTR& valueRef() override
+    {
+        return _value;
     }
     void setValue(const LPCSTR& sz) override
     {
