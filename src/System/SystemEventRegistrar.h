@@ -8,8 +8,8 @@
 
 struct SystemEventNotifications
 {
-    virtual void onNetworkStatus(system_event_t event, int eventParam) = 0;
-    virtual void onCloudStatus(system_event_t event, int eventParam) = 0;
+    virtual void onNetworkStatus(system_event_t event, int netStatus) = 0;
+    virtual void onCloudStatus(system_event_t event, int cloudStatus) = 0;
 };
 
 
