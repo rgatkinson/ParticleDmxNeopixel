@@ -26,6 +26,7 @@ struct PersistentSettingTyped : PersistentSetting
     virtual const T&    valueRef() = 0;
     virtual String      valueAsString() = 0;
     virtual void        setValue(const T& value) = 0;
+    virtual void        setValue(const String& string) = 0;
 };
 
 //==================================================================================================
@@ -201,6 +202,11 @@ struct PersistentValueSetting : PersistentSettingTyped<T>
     {
         _value = value;
         save();
+        INFO("PersistentValueSetting: setValue: %s", valueAsString().c_str());
+    }
+    virtual void setValue(const String& string) override
+    {
+        // subclass responsibility
     }
     virtual String valueAsString() override
     {
@@ -258,6 +264,10 @@ struct PersistentIntSetting : PersistentValueSetting<int>
     {
         return String::format("%d", value());
     }
+    virtual void setValue(const String& value) override
+    {
+        PersistentValueSetting<int>::setValue(value.toInt());
+    }
 };
 
 //==================================================================================================
@@ -307,6 +317,11 @@ struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
         zero();
         safeStrncpy(_rgchValue, _cchValue, sz);
         save();
+        INFO("PersistentStringSetting: setValue: %s", valueAsString().c_str());
+    }
+    void setValue(const String& value) override
+    {
+        setValue(value.c_str());
     }
 
     int size() override

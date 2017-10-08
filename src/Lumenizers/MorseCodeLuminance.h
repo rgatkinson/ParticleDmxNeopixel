@@ -146,14 +146,14 @@ public:
         if (_timer.hasExpired())
         {
             // Set level accordingly
-            if (_encodingIndex < _encodedMessage.size())
+            if (_encodingIndex < (int)_encodedMessage.size())
             {
                 setCurrentLevel(_encodedMessage[_encodingIndex] ? onLevel : offLevel);
             }
 
             // Advance
             _encodingIndex++;
-            if (_encodingIndex >= _encodedMessage.size())
+            if (_encodingIndex >= (int)_encodedMessage.size())
             {
                 _encodingIndex = 0;
             }
