@@ -7,6 +7,7 @@
 #include "SystemEventRegistrar.h"
 #include "PersistentSettings.h"
 #include "NetworkManager.h"
+#include "CloudVariable.h"
 #include "Util/ElapsedTime.h"
 
 struct Globals
@@ -37,14 +38,12 @@ public:
     {
         delay(500); // try to allow the Log to become ready for output
 
-        ElapsedTime::begin();
         _persistentSettings.begin();
         _networkManager.begin();
     }
 
     void loop()
     {
-        ElapsedTime::loop();
         _persistentSettings.loop();
         _networkManager.loop();
     }

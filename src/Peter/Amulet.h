@@ -41,7 +41,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Amulet(LPCSTR shortName, COLOR_INT indicatorColor)
+    Amulet(COLOR_INT indicatorColor, LPCSTR shortName="Amulet")
         : _artnet(this, DMX_ADDRESS_DEFAULT, shortName)
     {
         _pPixels = new ParticleRing();

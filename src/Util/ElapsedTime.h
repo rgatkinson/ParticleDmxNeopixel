@@ -17,7 +17,6 @@ struct ElapsedTime
     static const TIME Infinite = 604800000;  // a week in ms
 
     TIME _msStartTime;
-    static TIME loopNow;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -31,19 +30,6 @@ struct ElapsedTime
     ElapsedTime(TIME _msStartTime)
     {
         this->_msStartTime = _msStartTime;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Loop
-    //----------------------------------------------------------------------------------------------
-
-    static void begin()
-    {
-        updateNow();
-    }
-    static void loop()
-    {
-        updateNow();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -65,15 +51,9 @@ protected:
     TIME msNow()
     {
         return computeNow();
-        // return loopNow;  // causes problems
     }
 
 private:
-
-    static void updateNow()
-    {
-        loopNow = computeNow();
-    }
 
     static TIME computeNow()
     {

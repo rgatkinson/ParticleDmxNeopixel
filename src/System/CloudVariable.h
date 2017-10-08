@@ -18,6 +18,9 @@ struct CloudVariable : SystemEventNotifications
 
     SETTING* _persistentSetting;
     String   _name;
+    bool     _begun = false;
+    bool     _connected = false;
+    bool     _announced = false;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -44,6 +47,11 @@ struct CloudVariable : SystemEventNotifications
     }
     void onCloudStatus(system_event_t event, int cloudStatus) override
     {
+        if (cloudStatus==cloud_status_connected)
+        {
+            _connected = true;
+            announce();
+        }
     }
     void onTimeChanged(system_event_t event, int timeStatus) override
     {
@@ -69,15 +77,19 @@ struct CloudVariable : SystemEventNotifications
 
     void announce()
     {
-        INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _persistentSetting->valueAsString().c_str());
-        bool success = Particle.variable(_name, this->valueRef());
-        if (success)
+        if (_begun && _connected && !_announced)
         {
-            success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::setValue), this);
-        }
-        if (!success)
-        {
-            ERROR("announcing cloud variable FAILED: %s", _name.c_str());
+            _announced = true;
+            INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _persistentSetting->valueAsString().c_str());
+            bool success = Particle.variable(_name, this->valueRef());
+            if (success)
+            {
+                success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::setValue), this);
+            }
+            if (!success)
+            {
+                ERROR("announcing cloud variable FAILED: %s", _name.c_str());
+            }
         }
     }
 
@@ -87,6 +99,7 @@ struct CloudVariable : SystemEventNotifications
 
     void begin()
     {
+        _begun = true;
         announce();
     }
 };
