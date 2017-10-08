@@ -6,7 +6,7 @@
 
 #include "ArtnetConstants.h"
 #include "System/PersistentSettings.h"
-#include "System/CloudVariables.h"
+#include "System/CloudVariable.h"
 
 struct ArtnetDevice
 {
@@ -27,6 +27,8 @@ protected:
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
     CloudVariable<int>                              _dmxAddressCloudVariable;
+    CloudVariable<LPCSTR>                           _nameCloudVariable;
+    CloudVariable<LPCSTR>                           _descriptionCloudVariable;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -36,7 +38,9 @@ public:
         : _dmxAddress(dmxAddress),
           _name(name),
           _description(description),
-          _dmxAddressCloudVariable("dmxAddress", &_dmxAddress)
+          _dmxAddressCloudVariable("dmxAddress", &_dmxAddress),
+          _nameCloudVariable("name", &_name),
+          _descriptionCloudVariable("description", &_description)
     {
         _pOwner = pOwner;
         _initialized = false;
@@ -103,6 +107,8 @@ public:
     void begin()
     {
         _dmxAddressCloudVariable.begin();
+        _nameCloudVariable.begin();
+        _descriptionCloudVariable.begin();
     }
 
     void loop()

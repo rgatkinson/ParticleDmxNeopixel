@@ -1,8 +1,8 @@
 //
-// CloudVariables.h
+// CloudVariable.h
 //
-#ifndef __CLOUD_VARIABLES_H__
-#define __CLOUD_VARIABLES_H__
+#ifndef __CLOUD_VARIABLE_H__
+#define __CLOUD_VARIABLE_H__
 
 #include "System/PersistentSettings.h"
 #include "System/SystemEventRegistrar.h"
