@@ -123,6 +123,9 @@ private:
 
 public:
 
+    // color temperature zero allows rgb
+    // otherwise, color temperature max is the sweet spot
+    // othewise, we interpolate color temperature
     COLOR_INT effectiveColor()
     {
         const byte dmxColorTemperature = colorTemperature();

@@ -103,7 +103,8 @@ public:
     // Controlled by external faders etc
     virtual void setDimmerLevel(float dimmerLevel)
     {
-        _dimmerLevel = clip(dimmerLevel, 0, 1);
+        dimmerLevel = clip(dimmerLevel, 0, 1);
+        _dimmerLevel = dimmerLevel;
     }
 
     virtual BRIGHTNESS currentBrightness()
@@ -163,7 +164,11 @@ public:
     virtual void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock)
     {
         float dimmerLevel = scaleRange(parameterBlock.dimmer(), 0, 255, 0, 1);
-        _pColorizeable->setDimmerLevel(dimmerLevel);
+        if (_dimmerLevel != dimmerLevel)
+        {
+            INFO("Luminizer: dimmerLevel=%f", dimmerLevel);
+            setDimmerLevel(dimmerLevel);
+        }
     }
 
     //----------------------------------------------------------------------------------------------

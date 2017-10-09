@@ -22,8 +22,6 @@ struct Colorizeable : RefCountable
 
     virtual Colorizer* colorizer() = 0;
     virtual Lumenizer* lumenizer() = 0;
-
-    virtual void setDimmerLevel(float dimmerLevel) = 0;
 };
 
 #endif

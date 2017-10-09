@@ -93,12 +93,20 @@ public:
         return ArtDmxPacketData::cb(channelCount()) <= cbData;
     }
 
-    byte* pDmx(DMX_ADDRESS dmxAddress)
+    byte* dmxValuesPointer(DMX_ADDRESS dmxAddress, int count)
     {
-        return &pData->_data[dmxAddress - 1];
+        int channelNumber = dmxAddress - 1;
+        if (0 <= channelNumber && channelNumber + count <= channelCount())
+        {
+            return &pData->_data[channelNumber];
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
-    byte dmx(DMX_ADDRESS dmxAddress)
+    byte dmxValue(DMX_ADDRESS dmxAddress)
     {
         int channelNumber = dmxAddress - 1;    // make zero-based
         if (0 <= channelNumber && channelNumber < channelCount())

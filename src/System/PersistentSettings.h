@@ -251,18 +251,29 @@ struct PersistentValueSetting : PersistentSettingTyped<T>
     }
 };
 
+template <typename T>
+struct VolatileValueSetting
+{
+    T _value;
+
+    VolatileValueSetting() : VolatileValueSetting(T{}) {}
+    VolatileValueSetting(const T& defaultValue) : _value(defaultValue) {}
+
+    T               value()                         { return _value; }
+    const T&        valueRef()                      { return _value; }
+    void            setValue(const T& value)        { _value = value; }
+    virtual String  valueAsString()                 { return "<subclassResponsibility>"; }
+    virtual void    setValue(const String& string)  { /*subclassResponsibility */ }
+};
+
 //==================================================================================================
 // PersistentIntSetting
 //==================================================================================================
 
 struct PersistentIntSetting : PersistentValueSetting<int>
 {
-    PersistentIntSetting() : PersistentIntSetting(0)
-    {
-    }
-    PersistentIntSetting(int defaultValue) : PersistentValueSetting<int>(defaultValue)
-    {
-    }
+    PersistentIntSetting() : PersistentIntSetting(0) {}
+    PersistentIntSetting(int defaultValue) : PersistentValueSetting<int>(defaultValue) {}
 
     virtual String valueAsString() override
     {
@@ -271,6 +282,21 @@ struct PersistentIntSetting : PersistentValueSetting<int>
     virtual void setValue(const String& value) override
     {
         PersistentValueSetting<int>::setValue(value.toInt());
+    }
+};
+
+struct VolatileIntSetting : VolatileValueSetting<int>
+{
+    VolatileIntSetting() : VolatileIntSetting(0) {}
+    VolatileIntSetting(int defaultValue) : VolatileValueSetting<int>(defaultValue) {}
+
+    virtual String valueAsString() override
+    {
+        return String::format("%d", value());
+    }
+    virtual void setValue(const String& value) override
+    {
+        VolatileValueSetting<int>::setValue(value.toInt());
     }
 };
 
@@ -292,8 +318,8 @@ struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
     {
     }
     PersistentStringSetting(LPCSTR defaultValue)
-        : _defaultValue(defaultValue),
-          _value(&_rgchValue[0])
+    : _defaultValue(defaultValue),
+    _value(&_rgchValue[0])
     {
         zero();
         loadDefault();
@@ -354,6 +380,20 @@ struct PersistentStringSetting : PersistentSettingTyped<LPCSTR>
     {
         PersistentSettings::theInstance->save(this);
     }
+};
+
+struct VolatileStringSetting
+{
+    String _value;
+
+    VolatileStringSetting() : VolatileStringSetting("") {}
+    VolatileStringSetting(LPCSTR defaultValue) : _value(defaultValue) {}
+
+    String          value()                         { return _value; }
+    const String&   valueRef()                      { return _value; }
+    void            setValue(const String& value)   { _value = value; }
+    void            setValue(LPCSTR value)          { _value = value; }
+    String          valueAsString()                 { return value(); }
 };
 
 #endif

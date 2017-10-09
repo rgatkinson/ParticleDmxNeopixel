@@ -98,11 +98,6 @@ public:
         if (_pColorizer) _pColorizer->begin();
     }
 
-    void setDimmerLevel(float dimmerLevel) override
-    {
-        if (_pLumenizer) _pLumenizer->setDimmerLevel(dimmerLevel);
-    }
-
     void setPixelColor(uint16_t iPixel, COLOR_INT color) override
     {
         _pixelValues[iPixel] = color;

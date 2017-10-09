@@ -39,8 +39,9 @@ public:
     {
         if (_color != color)
         {
+            INFO("UniformColor: color=0x%08x", color);
             _color = color;
-            begin();
+            _colorUpdateDeadline.expire();
         }
     }
 

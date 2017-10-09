@@ -33,15 +33,12 @@ public:
     }
 
     //----------------------------------------------------------------------------------------------
-    // Accessing
-    //----------------------------------------------------------------------------------------------
-public:
-
-    //----------------------------------------------------------------------------------------------
     // Dmx
     //----------------------------------------------------------------------------------------------
 public:
 
+    // colorSpeedLevel() controls rate and direction of rainbow rotation
+    // TODO: add control for _wheelFractionVisible
     void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
     {
         Colorizer::processParameterBlock(parameterBlock);

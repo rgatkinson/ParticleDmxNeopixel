@@ -26,9 +26,9 @@ protected:
     PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
-    CloudVariable<int>                              _dmxAddressCloudVariable;
-    CloudVariable<LPCSTR>                           _nameCloudVariable;
-    CloudVariable<LPCSTR>                           _descriptionCloudVariable;
+    CloudVariable<decltype(_dmxAddress), int>       _dmxAddressCloudVariable;
+    CloudVariable<decltype(_name), LPCSTR>          _nameCloudVariable;
+    CloudVariable<decltype(_description), LPCSTR>   _descriptionCloudVariable;
 
     //----------------------------------------------------------------------------------------------
     // Construction

@@ -7,17 +7,16 @@
 #include "System/PersistentSettings.h"
 #include "System/SystemEventRegistrar.h"
 
-template <typename VALUE>
+template <typename SETTING, typename VALUE>
 struct CloudVariable : SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 
-    typedef PersistentSettingTyped<VALUE> SETTING;
-
     SETTING* _persistentSetting;
     String   _name;
+    bool     _writeable;
     bool     _begun = false;
     bool     _connected = false;
     bool     _announced = false;
@@ -26,9 +25,10 @@ struct CloudVariable : SystemEventNotifications
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    CloudVariable(LPCSTR name, SETTING* pSetting)
+    CloudVariable(LPCSTR name, SETTING* pSetting, bool writeable = true)
         : _persistentSetting(pSetting),
-          _name(name)
+          _name(name),
+          _writeable(writeable)
     {
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
@@ -82,7 +82,7 @@ struct CloudVariable : SystemEventNotifications
             _announced = true;
             INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _persistentSetting->valueAsString().c_str());
             bool success = Particle.variable(_name, this->valueRef());
-            if (success)
+            if (success && _writeable)
             {
                 success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::setValue), this);
             }

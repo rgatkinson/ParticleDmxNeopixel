@@ -6,6 +6,8 @@
 
 #include "ColorLuminanceParameterBlock.h"
 #include "DmxEffectSelector.h"
+#include "System/PersistentSettings.h"
+#include "System/CloudVariable.h"
 
 struct DmxColorEffectSelector : DmxEffectSelector
 {
@@ -24,24 +26,46 @@ public:
         Last=SelfTest,
     };
 
+    static LPCSTR nameOf(Effect effect)
+    {
+        switch (effect)
+        {
+            case Effect::None:      return "None";
+            case Effect::Uniform:   return "Uniform";
+            case Effect::Rainbow:   return "Rainbow";
+            case Effect::SelfTest:  return "SelfTest";
+            default:                return "<unknown>";
+        }
+    }
+
 protected:
 
     Effect _currentEffect;
+    VolatileStringSetting _currentEffectName;
+    CloudVariable<decltype(_currentEffectName), String> _currentEffectCloud;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    DmxColorEffectSelector(Colorizeable* pColorizeable) : DmxEffectSelector(pColorizeable)
+    DmxColorEffectSelector(Colorizeable* pColorizeable)
+        : DmxEffectSelector(pColorizeable),
+          _currentEffectCloud("colorEffect", &_currentEffectName, false)
     {
-        _currentEffect = Effect::None;
+        setEffect(Effect::None);
     }
 
 protected:
 
     ~DmxColorEffectSelector() override
     {
+    }
+
+    void setEffect(Effect effect)
+    {
+        _currentEffect = effect;
+        _currentEffectName.setValue(nameOf(effect));
     }
 
     //----------------------------------------------------------------------------------------------
@@ -59,7 +83,7 @@ public:
         Effect effectDesired = colorEffect(parameterBlock);
         if (_currentEffect != effectDesired)
         {
-            _currentEffect = effectDesired;
+            setEffect(effectDesired);
             //
             Colorizer* pColorizer = nullptr;
             switch (effectDesired)
@@ -80,7 +104,7 @@ public:
             {
                 if (!pColorizer->sameAs(_pColorizeable->colorizer()))
                 {
-                    INFO("switching to color effect %d", effectDesired);
+                    INFO("switching to color effect %d", _currentEffect);
                     _pColorizeable->ownColorizer(pColorizer);
                 }
                 else

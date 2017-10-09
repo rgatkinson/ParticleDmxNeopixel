@@ -30,24 +30,47 @@ public:
         SelfTest,   // AFTER Max, yes
     };
 
+    static LPCSTR nameOf(Effect effect)
+    {
+        switch (effect)
+        {
+            case Effect::None:      return "None";
+            case Effect::Uniform:   return "Uniform";
+            case Effect::Breathing: return "Breathing";
+            case Effect::Twinkle:   return "Twinkle";
+            case Effect::SelfTest:  return "SelfTest";
+            default:                return "<unknown>";
+        }
+    }
+
 protected:
 
     Effect _currentEffect;
+    VolatileStringSetting _currentEffectName;
+    CloudVariable<decltype(_currentEffectName), String> _currentEffectCloud;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    DmxLuminanceEffectSelector(Colorizeable* pColorizeable) : DmxEffectSelector(pColorizeable)
+    DmxLuminanceEffectSelector(Colorizeable* pColorizeable)
+        : DmxEffectSelector(pColorizeable),
+          _currentEffectCloud("lumEffect", &_currentEffectName, false)
     {
-        _currentEffect = Effect::None;
+        setEffect(Effect::None);
     }
 
 protected:
 
     ~DmxLuminanceEffectSelector() override
     {
+    }
+
+    void setEffect(Effect effect)
+    {
+        _currentEffect = effect;
+        _currentEffectName.setValue(nameOf(effect));
     }
 
     //----------------------------------------------------------------------------------------------
@@ -69,7 +92,7 @@ public:
 
         if (_currentEffect != effectDesired)
         {
-            _currentEffect = effectDesired;
+            setEffect(effectDesired);
             //
             Lumenizer* pLumenizer = nullptr;
             switch (effectDesired)
@@ -94,7 +117,7 @@ public:
             {
                 if (!pLumenizer->sameAs(_pColorizeable->lumenizer()))
                 {
-                    INFO("switching to luminance effect %d", effectDesired);
+                    INFO("switching to luminance effect %d", _currentEffect);
                     _pColorizeable->ownLumenizer(pLumenizer);
                 }
                 else
