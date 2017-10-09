@@ -20,6 +20,7 @@ private:
     SystemEventRegistrar    _systemEventRegistrar;
     PersistentSettings      _persistentSettings;
     NetworkManager          _networkManager;
+    int                     _buttonToken;
 
 public:
     Globals()
@@ -31,6 +32,16 @@ public:
         {
             System.enterSafeMode();
         }
+
+        _buttonToken = SystemEventRegistrar::theInstance->registerButtonFinalClick(
+            [this](int clickCount)
+            {
+                report();
+            });
+    }
+    ~Globals()
+    {
+        SystemEventRegistrar::theInstance->unregisterButtonFinalClick(_buttonToken);
     }
 
 public:
@@ -39,18 +50,20 @@ public:
         delay(500); // try to allow the Log to become ready for output
 
         _persistentSettings.begin();
+        _systemEventRegistrar.begin();
         _networkManager.begin();
     }
 
     void loop()
     {
-        _persistentSettings.loop();
+        _systemEventRegistrar.loop();
         _networkManager.loop();
     }
 
     void report()
     {
-        _persistentSettings.report();
+        INFO("--------------------------------------------");
+        INFO("free memory: %lu", System.freeMemory());
         _networkManager.report();
     }
 };

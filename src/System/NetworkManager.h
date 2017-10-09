@@ -85,7 +85,7 @@ public:
     // System Events
     //----------------------------------------------------------------------------------------------
 
-    void onNetworkStatus(system_event_t ignored, int netStatus) override
+    void onNetworkStatus(int netStatus) override
     {
         switch (netStatus)
         {
@@ -100,7 +100,7 @@ public:
         }
     }
 
-    void onCloudStatus(system_event_t event, int cloudStatus) override
+    void onCloudStatus(int cloudStatus) override
     {
         switch (cloudStatus)
         {
@@ -111,7 +111,7 @@ public:
         }
     }
 
-    void onTimeChanged(system_event_t event, int timeStatus) override
+    void onTimeChanged(int timeStatus) override
     {
         switch (timeStatus)
         {

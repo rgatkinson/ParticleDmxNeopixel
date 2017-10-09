@@ -42,10 +42,10 @@ struct CloudVariable : SystemEventNotifications
     // System
     //----------------------------------------------------------------------------------------------
 
-    void onNetworkStatus(system_event_t event, int netStatus) override
+    void onNetworkStatus(int netStatus) override
     {
     }
-    void onCloudStatus(system_event_t event, int cloudStatus) override
+    void onCloudStatus(int cloudStatus) override
     {
         if (cloudStatus==cloud_status_connected)
         {
@@ -53,7 +53,7 @@ struct CloudVariable : SystemEventNotifications
             announce();
         }
     }
-    void onTimeChanged(system_event_t event, int timeStatus) override
+    void onTimeChanged(int timeStatus) override
     {
     }
 

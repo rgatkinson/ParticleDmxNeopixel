@@ -35,6 +35,7 @@ protected:
     ParticleRing*                   _pPixels;
     COLOR_INT                       _indicatorColor;
     DmxEffectSelector::Demo         _demo = DmxEffectSelector::Demo::Default;
+    int                             _buttonToken;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -51,6 +52,12 @@ public:
 
         _artnet.setShortName(shortName);
         setDemo();
+
+        _buttonToken = SystemEventRegistrar::theInstance->registerButtonFinalClick(
+            [this](int clickCount)
+            {
+                cycleDemo();
+            });
     }
 
     ~Amulet()
@@ -58,10 +65,12 @@ public:
         releaseRef(_pLuminanceEffectSelector);
         releaseRef(_pColorEffectSelector);
         releaseRef(_pPixels);
+        SystemEventRegistrar::theInstance->unregisterButtonClick(_buttonToken);
     }
 
     void setDemo()
     {
+        INFO("amulet demo #%d", (int)_demo);
         Colorizer* pColorizer = new AmuletSelfTestColorizer(_indicatorColor);
         Lumenizer* pLumenizer = new AmuletSelfTestLuminance(pColorizer);
         DmxEffectSelector::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
