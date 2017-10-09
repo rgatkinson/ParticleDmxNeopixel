@@ -16,8 +16,6 @@ struct Twinkler
 private:
 
     Breather<sinWave> _breather;
-    int _msPause;
-    int _msBreathe;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -30,8 +28,6 @@ public:
 
     Twinkler(int msPause, int msBreathe)
     {
-        _msPause = msPause;
-        _msBreathe = msBreathe;
         setPauseInterval(msPause);
         setBreatheInterval(msBreathe);
     }
@@ -82,21 +78,22 @@ private:
     void resetTimer()
     {
         // uniform dist'n centered on msPause
-        int dms = _msPause / 3;
-        int msPause = random(_msPause - dms, _msPause + dms);  // half-open interval, fwiw
+        int msPause = _breather.pauseInterval();
+        int dms = msPause / 3;
+        msPause = random(msPause - dms, msPause + dms);  // half-open interval, fwiw
 
         // uniform dist'n centered on msBreathe
-        dms = _msBreathe / 4;
-        int msBreathe = random(_msBreathe - dms, _msBreathe + dms);
+        int msBreathe = _breather.breatheInterval();
+        dms = msBreathe / 4;
+        msBreathe = random(msBreathe - dms, msBreathe + dms);
 
         // Allow only a small number of breaths before we re-randomize
         int breaths = random(1,4);
 
         // INFO("msPause=%d msBreathe=%d breaths=%d", msPause, msBreathe, breaths);
-
         _breather.setPauseInterval(msPause);
         _breather.setBreatheInterval(msBreathe);
-        _breather.setDurationAndResetTimer(breaths * (msPause + msBreathe));
+        _breather.setBreathsDuration(breaths);
     }
 };
 

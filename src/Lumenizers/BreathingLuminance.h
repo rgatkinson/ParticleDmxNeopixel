@@ -104,7 +104,7 @@ public:
     void report() override
     {
         Lumenizer::report();
-        INFO("BreathingLuminance: breathe interval=%d", _breather.breathInterval());
+        INFO("BreathingLuminance: breathe interval=%d", _breather.breatheInterval());
     }
 
 };

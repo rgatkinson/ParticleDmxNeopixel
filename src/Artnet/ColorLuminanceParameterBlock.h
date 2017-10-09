@@ -71,8 +71,6 @@ public:
         return speedLevel(directional, luminanceSpeed());
     }
 
-private:
-
     static float speedLevel(bool directional, byte dmx)   // [-1,1], neg=CW, pos=CCW
     {
         if (dmx==0)

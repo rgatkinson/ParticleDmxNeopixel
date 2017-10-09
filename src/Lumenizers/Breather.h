@@ -31,7 +31,7 @@ public:
         _msBreathe = 0;
         _minLevel = 0.0;
         _currentLevel = 1;
-        setDurationAndResetTimer(msDuration);
+        _timer = Deadline(msDuration);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ public:
     {
         _msBreathe = msBreathe;
     }
-    int breathInterval()
+    int breatheInterval()
     {
         return _msBreathe;
     }
@@ -70,14 +70,20 @@ public:
         return _currentLevel;
     }
 
-    void setDurationAndResetTimer(int msDuration)
+    void setBreathsDuration(int breaths)
     {
+        int msDuration = breaths * msBreathCycle();
         _timer = Deadline(msDuration);
     }
 
     bool hasExpired()
     {
         return _timer.hasExpired();
+    }
+
+    int msBreathCycle()
+    {
+        return _msPause + _msBreathe;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -89,14 +95,15 @@ public:
         _timer.reset();
         if (randomize)
         {
-            int ms = random(0, _timer.msDuration());
+            int ms = random(0, msBreathCycle());
             _timer.consume(ms);
         }
+        // INFO("millis=%d", _timer.milliseconds());
     }
 
     void loop()
     {
-        int ms = _timer.milliseconds() % (_msPause + _msBreathe);   // [0, _msPause + _msBreathe)
+        int ms = _timer.milliseconds() % msBreathCycle();   // [0, _msPause + _msBreathe)
         if (ms < _msPause)
         {
             _currentLevel = 1.0f;

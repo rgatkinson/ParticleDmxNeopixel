@@ -71,11 +71,25 @@ public:
     {
         if (_msPause != msPause)
         {
-            INFO("setting twinkle pause to %d", msPause);
+            INFO("TwinklingLuminance: pause=%d", msPause);
             _msPause = msPause;
             for (int i = 0; i < _twinklers.count(); i++)
             {
                 _twinklers[i].setPauseInterval(msPause);
+                _twinklers[i].begin();  // make interval take effect right away
+            }
+        }
+    }
+
+    void setTwinkleBreathe(int msBreathe)
+    {
+        if (_msBreathe != msBreathe)
+        {
+            INFO("TwinklingLuminance: breathe=%d", msBreathe);
+            _msBreathe = msBreathe;
+            for (int i = 0; i < _twinklers.count(); i++)
+            {
+                _twinklers[i].setBreatheInterval(msBreathe);
                 _twinklers[i].begin();  // make interval take effect right away
             }
         }
@@ -94,11 +108,23 @@ public:
         int msTwinklePause = msTwinklePauseDefault;
         if (parameterBlock.luminanceSpeed()!=0)
         {
-            float speed = parameterBlock.luminanceSpeedLevel(false);
+            float speed = 1 - parameterBlock.speedLevel(false, parameterBlock.luminanceSpeed());
+            float msMin = 5;
+            float msMax = 2 * msTwinklePauseDefault;
             msTwinklePause = scaleRange(speed, 0, 1, 0, 2 * msTwinklePauseDefault);
         }
 
+        int msTwinkleBreathe = msTwinkleBreatheDefault;
+        if (parameterBlock.luminanceControl()!=0)
+        {
+            float speed = 1 - parameterBlock.speedLevel(false, parameterBlock.luminanceControl());
+            float msMin = 100;
+            float msMax = 2 * msTwinkleBreatheDefault;
+            msTwinkleBreathe = scaleRange(speed, 0, 1, msMin, msMax);
+        }
+
         setTwinklePause(msTwinklePause);
+        setTwinkleBreathe(msTwinkleBreathe);
     }
 
     //----------------------------------------------------------------------------------------------
