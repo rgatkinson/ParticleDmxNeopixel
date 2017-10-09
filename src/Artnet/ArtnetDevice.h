@@ -104,14 +104,14 @@ public:
     // Main loop
     //----------------------------------------------------------------------------------------------
 public:
-    void begin()
+    virtual void begin()
     {
         _dmxAddressCloudVariable.begin();
         _nameCloudVariable.begin();
         _descriptionCloudVariable.begin();
     }
 
-    void loop()
+    virtual void loop()
     {
         if (!_initialized && WiFi.ready())
         {
@@ -123,7 +123,7 @@ public:
         }
     }
 
-    void report()
+    virtual void report()
     {
         if (_initialized)
         {
@@ -152,12 +152,15 @@ protected:
         int cbPacket = _udp.receivePacket(pbPacket, cbUdpBuffer);
         if (cbPacket > 0)
         {
-            Log.info("packet received: cb=%d addr=%s", cbPacket, _udp.remoteIP().toString().c_str());
+            // INFO("packet received: cb=%d addr=%s", cbPacket, _udp.remoteIP().toString().c_str());
             ArtnetPacketHeader header(pbPacket, cbPacket);
             if (header.validate())
             {
                 ArtnetOpMode artnetOpMode = header.artnetOpMode();
-                // Log.info("opMode=0x%04x", artnetOpMode);
+                if (artnetOpMode != ArtnetOpMode::Dmx)
+                {
+                    INFO("opMode=0x%04x", (int)artnetOpMode);
+                }
                 switch (artnetOpMode)
                 {
                     case ArtnetOpMode::Poll:

@@ -16,7 +16,7 @@ protected:
     Deadline    _timer;
     int         _pixelOffset = 0;
     int         _pixelIncrement = 1;
-    float       _wheelFractionVisible = 0.1f;
+    float       _wheelFractionVisible = wheelFractionVisibleDefault;
     int         _msOriginalInterval;
 
     //----------------------------------------------------------------------------------------------
@@ -25,6 +25,7 @@ protected:
 public:
 
     static const int msIntervalDefault = 10;
+    static constexpr float wheelFractionVisibleDefault = 0.1f;
 
     RainbowColors(int msInterval, int msDuration) : Colorizer(Flavor::Rainbow, msDuration)
     {
@@ -38,7 +39,7 @@ public:
 public:
 
     // colorSpeedLevel() controls rate and direction of rainbow rotation
-    // TODO: add control for _wheelFractionVisible
+    // colorControl() controls fraction of color wheel visible
     void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
     {
         Colorizer::processParameterBlock(parameterBlock);
@@ -48,12 +49,26 @@ public:
         const float msMin = 5;      const float maxPerSecond = 1000 / msMin;
         const float msMax = 100;    const float minPerSecond = 1000 / msMax;
 
-        const float perSecond = scaleRange(fabs(speed), 0, 1, minPerSecond, maxPerSecond);
-        const int msInterval = 1000 / perSecond;
+         float perSecond = scaleRange(fabs(speed), 0, 1, minPerSecond, maxPerSecond);
+        int msInterval = 1000 / perSecond;
 
-        if (pixelIncrement != _pixelIncrement || msInterval != _timer.msDuration())
+        // Zero is a non-stopped default
+        if (parameterBlock.colorSpeed()==0)
         {
+            pixelIncrement = -1;
+            msInterval = msIntervalDefault;
+        }
+
+        // Zero is a pleasant default
+        float fraction = parameterBlock.colorControl()==0
+            ? wheelFractionVisibleDefault
+            : scaleRange(parameterBlock.colorControl(), 0, 255, 0, 1);
+
+        if (pixelIncrement != _pixelIncrement || msInterval != _timer.msDuration() || fraction != _wheelFractionVisible)
+        {
+            INFO("Rainbow: speed=%f incr=%d ms=%d fraction=%f", speed, pixelIncrement, msInterval, fraction);
             _pixelIncrement = pixelIncrement;
+            _wheelFractionVisible = fraction;
             _timer = Deadline(msInterval);
             _timer.expire();
         }

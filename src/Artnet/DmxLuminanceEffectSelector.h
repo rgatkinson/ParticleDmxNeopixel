@@ -74,6 +74,16 @@ protected:
     }
 
     //----------------------------------------------------------------------------------------------
+    // Loop
+    //----------------------------------------------------------------------------------------------
+public:
+    
+    void begin()
+    {
+        _currentEffectCloud.begin();
+    }
+
+    //----------------------------------------------------------------------------------------------
     // Operations
     //----------------------------------------------------------------------------------------------
 public:
@@ -117,7 +127,7 @@ public:
             {
                 if (!pLumenizer->sameAs(_pColorizeable->lumenizer()))
                 {
-                    INFO("switching to luminance effect %d", _currentEffect);
+                    INFO("switching to luminance effect %s", _currentEffectName.value().c_str());
                     _pColorizeable->ownLumenizer(pLumenizer);
                 }
                 else

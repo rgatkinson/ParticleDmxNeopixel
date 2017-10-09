@@ -8,17 +8,17 @@
 
 struct PACKED ColorLuminanceParameterBlockData
 {
-    byte    colorTemperature;
-    byte    red;
-    byte    green;
-    byte    blue;
-    byte    dimmer;
-    byte    colorEffect;
-    byte    colorSpeed;
-    byte    colorControl;
-    byte    luminanceEffect;
-    byte    luminanceSpeed;
-    byte    luminanceControl;
+    byte    colorTemperature;       // 300
+    byte    red;                    // 301
+    byte    green;                  // 302
+    byte    blue;                   // 303
+    byte    dimmer;                 // 304
+    byte    colorEffect;            // 305
+    byte    colorSpeed;             // 306
+    byte    colorControl;           // 307
+    byte    luminanceEffect;        // 308
+    byte    luminanceSpeed;         // 309
+    byte    luminanceControl;       // 310
 };
 
 struct ColorLuminanceParameterBlock

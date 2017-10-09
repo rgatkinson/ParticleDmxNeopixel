@@ -51,6 +51,8 @@ public:
     {
         _pPixels->begin();
         _artnet.begin();
+        _pLuminanceEffectSelector->begin();
+        _pColorEffectSelector->begin();
     }
 
     virtual void loop()

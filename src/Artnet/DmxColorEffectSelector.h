@@ -69,6 +69,16 @@ protected:
     }
 
     //----------------------------------------------------------------------------------------------
+    // Loop
+    //----------------------------------------------------------------------------------------------
+public:
+    
+    void begin()
+    {
+        _currentEffectCloud.begin();
+    }
+
+    //----------------------------------------------------------------------------------------------
     // Operations
     //----------------------------------------------------------------------------------------------
 public:
@@ -104,7 +114,7 @@ public:
             {
                 if (!pColorizer->sameAs(_pColorizeable->colorizer()))
                 {
-                    INFO("switching to color effect %d", _currentEffect);
+                    INFO("switching to color effect %s", _currentEffectName.value().c_str());
                     _pColorizeable->ownColorizer(pColorizer);
                 }
                 else
