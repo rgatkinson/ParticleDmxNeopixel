@@ -13,7 +13,6 @@
 
 SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(MANUAL);
-STARTUP(System.enableFeature(FEATURE_RESET_INFO));
 
 SystemEventRegistrar*   SystemEventRegistrar::theInstance;
 PersistentSettings*     PersistentSettings::theInstance;

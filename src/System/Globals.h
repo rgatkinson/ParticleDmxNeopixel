@@ -28,20 +28,18 @@ public:
     Globals()
     {
         theInstance = this;
-
-        Serial.begin(115200);
+        System.enableFeature(FEATURE_RESET_INFO);
         if (System.resetReason() == RESET_REASON_PANIC)
         {
             System.enterSafeMode();
         }
-
+        Serial.begin(115200);
+        setCredentials();
         _buttonToken = SystemEventRegistrar::theInstance->registerButtonFinalClick(
             [this](int clickCount)
             {
                 report();
             });
-
-        setCredentials();
     }
     ~Globals()
     {
