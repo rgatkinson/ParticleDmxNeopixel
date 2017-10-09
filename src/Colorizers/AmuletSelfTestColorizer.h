@@ -22,7 +22,7 @@ public:
 
     AmuletSelfTestColorizer(COLOR_INT color) : ColorizerSequence(Flavor::SelfTest)
     {
-        ownColorizer(new RainbowColors(10, _msQuantum * 2));
+        ownColorizer(_pRainbow = new RainbowColors(10, _msQuantum * 2));
         ownColorizer(_pUniform = new UniformColor(color, _msQuantum * 2));
         ownColorizer(new UniformColor(Color::BLACK, _msQuantum * 3));
         setLooping(true);
