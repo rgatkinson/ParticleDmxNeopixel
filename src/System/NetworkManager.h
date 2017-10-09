@@ -71,9 +71,14 @@ public:
         _passwords.addLast(password);
     }
 
-    void addPasswords(bool clearWifiPasswords, WiFiPassword wifiPasswords[], int cb)
+    void setClearCredentials(bool clearCredentials)
     {
-        _clearCredentials = clearWifiPasswords;
+        _clearCredentials = clearCredentials;
+    }
+
+    void addPasswords(WiFiPassword wifiPasswords[], int cb)
+    {
+
         int passwordCount = cb / sizeof(wifiPasswords[0]);
         for (int i = 0; i < passwordCount; i++)
         {

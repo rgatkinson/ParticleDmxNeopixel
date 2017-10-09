@@ -10,6 +10,8 @@
 #include "CloudVariable.h"
 #include "Util/ElapsedTime.h"
 
+extern void setCredentials();
+
 struct Globals
 {
 public:
@@ -38,6 +40,8 @@ public:
             {
                 report();
             });
+
+        setCredentials();
     }
     ~Globals()
     {
