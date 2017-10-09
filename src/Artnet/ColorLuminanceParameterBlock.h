@@ -71,7 +71,10 @@ public:
         return speedLevel(directional, luminanceSpeed());
     }
 
-    static float speedLevel(bool directional, byte dmx)   // [-1,1], neg=CW, pos=CCW
+    // directional:     [-1,1], neg=CW, pos=CCW
+    // non-directional: [0,1]
+    // zero is stopped 
+    static float speedLevel(bool directional, byte dmx)
     {
         if (dmx==0)
         {
