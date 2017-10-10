@@ -55,7 +55,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder()
+    Colorizer(Flavor flavor, Duration duration) : Durable(duration), ColorizeableHolder()
     {
         _flavor = flavor;
     }
@@ -101,7 +101,7 @@ public:
 
     virtual void begin()
     {
-        _duration.reset();
+        _deadline.reset();
     }
 
     virtual void loop()

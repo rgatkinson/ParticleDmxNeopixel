@@ -6,6 +6,7 @@
 
 #include "ReferenceCounted.h"
 
+
 struct Durable : ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
@@ -13,20 +14,20 @@ struct Durable : ReferenceCounted
     //----------------------------------------------------------------------------------------------
 protected:
 
-    Deadline _duration;
+    Deadline _deadline;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Durable(int msDuration) : _duration(msDuration)
+    Durable(Duration duration) : _deadline(duration)
     {
     }
 
-    virtual void setDuration(int msDuration)
+    virtual void setDuration(Duration duration)
     {
-        _duration = Deadline(msDuration);
+        _deadline = Deadline(duration);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -35,17 +36,17 @@ public:
 
     bool sameAs(Durable* pThem)
     {
-        return pThem != nullptr && _duration.msDuration() == pThem->_duration.msDuration();
+        return pThem != nullptr && msDuration() == pThem->msDuration(); // TODO: review use of msDuration here
     }
 
     virtual int msDuration()
     {
-        return _duration.msDuration();
+        return _deadline.msDuration();
     }
 
     virtual bool hasExpired()
     {
-        return _duration.hasExpired();
+        return _deadline.hasExpired();
     }
 
 };

@@ -21,7 +21,11 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    UniformColor(COLOR_INT color, int msDuration) : Colorizer(Flavor::Uniform, msDuration)
+    UniformColor(COLOR_INT color) : UniformColor(Duration::Infinite, color)
+    {
+    }
+
+    UniformColor(Duration duration, COLOR_INT color) : Colorizer(Flavor::Uniform, duration)
     {
         _color = color;
         _colorUpdateDeadline = Deadline(Deadline::Infinite);

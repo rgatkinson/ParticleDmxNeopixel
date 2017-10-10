@@ -27,7 +27,11 @@ public:
     static const int msIntervalDefault = 10;
     static constexpr float wheelFractionVisibleDefault = 0.1f;
 
-    RainbowColors(int msInterval, int msDuration) : Colorizer(Flavor::Rainbow, msDuration)
+    RainbowColors(int msInterval) : RainbowColors(Duration::Infinite, msInterval)
+    {
+    }
+
+    RainbowColors(Duration duration, int msInterval) : Colorizer(Flavor::Rainbow, duration)
     {
         _timer = Deadline(msInterval);
         _msOriginalInterval = msInterval;

@@ -62,17 +62,17 @@ public:
             case Demo::Twinkle:
             case Demo::White:
             {
-                pResult = new UniformColor(Color::temperature(2550), Deadline::Infinite);
+                pResult = new UniformColor(Color::temperature(2550));
                 break;
             }
             case Demo::Rainbow:
             {
-                pResult = new RainbowColors(RainbowColors::msIntervalDefault, Deadline::Infinite);
+                pResult = new RainbowColors(RainbowColors::msIntervalDefault);
                 break;
             }
             case Demo::Morse:
             {
-                pResult = new UniformColor(Color::YELLOW, Deadline::Infinite);
+                pResult = new UniformColor(Color::YELLOW);
                 break;
             }
             case Demo::SelfTest:
@@ -94,8 +94,8 @@ public:
             case Demo::White:
             {
                 LumenizerSequence* pSequence = new LumenizerSequence();
-                pSequence->ownLumenizer(new UniformLuminance(1.0f, 5000));
-                pSequence->ownLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault, Deadline::Infinite));
+                pSequence->ownLumenizer(new UniformLuminance(Duration(5000), 1.0f));
+                pSequence->ownLumenizer(new BreathingLuminance(BreathingLuminance::msPauseDefault, BreathingLuminance::msBreatheDefault));
                 pResult = pSequence;
                 break;
             }
@@ -103,18 +103,17 @@ public:
             {
                 pResult = new TwinklingLuminance(
                     TwinklingLuminance::msTwinklePauseDefault,
-                    TwinklingLuminance::msTwinkleBreatheDefault,
-                    Deadline::Infinite);
+                    TwinklingLuminance::msTwinkleBreatheDefault);
                 break;
             }
             case Demo::Morse:
             {
-                pResult = new MorseCodeLuminance(Deadline::Infinite);
+                pResult = new MorseCodeLuminance();
                 break;
             }
             case Demo::Rainbow:
             {
-                pResult = new UniformLuminance(1.0f, Deadline::Infinite);
+                pResult = new UniformLuminance(1.0f);
                 break;
             }
             case Demo::SelfTest:

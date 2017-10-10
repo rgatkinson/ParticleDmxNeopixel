@@ -18,7 +18,11 @@ struct UniformLuminance : Lumenizer
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    UniformLuminance(float level, int msDuration) : Lumenizer(Flavor::Uniform, msDuration)
+    UniformLuminance(float level) : UniformLuminance(Duration::Infinite, level)
+    {
+    }
+
+    UniformLuminance(Duration duration, float level) : Lumenizer(Flavor::Uniform, duration)
     {
         _level = level;
     }

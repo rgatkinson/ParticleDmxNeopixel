@@ -40,8 +40,8 @@ public:
         _pLumenizer = NULL;
         _pColorizer = NULL;
         _pixelValues = new COLOR_INT[pixelCount];
-        ownColorizerNoBegin(new UniformColor(Color::BLACK, Deadline::Infinite));
-        ownColorizerNoBegin(new UniformLuminance(1.0f, Deadline::Infinite));
+        ownColorizerNoBegin(new UniformColor(Color::BLACK));
+        ownColorizerNoBegin(new UniformLuminance(1.0f));
     }
 
     DELEGATE_REF_COUNTING
@@ -130,21 +130,20 @@ public:
 
         if (_showDeadline.hasExpired())
         {
-            // Only call the brightness when we actually are going to show _neopixels: efficiency
-            BRIGHTNESS brightness = BRIGHTNESS_MAX-1;
+            // Only call the brightness when we actually are going to show _neopixels: efficiency nit
             if (_pLumenizer)
             {
                 _pLumenizer->loop();
-                brightness = _pLumenizer->currentBrightness();
             }
 
+            BRIGHTNESS brightness = BRIGHTNESS_MAX-1;
             for (int iPixel = 0; iPixel < _pixelCount; iPixel++)
             {
-                COLOR_INT color = _pixelValues[iPixel];
-                if (_pLumenizer && _pLumenizer->hasPixelizedBrightness())
+                if (_pLumenizer && (_pLumenizer->hasPixelizedBrightness() || iPixel==0))
                 {
                     brightness = _pLumenizer->currentBrightness(iPixel);
                 }
+                COLOR_INT color = _pixelValues[iPixel];
                 _neopixels.setColorScaled(iPixel, Color::red(color), Color::green(color), Color::blue(color), brightness);
             }
 

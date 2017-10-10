@@ -27,6 +27,7 @@ public:
         Breathing,
         Twinkle,
         MorseCode,
+        Decimating,
         SelfTest
     };
 
@@ -34,13 +35,14 @@ public:
     {
         switch (flavor)
         {
-            case Flavor::None:      return "None";
-            case Flavor::Uniform:   return "Uniform";
-            case Flavor::Sequence:  return "Sequence";
-            case Flavor::Breathing: return "Breathing";
-            case Flavor::Twinkle:   return "Twinkle";
-            case Flavor::SelfTest:  return "SelfTest";
-            default:                return "<unknown>";
+            case Flavor::None:          return "None";
+            case Flavor::Uniform:       return "Uniform";
+            case Flavor::Sequence:      return "Sequence";
+            case Flavor::Breathing:     return "Breathing";
+            case Flavor::Twinkle:       return "Twinkle";
+            case Flavor::Decimating:    return "Decimating";
+            case Flavor::SelfTest:      return "SelfTest";
+            default:                    return "<unknown>";
         }
     }
 
@@ -57,7 +59,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Lumenizer(Flavor flavor, int msDuration) : Durable(msDuration), ColorizeableHolder()
+    Lumenizer(Flavor flavor, Duration duration) : Durable(duration), ColorizeableHolder()
     {
         _flavor = flavor;
 
@@ -73,6 +75,15 @@ public:
     virtual void noteColorizeable(Colorizeable* pColorizeable)
     {
         ColorizeableHolder::noteColorizeable(pColorizeable);
+    }
+
+protected:
+    void delgateTo(Lumenizer* pLumenizer)
+    {
+        pLumenizer->noteColorizeable(_pColorizeable);
+        pLumenizer->setBrightnessMin(_brightnessMin);
+        pLumenizer->setBrightnessMax(_brightnessMax);
+        pLumenizer->setDimmerLevel(_dimmerLevel);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -108,19 +119,15 @@ public:
         // INFO("setDimmerLevel: %f flavor=%s", dimmerLevel, nameOf(_flavor));
     }
 
-    virtual BRIGHTNESS currentBrightness()
+    virtual BRIGHTNESS currentBrightness(int iPixel)
     {
+        // Ignore iPixel
         BRIGHTNESS result = this->rawCurrentBrightness(_currentLevel);
         if (usesGammaCorrection())
         {
             result = gammaCorrect(result);
         }
         return result;
-    }
-
-    virtual BRIGHTNESS currentBrightness(int iPixel)
-    {
-        return currentBrightness();
     }
 
     virtual bool hasPixelizedBrightness()
@@ -179,7 +186,7 @@ public:
 
     virtual void begin()
     {
-        _duration.reset();
+        _deadline.reset();
     }
 
     virtual void loop()

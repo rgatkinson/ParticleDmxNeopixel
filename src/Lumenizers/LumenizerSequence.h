@@ -28,7 +28,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    LumenizerSequence(Flavor flavor = Flavor::Sequence) : Lumenizer(flavor, 0 /*ignored*/)
+    LumenizerSequence(Flavor flavor = Flavor::Sequence) : Lumenizer(flavor, Duration(0) /*ignored*/)
     {
         _currentLumenizer = 0;
         _looping = false;
@@ -50,10 +50,7 @@ public:
 
     void ownLumenizer(Lumenizer* pLumenizer /*takes ownwership*/)
     {
-        pLumenizer->noteColorizeable(_pColorizeable);
-        pLumenizer->setBrightnessMin(_brightnessMin);
-        pLumenizer->setBrightnessMax(_brightnessMax);
-        pLumenizer->setDimmerLevel(_dimmerLevel);
+        delgateTo(pLumenizer);
         _lumenizers.addLast(pLumenizer);    // takes ownership
     }
 
@@ -70,7 +67,7 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    void setDuration(int msDuration) override
+    void setDuration(Duration duration) override
     {
         Log.error("invalid call: LumenizerSequence::setDuration()");
     }
@@ -144,18 +141,6 @@ public:
     // Collections
     //----------------------------------------------------------------------------------------------
 public:
-
-    BRIGHTNESS currentBrightness() override
-    {
-        if (_currentLumenizer < count())
-        {
-            return _lumenizers[_currentLumenizer]->currentBrightness();
-        }
-        else
-        {
-            return Lumenizer::currentBrightness();
-        }
-    }
 
     BRIGHTNESS currentBrightness(int iPixel) override
     {

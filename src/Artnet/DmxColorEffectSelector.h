@@ -99,11 +99,11 @@ public:
             switch (effectDesired)
             {
                 case Effect::Uniform:
-                    pColorizer = new UniformColor(Color::WHITE, Deadline::Infinite);
+                    pColorizer = new UniformColor(Color::WHITE);
                     break;
 
                 case Effect::Rainbow:
-                    pColorizer = new RainbowColors(10, Deadline::Infinite);
+                    pColorizer = new RainbowColors(10);
                     break;
 
                 case Effect::SelfTest:

@@ -6,6 +6,33 @@
 
 #include "ElapsedTime.h"
 
+//==================================================================================================
+// Duration
+//==================================================================================================
+
+struct Duration
+{
+public:
+    static Duration Infinite;
+
+private:
+    TIME _ms;
+
+public:
+    explicit Duration(TIME ms)
+    {
+        _ms = ms;
+    }
+    TIME ms()
+    {
+        return _ms;
+    }
+};
+
+//==================================================================================================
+// Deadline
+//==================================================================================================
+
 struct Deadline : ElapsedTime
 {
     //----------------------------------------------------------------------------------------------
@@ -28,10 +55,14 @@ public:
         _msDeadline = 0;
     }
 
-    Deadline(TIME _msDuration)
+    Deadline(TIME msDuration)
     {
-        this->_msDuration = _msDuration;
-        this->_msDeadline = _msStartTime + _msDuration;
+        _msDuration = msDuration;
+        _msDeadline = _msStartTime + _msDuration;
+    }
+
+    Deadline(Duration duration) : Deadline(duration.ms())
+    {
     }
 
     //----------------------------------------------------------------------------------------------

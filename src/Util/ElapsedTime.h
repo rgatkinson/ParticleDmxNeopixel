@@ -6,7 +6,7 @@
 
 #include "Misc.h"
 
-typedef long TIME;
+typedef int TIME;
 
 struct ElapsedTime
 {

@@ -20,7 +20,7 @@ public:
 
     AmuletSelfTestColorizer() : ColorizerSequence(Flavor::SelfTest)
     {
-        ColorizerSequence::ownColorizer(_pUniform = new UniformColor(Color::BLACK, Deadline::Infinite));
+        ColorizerSequence::ownColorizer(_pUniform = new UniformColor(Color::BLACK));
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
     ~AmuletSelfTestColorizer() override

@@ -30,7 +30,11 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    TwinklingLuminance(float msPause, int msBreathe, int msDuration) : Lumenizer(Flavor::Twinkle, msDuration)
+    TwinklingLuminance(float msPause, int msBreathe) : TwinklingLuminance(Duration::Infinite, msPause, msBreathe)
+    {
+    }
+
+    TwinklingLuminance(Duration duration, float msPause, int msBreathe) : Lumenizer(Flavor::Twinkle, duration)
     {
         _msPause = -1;
         _msBreathe = msBreathe;

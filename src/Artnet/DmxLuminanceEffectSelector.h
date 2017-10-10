@@ -108,15 +108,15 @@ public:
             switch (effectDesired)
             {
                 case Effect::Uniform:
-                    pLumenizer = new UniformLuminance(1.0f, Deadline::Infinite);
+                    pLumenizer = new UniformLuminance(1.0f);
                     break;
 
                 case Effect::Breathing:
-                    pLumenizer = new BreathingLuminance(0, 4000, Deadline::Infinite);
+                    pLumenizer = new BreathingLuminance(0, 4000);
                     break;
 
                 case Effect::Twinkle:
-                    pLumenizer = new TwinklingLuminance(4000, 1000, Deadline::Infinite);
+                    pLumenizer = new TwinklingLuminance(4000, 1000);
                     break;
 
                 case Effect::SelfTest:

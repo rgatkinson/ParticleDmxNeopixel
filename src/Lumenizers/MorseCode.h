@@ -21,7 +21,7 @@ protected:
     // The space between parts of the same letter is one unit
     // The space between letters is three units
     // The space between words is seven units
-    enum class Duration
+    enum class Timing
     {
         Dot = 1,
         Dash = 3,
@@ -50,7 +50,7 @@ protected:
     static const Symbol* letters[];
     static const Symbol* digits[];
 
-    static void appendUnits(std::vector<bool>& result, Duration duration, bool value)
+    static void appendUnits(std::vector<bool>& result, Timing duration, bool value)
     {
         for (int i = 0; i < int(duration); i++)
         {
@@ -64,18 +64,18 @@ protected:
 
         if (!atStartOfWord)
         {
-            appendUnits(result, Duration::InterLetter, false);
+            appendUnits(result, Timing::InterLetter, false);
         }
         for (int iPip = 0; iPip < symbol._count; iPip++)
         {
             if (iPip > 0)
             {
-                appendUnits(result, Duration::IntraLetter, false);
+                appendUnits(result, Timing::IntraLetter, false);
             }
             switch (symbol._pips[iPip])
             {
-                case Dot:  appendUnits(result, Duration::Dot, true);  break;
-                case Dash: appendUnits(result, Duration::Dash, true); break;
+                case Dot:  appendUnits(result, Timing::Dot, true);  break;
+                case Dash: appendUnits(result, Timing::Dash, true); break;
             }
         }
     }
@@ -110,7 +110,7 @@ public:
             else if (' ' == ch)
             {
                 INFO("ch=' '");
-                appendUnits(result, Duration::InterWord, false);
+                appendUnits(result, Timing::InterWord, false);
                 atStartOfWord = true;
             }
         }

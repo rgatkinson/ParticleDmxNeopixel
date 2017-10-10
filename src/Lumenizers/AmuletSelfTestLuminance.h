@@ -4,6 +4,8 @@
 #ifndef __AMULET_SELF_TEST_LUMENIZER_H__
 #define __AMULET_SELF_TEST_LUMENIZER_H__
 
+#include "Lumenizers/DecimatingLuminance.h"
+
 struct AmuletSelfTestLuminance : LumenizerSequence, SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
@@ -64,18 +66,18 @@ protected:
 
     void blinkFast()
     {
-        setSelfTestLumenizer(new BreathingLuminance(0, 2000, Deadline::Infinite));
+        setSelfTestLumenizer(new BreathingLuminance(0, 2000));
     }
     void breatheSlow()
     {
-        setSelfTestLumenizer(new BreathingLuminance(2000, 6000, 16000));
-        LumenizerSequence::ownLumenizer(new UniformLuminance(0.0f, 2 * 16000));
+        setSelfTestLumenizer(new BreathingLuminance(Duration(16000), 2000, 6000));
+        LumenizerSequence::ownLumenizer(new UniformLuminance(Duration(2 * 16000), 0.0f));
         setLooping(true);
     }
     void steady()
     {
-        setSelfTestLumenizer(new UniformLuminance(1.0f, 2000));
-        LumenizerSequence::ownLumenizer(new UniformLuminance(0.0f, 8000));
+        setSelfTestLumenizer(new UniformLuminance(Duration(2000), 1.0f));
+        LumenizerSequence::ownLumenizer(new UniformLuminance(Duration(8000), 0.0f));
         setLooping(true);
     }
 

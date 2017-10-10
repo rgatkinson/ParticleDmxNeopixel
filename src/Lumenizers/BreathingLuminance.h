@@ -29,7 +29,11 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    BreathingLuminance(int msPauseInterval, int msBreatheInterval, int msDuration) : Lumenizer(Flavor::Breathing, msDuration)
+    BreathingLuminance(int msPauseInterval, int msBreatheInterval) : BreathingLuminance(Duration::Infinite, msPauseInterval, msBreatheInterval)
+    {
+    }
+
+    BreathingLuminance(Duration duration, int msPauseInterval, int msBreatheInterval) : Lumenizer(Flavor::Breathing, duration)
     {
         _msPause = -1;
         _msBreathe = -1;

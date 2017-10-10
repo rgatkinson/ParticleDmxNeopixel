@@ -49,7 +49,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    MorseCodeLuminance(int msDuration) : Lumenizer(Flavor::MorseCode, msDuration)
+    MorseCodeLuminance(Duration duration = Duration::Infinite) : Lumenizer(Flavor::MorseCode, duration)
     {
         setMessage(Message::Default);
         setDotLength(msDotLengthDefault);

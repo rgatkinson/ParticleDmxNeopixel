@@ -33,8 +33,16 @@ public:
         {
             System.enterSafeMode();
         }
+
+        Serial.blockOnOverrun(false);   // its just debug; don't hold things up
         Serial.begin(115200);
-        setCredentials();
+        while (!Serial.isEnabled())
+        {
+            // spin
+        }
+
+        setCredentials(); // see AfterPasswords.h
+
         _buttonToken = SystemEventRegistrar::theInstance->registerButtonFinalClick(
             [this](int clickCount)
             {
@@ -49,7 +57,7 @@ public:
 public:
     void begin()
     {
-        delay(500); // try to allow the Log to become ready for output
+        delay(500); // try to allow the Log to become ready for output (naybe no longer needed w/ wait on serial above?)
 
         _persistentSettings.begin();
         _systemEventRegistrar.begin();

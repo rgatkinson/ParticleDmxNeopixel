@@ -28,7 +28,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorizerSequence(Flavor flavor = Flavor::Sequence) : Colorizer(flavor, 0 /*ignored*/)
+    ColorizerSequence(Flavor flavor = Flavor::Sequence) : Colorizer(flavor, Duration(0) /*ignored*/)
     {
         _currentColorizer = 0;
         _looping = false;
@@ -61,7 +61,7 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    void setDuration(int msDuration) override
+    void setDuration(Duration duration) override
     {
         Log.error("invalid call: ColorizerSequence::setDuration()");
     }
