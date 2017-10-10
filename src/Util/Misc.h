@@ -160,6 +160,16 @@ inline T cycle(T t, T tFirst, T tMax)
     return result;
 }
 
+inline bool isOdd(int value)
+{
+    return (value & 1) != 0;
+}
+
+inline bool isEven(int value)
+{
+    return (value & 1) == 0;
+}
+
 //--------------------------------------------------------------------------------------------------
 // Ups & downs
 //--------------------------------------------------------------------------------------------------
