@@ -105,6 +105,7 @@ public:
     {
         dimmerLevel = clip(dimmerLevel, 0, 1);
         _dimmerLevel = dimmerLevel;
+        // INFO("setDimmerLevel: %f flavor=%s", dimmerLevel, nameOf(_flavor));
     }
 
     virtual BRIGHTNESS currentBrightness()
@@ -166,7 +167,7 @@ public:
         float dimmerLevel = scaleRange(parameterBlock.dimmer(), 0, 255, 0, 1);
         if (_dimmerLevel != dimmerLevel)
         {
-            INFO("Luminizer: dimmerLevel=%f", dimmerLevel);
+            INFO("Lumenizer: dimmerLevel=%f", dimmerLevel);
             setDimmerLevel(dimmerLevel);
         }
     }

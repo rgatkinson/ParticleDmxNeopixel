@@ -11,7 +11,7 @@ struct AmuletSelfTestLuminance : LumenizerSequence, SystemEventNotifications
     //----------------------------------------------------------------------------------------------
 protected:
 
-    static constexpr float _initialDimmerLevel = 0.25f;
+    static constexpr float _initialDimmerLevel = 0.05f;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -48,13 +48,13 @@ protected:
     void breatheSlow()
     {
         setSelfTestLumenizer(new BreathingLuminance(2000, 6000, 16000));
-        LumenizerSequence::ownLumenizer(new UniformLuminance(0, 16000));
+        LumenizerSequence::ownLumenizer(new UniformLuminance(0.0f, 2 * 16000));
         setLooping(true);
     }
     void steady()
     {
         setSelfTestLumenizer(new UniformLuminance(1.0f, 2000));
-        LumenizerSequence::ownLumenizer(new UniformLuminance(0, 8000));
+        LumenizerSequence::ownLumenizer(new UniformLuminance(0.0f, 8000));
         setLooping(true);
     }
 
