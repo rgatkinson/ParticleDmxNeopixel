@@ -49,14 +49,19 @@ public:
         return items[iItemFirst++];
     }
 
+    void clear()
+    {
+        iItemFirst = 0;
+        iItemMax = 0;
+    }
+
 protected:
 
     void initialize()
     {
         items = 0;
         cItemAllocated = 0;
-        iItemFirst = 0;
-        iItemMax = 0;
+        clear();
     }
 
     void free()

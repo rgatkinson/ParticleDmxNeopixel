@@ -18,7 +18,6 @@ struct Amulet : NeoPixelDmxDevice
     //----------------------------------------------------------------------------------------------
 protected:
 
-    COLOR_INT               _indicatorColor;
     DmxEffectSelector::Demo _demo = DmxEffectSelector::Demo::Default;
     int                     _buttonToken;
 
@@ -27,10 +26,9 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Amulet(COLOR_INT indicatorColor, LPCSTR shortName="Amulet")
+    Amulet(LPCSTR shortName="Amulet")
         : NeoPixelDmxDevice(new ParticleRing(), shortName)
     {
-        _indicatorColor = indicatorColor;
         setDemo();
         _buttonToken = SystemEventRegistrar::theInstance->registerButtonFinalClick(
             [this](int clickCount)
@@ -47,7 +45,7 @@ public:
     void setDemo()
     {
         INFO("amulet demo #%d", (int)_demo);
-        Colorizer* pColorizer = new AmuletSelfTestColorizer(_indicatorColor);
+        Colorizer* pColorizer = new AmuletSelfTestColorizer();
         Lumenizer* pLumenizer = new AmuletSelfTestLuminance(pColorizer);
         DmxEffectSelector::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
         releaseRef(pColorizer);

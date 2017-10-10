@@ -36,10 +36,16 @@ public:
 
     ~LumenizerSequence() override
     {
+        releaseLumenizers();
+    }
+
+    void releaseLumenizers()
+    {
         for (int i = 0; i < _lumenizers.count(); i++)
         {
             ::releaseRef(_lumenizers[i]);
         }
+        _lumenizers.clear();
     }
 
     void ownLumenizer(Lumenizer* pLumenizer /*takes ownwership*/)

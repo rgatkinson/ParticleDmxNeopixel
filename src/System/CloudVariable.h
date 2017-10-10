@@ -51,6 +51,10 @@ struct CloudVariable : SystemEventNotifications
         {
             _connected = true;
             announce();
+        } else if (cloudStatus==cloud_status_disconnected)
+        {
+            _connected = false;
+            _announced = false;
         }
     }
     void onTimeChanged(int timeStatus) override
