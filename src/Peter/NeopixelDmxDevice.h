@@ -17,10 +17,10 @@ struct NeoPixelDmxDevice : DmxPacketConsumer
     //----------------------------------------------------------------------------------------------
 protected:
 
+    PixelSequence*              _pPixels;
     ArtnetDevice                _artnet;
     DmxLuminanceEffectSelector* _pLuminanceEffectSelector;
     DmxColorEffectSelector*     _pColorEffectSelector;
-    PixelSequence*              _pPixels;
 
     //----------------------------------------------------------------------------------------------
     // Construction

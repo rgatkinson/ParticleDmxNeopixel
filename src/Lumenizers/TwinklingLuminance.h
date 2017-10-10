@@ -109,9 +109,9 @@ public:
         if (parameterBlock.luminanceSpeed()!=0)
         {
             float speed = 1 - parameterBlock.speedLevel(false, parameterBlock.luminanceSpeed());
-            float msMin = 5;
+            float msMin = 0;
             float msMax = 2 * msTwinklePauseDefault;
-            msTwinklePause = scaleRange(speed, 0, 1, 0, 2 * msTwinklePauseDefault);
+            msTwinklePause = scaleRange(speed, 0, 1, msMin, msMax);
         }
 
         int msTwinkleBreathe = msTwinkleBreatheDefault;
