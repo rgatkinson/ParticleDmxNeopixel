@@ -27,7 +27,7 @@ public:
         Breathing,
         Twinkle,
         Last=Twinkle,
-        SelfTest,   // AFTER Max, yes
+        SelfTest,   // excluded from Lightboard availability
     };
 
     static LPCSTR nameOf(Effect effect)

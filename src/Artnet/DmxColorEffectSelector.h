@@ -22,8 +22,8 @@ public:
         First,
         Uniform = First,
         Rainbow,
-        SelfTest,
-        Last=SelfTest,
+        Last=Rainbow,
+        SelfTest,   // excluded from Lightboard availability
     };
 
     static LPCSTR nameOf(Effect effect)
