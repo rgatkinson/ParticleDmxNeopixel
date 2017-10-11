@@ -5,6 +5,13 @@
 #define __KDRIDA_I2C_PARAMETER_BLOCK_H__
 
 #include "Util/Misc.h"
+#include "Artnet/DmxColorLuminanceParameters.h"
+
+struct PACKED KridaI2CDimmerParameters
+{
+    byte                dimmer;
+    DmxEffectSpeedControl  luminance;
+};
 
 struct PACKED KridaI2CParameterBlockData
 {

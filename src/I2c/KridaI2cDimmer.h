@@ -167,7 +167,7 @@ public:
 
     static int dmxCount()
     {
-        return sizeof(ColorLuminanceParameterBlockData);
+        return sizeof(DmxColorLuminanceParametersData);
     }
 
     DIMMER_VALUE dimmerValueFromDmx(byte dmx)

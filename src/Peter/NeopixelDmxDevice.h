@@ -6,7 +6,7 @@
 
 #include "Artnet/Artnet.h"
 #include "Pixels/PixelSequence.h"
-#include "Artnet/ColorLuminanceParameterBlock.h"
+#include "Artnet/DmxColorLuminanceParameters.h"
 #include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 
@@ -74,7 +74,7 @@ public:
 
     static int dmxCount()
     {
-        return sizeof(ColorLuminanceParameterBlockData);
+        return sizeof(DmxColorLuminanceParametersData);
     }
 
     void onDmxPacket(ArtDmxPacket& packet) override
@@ -82,7 +82,7 @@ public:
         byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount());
         if (dmxValuesPointer)
         {
-            ColorLuminanceParameterBlock parameterBlock = ColorLuminanceParameterBlock(dmxValuesPointer);
+            DmxColorLuminanceParameters parameterBlock = DmxColorLuminanceParameters(dmxValuesPointer);
 
             _pColorEffectSelector->processParameterBlock(parameterBlock);
             _pLuminanceEffectSelector->processParameterBlock(parameterBlock);

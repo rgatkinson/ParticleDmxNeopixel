@@ -10,7 +10,7 @@
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
 #include "Pixels/ColorizeableHolder.h"
-#include "Artnet/ColorLuminanceParameterBlock.h"
+#include "Artnet/DmxColorLuminanceParameters.h"
 
 //==================================================================================================
 // Colorizer
@@ -90,7 +90,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock)
+    virtual void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
     {
     }
 

@@ -4,7 +4,7 @@
 #ifndef __DMX_COLOR_EFFECT_SELECTOR_H__
 #define __DMX_COLOR_EFFECT_SELECTOR_H__
 
-#include "ColorLuminanceParameterBlock.h"
+#include "DmxColorLuminanceParameters.h"
 #include "DmxEffectSelector.h"
 #include "System/PersistentSettings.h"
 #include "System/CloudVariable.h"
@@ -83,12 +83,12 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    static Effect colorEffect(ColorLuminanceParameterBlock& parameterBlock)
+    static Effect colorEffect(DmxColorLuminanceParameters& parameterBlock)
     {
         return scaleRangeDiscrete(parameterBlock.colorEffect(), 0, 255, Effect::First, Effect::Last);
     }
 
-    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock)
+    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
     {
         Effect effectDesired = colorEffect(parameterBlock);
         if (_currentEffect != effectDesired)

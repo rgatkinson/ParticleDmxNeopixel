@@ -44,7 +44,7 @@ public:
 
     // colorSpeedLevel() controls rate and direction of rainbow rotation
     // colorControl() controls fraction of color wheel visible
-    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
+    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
     {
         Colorizer::processParameterBlock(parameterBlock);
         float speed = parameterBlock.colorSpeedLevel();

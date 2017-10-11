@@ -1,43 +1,51 @@
 //
-// ColorLuminanceParameterBlock.h
+// DmxColorLuminanceParameters.h
 //
 #ifndef __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
 #define __COLOR_LUMINANCE_PARAMTER_BLOCK_H__
 
 #include "Util/Misc.h"
 
-struct PACKED ColorLuminanceParameterBlockData
+struct PACKED DmxEffectSpeedControl
 {
-    byte    colorTemperature;       // 300
-    byte    red;                    // 301
-    byte    green;                  // 302
-    byte    blue;                   // 303
-    byte    dimmer;                 // 304
-    byte    colorEffect;            // 305
-    byte    colorSpeed;             // 306
-    byte    colorControl;           // 307
-    byte    luminanceEffect;        // 308
-    byte    luminanceSpeed;         // 309
-    byte    luminanceControl;       // 310
+    byte    effect;
+    byte    speed;
+    byte    control;
 };
 
-struct ColorLuminanceParameterBlock
+struct PACKED DmxDimmer
+{
+    byte    value;
+};
+
+struct PACKED DmxColorLuminanceParametersData
+{
+    byte                    colorTemperature;       // 300
+    byte                    red;                    // 301
+    byte                    green;                  // 302
+    byte                    blue;                   // 303
+    DmxDimmer               dimmer;                 // 304
+    DmxEffectSpeedControl   color;                  // 305, 306, 307
+    DmxEffectSpeedControl   luminance;              // 308, 309, 310
+};
+
+struct DmxColorLuminanceParameters
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
 
-    ColorLuminanceParameterBlockData* _pData;
+    DmxColorLuminanceParametersData* _pData;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    ColorLuminanceParameterBlock(void* pv)
+    DmxColorLuminanceParameters(void* pv)
     {
-        _pData = reinterpret_cast<ColorLuminanceParameterBlockData*>(pv);
+        _pData = reinterpret_cast<DmxColorLuminanceParametersData*>(pv);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -46,20 +54,21 @@ public:
 public:
 
     #define declare(memberName)  inline byte memberName() { return _pData->memberName; }
-
     declare(colorTemperature)
     declare(red)
     declare(green)
     declare(blue)
-    declare(dimmer)
-    declare(colorEffect)
-    declare(colorSpeed)
-    declare(colorControl)
-    declare(luminanceEffect)
-    declare(luminanceSpeed)
-    declare(luminanceControl)
-
     #undef declare
+
+    byte dimmer()       { return _pData->dimmer.value; }
+
+    byte colorEffect()  { return _pData->color.effect; }
+    byte colorSpeed()   { return _pData->color.speed; }
+    byte colorControl() { return _pData->color.control; }
+
+    byte luminanceEffect()  { return _pData->luminance.effect; }
+    byte luminanceSpeed()   { return _pData->luminance.speed; }
+    byte luminanceControl() { return _pData->luminance.control; }
 
     float colorSpeedLevel(bool directional = true)
     {
@@ -73,7 +82,7 @@ public:
 
     // directional:     [-1,1], neg=CW, pos=CCW
     // non-directional: [0,1]
-    // zero is stopped 
+    // zero is stopped
     static float speedLevel(bool directional, byte dmx)
     {
         if (dmx==0)

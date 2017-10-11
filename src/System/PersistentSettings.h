@@ -33,6 +33,8 @@ struct PersistentSettingTyped : PersistentSetting
 // PersistentSettings
 //==================================================================================================
 
+#define USE_HAL 1
+
 struct PersistentSettings
 {
     //----------------------------------------------------------------------------------------------
@@ -104,10 +106,14 @@ public:
         {
             byte* pb = reinterpret_cast<byte*>(persistentSetting->pointer());
             int cb = persistentSetting->size();
-            for (int dib = 0; dib < cb; dib++)
-            {
-                EEPROM.write(ibFirst + dib, pb[dib]);
-            }
+            #if USE_HAL
+                HAL_EEPROM_Put(ibFirst, pb, cb);
+            #else
+                for (int dib = 0; dib < cb; dib++)
+                {
+                    EEPROM.write(ibFirst + dib, pb[dib]);
+                }
+            #endif
         }
     }
 
@@ -118,10 +124,14 @@ public:
         {
             int cb = persistentSetting->size();
             byte* pb = reinterpret_cast<byte*>(mallocNoFail(cb));
-            for (int dib = 0; dib < cb; dib++)
-            {
-                pb[dib] = EEPROM.read(ibFirst + dib);
-            }
+            #if USE_HAL
+                HAL_EEPROM_Get(ibFirst, pb, cb);
+            #else
+                for (int dib = 0; dib < cb; dib++)
+                {
+                    pb[dib] = EEPROM.read(ibFirst + dib);
+                }
+            #endif
             persistentSetting->load(pb, cb);
             free(pb);
         }
@@ -396,4 +406,5 @@ struct VolatileStringSetting
     String          valueAsString()                 { return value(); }
 };
 
+#undef USE_HAL
 #endif

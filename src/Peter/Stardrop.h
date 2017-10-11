@@ -14,7 +14,7 @@
 #include "Lumenizers/MorseCodeLuminance.h"
 #include "Colorizers/ColorizerSequence.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"
-#include "Artnet/ColorLuminanceParameterBlock.h"
+#include "Artnet/DmxColorLuminanceParameters.h"
 #include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 
@@ -25,7 +25,7 @@ struct Stardrop : DmxPacketConsumer
     //----------------------------------------------------------------------------------------------
 public:
 
-    static const int DMX_ADDRESS_COUNT = sizeof(ColorLuminanceParameterBlock);
+    static const int DMX_ADDRESS_COUNT = sizeof(DmxColorLuminanceParameters);
 
 protected:
 
@@ -141,7 +141,7 @@ public:
 
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        ColorLuminanceParameterBlock parameterBlock = ColorLuminanceParameterBlock(packet.pDmx(_dmxAddress));
+        DmxColorLuminanceParameters parameterBlock = DmxColorLuminanceParameters(packet.pDmx(_dmxAddress));
 
         _pColorEffectSelector->processParameterBlock(parameterBlock);
         _pLuminanceEffectSelector->processParameterBlock(parameterBlock);

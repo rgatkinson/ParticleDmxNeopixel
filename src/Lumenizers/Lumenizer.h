@@ -7,7 +7,7 @@
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
 #include "Pixels/ColorizeableHolder.h"
-#include "Artnet/ColorLuminanceParameterBlock.h"
+#include "Artnet/DmxColorLuminanceParameters.h"
 
 const BRIGHTNESS BRIGHTNESS_MIN = 0;
 const BRIGHTNESS BRIGHTNESS_MAX = 256;
@@ -169,7 +169,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock)
+    virtual void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
     {
         float dimmerLevel = scaleRange(parameterBlock.dimmer(), 0, 255, 0, 1);
         if (_dimmerLevel != dimmerLevel)

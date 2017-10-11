@@ -103,7 +103,7 @@ protected:
 
 public:
 
-    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
+    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
     {
         Lumenizer::processParameterBlock(parameterBlock);
 

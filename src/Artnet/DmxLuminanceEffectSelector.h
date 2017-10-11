@@ -4,7 +4,7 @@
 #ifndef __DMX_BRIGHTNESS_EFFECT_SELECTOR_H__
 #define __DMX_BRIGHTNESS_EFFECT_SELECTOR_H__
 
-#include "ColorLuminanceParameterBlock.h"
+#include "DmxColorLuminanceParameters.h"
 #include "DmxEffectSelector.h"
 #include "DmxColorEffectSelector.h"
 #include "Lumenizers/UniformLuminance.h"
@@ -88,12 +88,12 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    static Effect luminanceEffect(ColorLuminanceParameterBlock& parameterBlock)
+    static Effect luminanceEffect(DmxColorLuminanceParameters& parameterBlock)
     {
         return scaleRangeDiscrete(parameterBlock.luminanceEffect(), 0, 255, Effect::First, Effect::Last);
     }
 
-    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock)
+    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
     {
         // Use a self test if the COLOR it set to self test
         Effect effectDesired = DmxColorEffectSelector::Effect::SelfTest == DmxColorEffectSelector::colorEffect(parameterBlock)
