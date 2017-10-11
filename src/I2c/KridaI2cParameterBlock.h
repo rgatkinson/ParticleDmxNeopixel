@@ -1,5 +1,5 @@
 //
-// KridaI2cParameterBlock.h
+// KridaParameterBlock.h
 //
 #ifndef __KDRIDA_I2C_PARAMETER_BLOCK_H__
 #define __KDRIDA_I2C_PARAMETER_BLOCK_H__
@@ -8,39 +8,39 @@
 #include "DmxParams/DmxDimmer.h"
 #include "DmxParams/DmxEffectSpeedControl.h"
 
-struct PACKED DmxKridaI2cChannel
+struct PACKED DmxKridaChannel
 {
     DmxDimmer              dimmer;
     DmxEffectSpeedControl  luminance;
 };
 
-struct PACKED DmxKridaI2cDimmer
+struct PACKED DmxKridaDimmer
 {
-    DmxKridaI2cChannel channels[4];
+    DmxKridaChannel channels[4];
 
-    const DmxKridaI2cChannel& channel(int i) const
+    const DmxKridaChannel& channel(int i) const
     {
         return channels[i];
     }
 };
 
-struct DmxKridaI2cParameters
+struct DmxKridaParameters
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
 
-    DmxKridaI2cDimmer* _pData;
+    DmxKridaDimmer* _pData; // how many?
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    DmxKridaI2cParameters(void* pv)
+    DmxKridaParameters(void* pv)
     {
-        _pData = reinterpret_cast<DmxKridaI2cDimmer*>(pv);
+        _pData = reinterpret_cast<DmxKridaDimmer*>(pv);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    const DmxKridaI2cChannel& channel(int i) const
+    const DmxKridaChannel& channel(int i) const
     {
         return _pData->channel(i);
     }
