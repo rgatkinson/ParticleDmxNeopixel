@@ -14,18 +14,18 @@ struct CloudVariable : SystemEventNotifications
     // State
     //----------------------------------------------------------------------------------------------
 
-    SETTING* _persistentSetting;
-    String   _name;
-    bool     _writeable;
-    bool     _begun = false;
-    bool     _connected = false;
-    bool     _announced = false;
+    SETTING*        _persistentSetting;
+    String          _name;
+    ReadWriteable   _writeable;
+    bool            _begun = false;
+    bool            _connected = false;
+    bool            _announced = false;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    CloudVariable(LPCSTR name, SETTING* pSetting, bool writeable = true)
+    CloudVariable(LPCSTR name, SETTING* pSetting, ReadWriteable writeable = ReadWriteable::RW)
         : _persistentSetting(pSetting),
           _name(name),
           _writeable(writeable)
@@ -86,7 +86,7 @@ struct CloudVariable : SystemEventNotifications
             _announced = true;
             INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _persistentSetting->valueAsString().c_str());
             bool success = Particle.variable(_name, this->valueRef());
-            if (success && _writeable)
+            if (success && _writeable==ReadWriteable::RW)
             {
                 success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::setValue), this);
             }

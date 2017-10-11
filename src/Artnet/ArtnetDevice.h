@@ -23,24 +23,28 @@ protected:
     int                 _pollReplyCount  = 0;
 
     PersistentIntSetting                            _dmxAddress;
+    VolatileIntSetting                              _dmxLast;
     PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
-    CloudVariable<decltype(_dmxAddress), int>       _dmxAddressCloudVariable;
-    CloudVariable<decltype(_name), LPCSTR>          _nameCloudVariable;
-    CloudVariable<decltype(_description), LPCSTR>   _descriptionCloudVariable;
+    CloudVariable<decltype(_dmxAddress), int>       _dmxAddressCloudVar;
+    CloudVariable<decltype(_dmxLast), int>          _dmxLastCloudVar;
+    CloudVariable<decltype(_name), LPCSTR>          _nameCloudVar;
+    CloudVariable<decltype(_description), LPCSTR>   _descriptionCloudVar;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
-    ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, LPCSTR name="<name>", LPCSTR description="<description>")
+    ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, int dmxCount, LPCSTR name="<name>", LPCSTR description="<description>")
         : _dmxAddress(dmxAddress),
+          _dmxLast(dmxAddress + dmxCount - 1),
           _name(name),
           _description(description),
-          _dmxAddressCloudVariable("dmxAddress", &_dmxAddress),
-          _nameCloudVariable("name", &_name),
-          _descriptionCloudVariable("description", &_description)
+          _dmxAddressCloudVar("dmxAddrFirst", &_dmxAddress),
+          _dmxLastCloudVar("dmxAddrLast", &_dmxLast, ReadWriteable::RO),
+          _nameCloudVar("name", &_name),
+          _descriptionCloudVar("description", &_description)
     {
         _pOwner = pOwner;
         _initialized = false;
@@ -106,9 +110,10 @@ public:
 public:
     virtual void begin()
     {
-        _dmxAddressCloudVariable.begin();
-        _nameCloudVariable.begin();
-        _descriptionCloudVariable.begin();
+        _dmxAddressCloudVar.begin();
+        _dmxLastCloudVar.begin();
+        _nameCloudVar.begin();
+        _descriptionCloudVar.begin();
     }
 
     virtual void loop()

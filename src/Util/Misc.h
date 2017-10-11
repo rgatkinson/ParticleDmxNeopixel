@@ -15,6 +15,8 @@ typedef long long Int64;
 #define PACKED      __attribute__((__packed__))  // https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html
 #define SELECTANY   __attribute__((weak))        // https://en.wikipedia.org/wiki/Weak_symbol
 
+enum class ReadWriteable { RW, RO };
+
 //--------------------------------------------------------------------------------------------------
 // Logging / tracing
 //--------------------------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ public:
 
     DmxColorEffectSelector(Colorizeable* pColorizeable)
         : DmxEffectSelector(pColorizeable),
-          _currentEffectCloud("colorEffect", &_currentEffectName, false)
+          _currentEffectCloud("colorEffect", &_currentEffectName, ReadWriteable::RO)
     {
         setEffect(Effect::None);
     }

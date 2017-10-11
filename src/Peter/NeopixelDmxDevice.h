@@ -29,7 +29,7 @@ public:
 
     NeoPixelDmxDevice(PixelSequence* pixels, LPCSTR shortName)
         : _pPixels(pixels),
-          _artnet(this, DMX_ADDRESS_DEFAULT, shortName)
+          _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(),  shortName)
     {
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
         _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
@@ -72,9 +72,14 @@ public:
     // Packets
     //----------------------------------------------------------------------------------------------
 
+    static int dmxCount()
+    {
+        return sizeof(ColorLuminanceParameterBlockData);
+    }
+
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), sizeof(ColorLuminanceParameterBlockData));
+        byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount());
         if (dmxValuesPointer)
         {
             ColorLuminanceParameterBlock parameterBlock = ColorLuminanceParameterBlock(dmxValuesPointer);

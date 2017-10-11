@@ -72,6 +72,7 @@ protected:
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
+
     static const int i2cAddressPCF8574T  = 0x20;   // '7 bit addr'
     static const int i2cAddressPCF8574AT = 0x38;   // '7 bit addr'
 
@@ -97,7 +98,7 @@ protected:
 public:
 
     KridaI2cDimmer(int i2cAddressBase, int addressDipSwitch, LPCSTR shortName)
-        : _artnet(this, DMX_ADDRESS_DEFAULT, shortName),
+        : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(), shortName),
           _deadline(_msTransmissionInterval),
           _dimmers { {this,0}, {this,1}, {this,2}, {this,3} }
     {
@@ -164,6 +165,11 @@ public:
     // Packets
     //----------------------------------------------------------------------------------------------
 
+    static int dmxCount()
+    {
+        return sizeof(ColorLuminanceParameterBlockData);
+    }
+
     DIMMER_VALUE dimmerValueFromDmx(byte dmx)
     {
         return scaleRangeDiscrete(dmx, 0, 255, _dimmerValueFirst, _dimmerValueLast);
@@ -171,7 +177,7 @@ public:
 
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), sizeof(KridaI2CParameterBlockData));
+        byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount());
         if (dmxValuesPointer)
         {
             KridaI2CParameterBlock parameterBlock = KridaI2CParameterBlock(dmxValuesPointer);
