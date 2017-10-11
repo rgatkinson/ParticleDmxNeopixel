@@ -99,7 +99,7 @@ public:
             switch (effectDesired)
             {
                 case Effect::Uniform:
-                    pColorizer = new UniformColor(Color::WHITE);
+                    pColorizer = new UniformColor(Color::White);
                     break;
 
                 case Effect::Rainbow:

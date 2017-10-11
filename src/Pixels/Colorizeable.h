@@ -15,7 +15,7 @@ typedef int BRIGHTNESS;
 
 struct Colorizeable : RefCountable
 {
-    virtual void setPixelColor(uint16_t iPixel, COLOR_INT color) = 0;
+    virtual void setPixelColor(uint16_t iPixel, Color color) = 0;
     virtual int  numberOfPixels() = 0;
     virtual void ownColorizer(Colorizer*) = 0;
     virtual void ownLumenizer(Lumenizer*) = 0;

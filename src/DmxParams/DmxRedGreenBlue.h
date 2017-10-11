@@ -14,7 +14,7 @@ struct PACKED DmxRedGreenBlue
     byte green() const { return _green; }
     byte blue()  const { return _blue;  }
 
-    COLOR_INT color() const
+    Color color() const
     {
         return Color::rgb(red(), green(), blue());
     }

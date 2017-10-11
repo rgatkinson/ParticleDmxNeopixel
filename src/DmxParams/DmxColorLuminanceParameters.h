@@ -72,7 +72,7 @@ public:
     // color temperature zero allows rgb
     // otherwise, color temperature max is the sweet spot
     // othewise, we interpolate color temperature
-    COLOR_INT effectiveColor() const
+    Color effectiveColor() const
     {
         const byte dmxColorTemperature = colorTemperature();
         const float kelvinSweet = 2550;   // soft white incandesent

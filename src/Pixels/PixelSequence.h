@@ -25,7 +25,7 @@ protected:
     Deadline            _showDeadline;
     Lumenizer*          _pLumenizer;
     Colorizer*          _pColorizer;
-    COLOR_INT*          _pixelValues;
+    Color*              _pixelValues;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -39,8 +39,8 @@ public:
         _pixelCount = pixelCount;
         _pLumenizer = NULL;
         _pColorizer = NULL;
-        _pixelValues = new COLOR_INT[pixelCount];
-        ownColorizerNoBegin(new UniformColor(Color::BLACK));
+        _pixelValues = new Color[pixelCount];
+        ownColorizerNoBegin(new UniformColor(Color::Black));
         ownColorizerNoBegin(new UniformLuminance(1.0f));
     }
 
@@ -98,7 +98,7 @@ public:
         if (_pColorizer) _pColorizer->begin();
     }
 
-    void setPixelColor(uint16_t iPixel, COLOR_INT color) override
+    void setPixelColor(uint16_t iPixel, Color color) override
     {
         _pixelValues[iPixel] = color;
     }
@@ -117,7 +117,7 @@ public:
         _neopixels.begin();
         for (int iPixel = 0; iPixel < _pixelCount; iPixel++)
         {
-            _pixelValues[iPixel] = Color::BLACK;
+            _pixelValues[iPixel] = Color::Black;
         }
         if (_pLumenizer) _pLumenizer->begin();
         if (_pColorizer) _pColorizer->begin();
@@ -143,8 +143,8 @@ public:
                 {
                     brightness = _pLumenizer->currentBrightness(iPixel);
                 }
-                COLOR_INT color = _pixelValues[iPixel];
-                _neopixels.setColorScaled(iPixel, Color::red(color), Color::green(color), Color::blue(color), brightness);
+                Color color = _pixelValues[iPixel];
+                _neopixels.setColorScaled(iPixel, color.red(), color.green(), color.blue(), brightness);
             }
 
             _neopixels.show();

@@ -13,7 +13,7 @@ struct UniformColor : Colorizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    COLOR_INT   _color;
+    Color       _color;
     Deadline    _colorUpdateDeadline;
 
     //----------------------------------------------------------------------------------------------
@@ -21,11 +21,11 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    UniformColor(COLOR_INT color) : UniformColor(Duration::Infinite, color)
+    UniformColor(Color color) : UniformColor(Duration::Infinite, color)
     {
     }
 
-    UniformColor(Duration duration, COLOR_INT color) : Colorizer(Flavor::Uniform, duration)
+    UniformColor(Duration duration, Color color) : Colorizer(Flavor::Uniform, duration)
     {
         _color = color;
         _colorUpdateDeadline = Deadline(Deadline::Infinite);
@@ -35,11 +35,11 @@ public:
     // Accessing
     //----------------------------------------------------------------------------------------------
 
-    COLOR_INT color()
+    Color color()
     {
         return _color;
     }
-    void setColor(COLOR_INT color)
+    void setColor(Color color)
     {
         if (_color != color)
         {
@@ -57,7 +57,7 @@ public:
     void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
     {
         Colorizer::processParameterBlock(parameterBlock);
-        COLOR_INT colorDesired = parameterBlock.effectiveColor();
+        Color colorDesired = parameterBlock.effectiveColor();
         setColor(colorDesired);
     }
 

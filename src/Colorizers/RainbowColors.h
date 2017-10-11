@@ -101,7 +101,7 @@ public:
                 // INFO("RainbowColors: pixelOffset=%d", _pixelOffset);
                 for (uint16_t iPixel=0; iPixel < _pixelCount; iPixel++)
                 {
-                    COLOR_INT color = Color::wheelSin((iPixel+_pixelOffset) / float(_pixelCount) * _wheelFractionVisible);
+                    Color color = Color::wheelSin((iPixel+_pixelOffset) / float(_pixelCount) * _wheelFractionVisible);
                     setPixelColor(iPixel, color);
                 }
                 _timer.reset();

@@ -6,77 +6,78 @@
 
 #include "math.h"
 
-typedef int COLOR_INT;
-
 struct Color
 {
+    //----------------------------------------------------------------------------------------------
+    // State
+    //----------------------------------------------------------------------------------------------
+protected:
+
+    int _value;
+
+    //----------------------------------------------------------------------------------------------
+    // Construction
+    //----------------------------------------------------------------------------------------------
+public:
+
+    Color() : Color(0)
+    {
+    }
+    explicit Color(int color) : _value(color)
+    {
+    }
+
+    Color& operator=(const Color& them)
+    {
+        _value = them.value();
+        return *this;
+    }
+
     //----------------------------------------------------------------------------------------------
     // Public function
     //----------------------------------------------------------------------------------------------
 
-    static const COLOR_INT BLACK       = 0xFF000000;
-    static const COLOR_INT DKGRAY      = 0xFF444444;
-    static const COLOR_INT GRAY        = 0xFF888888;
-    static const COLOR_INT LTGRAY      = 0xFFCCCCCC;
-    static const COLOR_INT WHITE       = 0xFFFFFFFF;
-    static const COLOR_INT RED         = 0xFFFF0000;
-    static const COLOR_INT GREEN       = 0xFF00FF00;
-    static const COLOR_INT BLUE        = 0xFF0000FF;
-    static const COLOR_INT YELLOW      = 0xFFFFFF00;
-    static const COLOR_INT CYAN        = 0xFF00FFFF;
-    static const COLOR_INT MAGENTA     = 0xFFFF00FF;
-    static const COLOR_INT TRANSPARENT = 0;
-
-    static inline int alpha(COLOR_INT color)
+    int value() const
     {
-        return (color >> 24) & 0xFF;
-    }
-    static inline int red(COLOR_INT color)
-    {
-        return (color >> 16) & 0xFF;
-    }
-    static inline int green(COLOR_INT color)
-    {
-        return (color >> 8) & 0xFF;
-    }
-    static inline int blue(COLOR_INT color)
-    {
-        return (color >> 0) & 0xFF;
+        return _value;
     }
 
+    static const Color Black, DarkGray, Gray, LightGray, White, Red, Green, Blue, Yellow, Cyan, Magenta, Transparent;
 
-    static inline COLOR_INT rgb(int red, int green, int blue)
+    int alpha() { return (_value >> 24) & 0xFF; }
+    int red()   { return (_value >> 16) & 0xFF; }
+    int green() { return (_value >>  8) & 0xFF; }
+    int blue()  { return (_value >>  0) & 0xFF; }
+
+    static Color rgb(int red, int green, int blue)
     {
         return argb(0xFF, red, green, blue);
     }
-    static COLOR_INT argb(int alpha, int red, int green, int blue)
+    static Color argb(int alpha, int red, int green, int blue)
     {
-        return (clipByte(alpha) << 24) | (clipByte(red) << 16) | (clipByte(green) << 8) | clipByte(blue);
+        return Color((clipByte(alpha) << 24) | (clipByte(red) << 16) | (clipByte(green) << 8) | clipByte(blue));
     }
 
-
-    static inline COLOR_INT rgb(float red, float green, float blue)
+    static inline Color rgb(float red, float green, float blue)
     {
         return argb(1.0f, red, green, blue);
     }
-    static COLOR_INT argb(float alpha, float red, float green, float blue)
+    static Color argb(float alpha, float red, float green, float blue)
     {
         return argb(zeroOneToByte(alpha), zeroOneToByte(red), zeroOneToByte(green), zeroOneToByte(blue));
     }
 
-
-    static COLOR_INT temperature(float kelvin)
+    static Color temperature(float kelvin)
     {
         return rgb(blackBodyRed(kelvin), blackBodyGreen(kelvin), blackBodyBlue(kelvin));
     }
 
-
-    static inline COLOR_INT wheelTri(float f)
+    static inline Color wheelTri(float f)
     {
         return wheel<triWaveUp, triWaveDown>(f);
     }
 
-    static inline COLOR_INT wheelSin(float f)
+    static inline Color wheelSin(float f)
     {
         return wheel<sinWaveUp, sinWaveDown>(f);
     }
@@ -103,7 +104,7 @@ protected:
     // the color associated therewith. Red is at 0 (and 1); green is
     // at 1/3, and blue is at 2/3.
     template <PFN pfnUp, PFN pfnDown>
-    static COLOR_INT wheel(float f)
+    static Color wheel(float f)
     {
         constexpr float oneThird = 1.f / 3.f;
         constexpr float twoThirds = 2.f / 3.f;
@@ -209,5 +210,37 @@ protected:
     }
 
 };
+
+//----------------------------------------------------------------------------------------------
+// Comparision
+//----------------------------------------------------------------------------------------------
+
+static inline bool operator==(const Color& left, const Color& right)
+{
+    return left.value() == right.value();
+}
+static inline bool operator!=(const Color& left, const Color& right)
+{
+    return left.value() != right.value();
+}
+
+//----------------------------------------------------------------------------------------------
+// Constants
+//----------------------------------------------------------------------------------------------
+
+const Color SELECTANY Color::Black      { 0xFF000000 };
+const Color SELECTANY Color::DarkGray   { 0xFF444444 };
+const Color SELECTANY Color::Gray       { 0xFF888888 };
+const Color SELECTANY Color::LightGray  { 0xFFCCCCCC };
+
+const Color SELECTANY Color::White      { 0xFFFFFFFF };
+const Color SELECTANY Color::Red        { 0xFFFF0000 };
+const Color SELECTANY Color::Green      { 0xFF00FF00 };
+const Color SELECTANY Color::Blue       { 0xFF0000FF };
+
+const Color SELECTANY Color::Yellow     { 0xFFFFFF00 };
+const Color SELECTANY Color::Cyan       { 0xFF00FFFF };
+const Color SELECTANY Color::Magenta    { 0xFFFF00FF };
+const Color SELECTANY Color::Transparent { 0 };
 
 #endif

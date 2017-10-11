@@ -8,7 +8,7 @@
 // Functions
 //==================================================================================================
 
-void Colorizer::setPixelColor(uint16_t iPixel, COLOR_INT color)
+void Colorizer::setPixelColor(uint16_t iPixel, Color color)
 {
     _pColorizeable->setPixelColor(iPixel, color);
 }

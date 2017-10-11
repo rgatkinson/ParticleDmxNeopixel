@@ -83,7 +83,7 @@ public:
 
 protected:
 
-    void setPixelColor(uint16_t iPixel, COLOR_INT color);
+    void setPixelColor(uint16_t iPixel, Color color);
 
     //----------------------------------------------------------------------------------------------
     // Dmx

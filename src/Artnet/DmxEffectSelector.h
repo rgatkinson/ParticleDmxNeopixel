@@ -72,7 +72,7 @@ public:
             }
             case Demo::Morse:
             {
-                pResult = new UniformColor(Color::YELLOW);
+                pResult = new UniformColor(Color::Yellow);
                 break;
             }
             case Demo::SelfTest:
