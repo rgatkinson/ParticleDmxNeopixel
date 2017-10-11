@@ -36,7 +36,7 @@ public:
 
     bool sameAs(Durable* pThem)
     {
-        return pThem != nullptr && msDuration() == pThem->msDuration(); // TODO: review use of msDuration here
+        return pThem != nullptr; // we *don't* count the duration itself
     }
 
     virtual int msDuration()
