@@ -4,7 +4,7 @@
 #ifndef __DMX_COLOR_EFFECT_SELECTOR_H__
 #define __DMX_COLOR_EFFECT_SELECTOR_H__
 
-#include "DmxColorLuminanceParameters.h"
+#include "DmxParams/DmxColorLuminanceParameters.h"
 #include "DmxEffectSelector.h"
 #include "System/PersistentSettings.h"
 #include "System/CloudVariable.h"

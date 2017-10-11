@@ -112,7 +112,7 @@ public:
         int msTwinklePause = msTwinklePauseDefault;
         if (parameterBlock.luminanceSpeed()!=0)
         {
-            float speed = 1 - parameterBlock.speedLevel(false, parameterBlock.luminanceSpeed());
+            float speed = 1 - parameterBlock.luminanceSpeedLevel(false);
             float msMin = 0;
             float msMax = 2 * msTwinklePauseDefault;
             msTwinklePause = scaleRange(speed, 0, 1, msMin, msMax);
@@ -121,7 +121,7 @@ public:
         int msTwinkleBreathe = msTwinkleBreatheDefault;
         if (parameterBlock.luminanceControl()!=0)
         {
-            float speed = 1 - parameterBlock.speedLevel(false, parameterBlock.luminanceControl());
+            float speed = 1 - DmxEffectSpeedControl::nonDirectionalSpeedLevel(parameterBlock.luminanceControl());
             float msMin = 100;
             float msMax = 2 * msTwinkleBreatheDefault;
             msTwinkleBreathe = scaleRange(speed, 0, 1, msMin, msMax);

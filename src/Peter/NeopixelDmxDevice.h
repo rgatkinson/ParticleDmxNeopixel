@@ -6,7 +6,7 @@
 
 #include "Artnet/Artnet.h"
 #include "Pixels/PixelSequence.h"
-#include "Artnet/DmxColorLuminanceParameters.h"
+#include "DmxParams/DmxColorLuminanceParameters.h"
 #include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 

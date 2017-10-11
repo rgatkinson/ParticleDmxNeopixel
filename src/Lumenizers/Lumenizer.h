@@ -7,7 +7,7 @@
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
 #include "Pixels/ColorizeableHolder.h"
-#include "Artnet/DmxColorLuminanceParameters.h"
+#include "DmxParams/DmxColorLuminanceParameters.h"
 
 const BRIGHTNESS BRIGHTNESS_MIN = 0;
 const BRIGHTNESS BRIGHTNESS_MAX = 256;

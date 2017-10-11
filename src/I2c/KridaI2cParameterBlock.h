@@ -5,7 +5,8 @@
 #define __KDRIDA_I2C_PARAMETER_BLOCK_H__
 
 #include "Util/Misc.h"
-#include "Artnet/DmxColorLuminanceParameters.h"
+#include "DmxParams/DmxDimmer.h"
+#include "DmxParams/DmxEffectSpeedControl.h"
 
 struct PACKED DmxKridaI2cChannel
 {

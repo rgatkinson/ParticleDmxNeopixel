@@ -4,7 +4,7 @@
 #ifndef __DMX_BRIGHTNESS_EFFECT_SELECTOR_H__
 #define __DMX_BRIGHTNESS_EFFECT_SELECTOR_H__
 
-#include "DmxColorLuminanceParameters.h"
+#include "DmxParams/DmxColorLuminanceParameters.h"
 #include "DmxEffectSelector.h"
 #include "DmxColorEffectSelector.h"
 #include "Lumenizers/UniformLuminance.h"
