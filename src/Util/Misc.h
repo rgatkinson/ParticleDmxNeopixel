@@ -12,8 +12,8 @@
 
 typedef long long Int64;
 
-// https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html
-#define PACKED __attribute__((__packed__))
+#define PACKED      __attribute__((__packed__))  // https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html
+#define SELECTANY   __attribute__((weak))        // https://en.wikipedia.org/wiki/Weak_symbol
 
 //--------------------------------------------------------------------------------------------------
 // Logging / tracing
@@ -168,6 +168,16 @@ inline bool isOdd(int value)
 inline bool isEven(int value)
 {
     return (value & 1) == 0;
+}
+
+inline int modZero(int numerator, int denominator)
+{
+    return numerator % denominator;                 // [0, denominator)
+}
+inline int modOne(int numerator, int denominator)
+{
+    int result = modZero(numerator, denominator);   // [1, denominator]
+    return result==0 ? denominator : result;
 }
 
 //--------------------------------------------------------------------------------------------------
