@@ -46,7 +46,7 @@ public:
     {
         INFO("amulet demo #%d", (int)_demo);
         Colorizer* pColorizer = new AmuletSelfTestColorizer();
-        Lumenizer* pLumenizer = new AmuletSelfTestLuminance(pColorizer);
+        Lumenizer* pLumenizer = new AmuletSelfTestLuminance(2,3);
         DmxEffectSelector::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
         releaseRef(pColorizer);
         releaseRef(pLumenizer);

@@ -120,7 +120,7 @@ public:
                     break;
 
                 case Effect::SelfTest:
-                    pLumenizer = new AmuletSelfTestLuminance(_pColorizeable->colorizer());
+                    pLumenizer = new AmuletSelfTestLuminance(2,3);
                     break;
             }
             if (pLumenizer)

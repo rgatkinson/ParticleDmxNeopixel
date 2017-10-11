@@ -6,7 +6,7 @@
 
 #include "Lumenizers/DecimatingLuminance.h"
 
-struct AmuletSelfTestLuminance : LumenizerSequence, SystemEventNotifications
+struct AmuletSelfTestLuminance : DelegatingLumenizer, SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -15,13 +15,22 @@ protected:
 
     static constexpr float _initialDimmerLevel = 0.05f;
 
+    DecimatingLuminance* _pDecimating;
+    LumenizerSequence*   _pSequence;
+
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    AmuletSelfTestLuminance(Colorizer* pColorizer) : LumenizerSequence(Flavor::SelfTest)
+    AmuletSelfTestLuminance(int numerator, int denominator) : DelegatingLumenizer(Flavor::SelfTest, nullptr)
     {
+        _pDecimating = new DecimatingLuminance(numerator, denominator, nullptr);
+        _pSequence   = new LumenizerSequence();
+
+        this->setLumenizer(_pDecimating);
+        _pDecimating->setLumenizer(_pSequence);
+
         setDimmerLevel(_initialDimmerLevel);   // this will be overridden if we're if Artnet is up
         steady();
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
@@ -29,27 +38,8 @@ public:
     ~AmuletSelfTestLuminance() override
     {
         SystemEventRegistrar::theInstance->unregisterSystemEvents(this);
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Brightness
-    //----------------------------------------------------------------------------------------------
-
-    bool hasPixelizedBrightness() override
-    {
-        return true;
-    }
-
-    BRIGHTNESS currentBrightness(int iPixel) override
-    {
-        if (isEven(iPixel))
-        {
-            return LumenizerSequence::currentBrightness(iPixel);
-        }
-        else
-        {
-            return 0;
-        }
+        releaseRef(_pSequence);
+        releaseRef(_pDecimating);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -59,9 +49,9 @@ protected:
 
     void setSelfTestLumenizer(Lumenizer* pLumenizer)
     {
-        releaseLumenizers();
-        setLooping(false);
-        LumenizerSequence::ownLumenizer(pLumenizer);
+        _pSequence->releaseLumenizers();
+        _pSequence->setLooping(false);
+        _pSequence->ownLumenizer(pLumenizer);
     }
 
     void blinkFast()
@@ -71,14 +61,14 @@ protected:
     void breatheSlow()
     {
         setSelfTestLumenizer(new BreathingLuminance(Duration(16000), 2000, 6000));
-        LumenizerSequence::ownLumenizer(new UniformLuminance(Duration(2 * 16000), 0.0f));
-        setLooping(true);
+        _pSequence->ownLumenizer(new UniformLuminance(Duration(2 * 16000), 0.0f));
+        _pSequence->setLooping(true);
     }
     void steady()
     {
         setSelfTestLumenizer(new UniformLuminance(Duration(2000), 1.0f));
-        LumenizerSequence::ownLumenizer(new UniformLuminance(Duration(8000), 0.0f));
-        setLooping(true);
+        _pSequence->ownLumenizer(new UniformLuminance(Duration(8000), 0.0f));
+        _pSequence->setLooping(true);
     }
 
     void onNetworkStatus(int netStatus) override

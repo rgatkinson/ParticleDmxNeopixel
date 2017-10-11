@@ -16,8 +16,9 @@ protected:
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
+public:
 
-    DelegatingLumenizer(Flavor flavor, Duration duration, Lumenizer* pLumenizer /*nullable, takes ownership*/) : Lumenizer(flavor, duration)
+    DelegatingLumenizer(Flavor flavor, Lumenizer* pLumenizer=nullptr /*nullable, takes ownership*/) : Lumenizer(flavor, Duration(0) /* ignored */)
     {
         _pLumenizer = nullptr;
         ownLumenizer(pLumenizer);
@@ -38,8 +39,83 @@ protected:
         clear();
         if (pLumenizer)
         {
-            delgateTo(pLumenizer);
             _pLumenizer = pLumenizer;   // takes ownership
+            delgateTo(pLumenizer);
+        }
+    }
+
+    void setLumenizer(Lumenizer* pLumenizer)
+    {
+        if (pLumenizer) pLumenizer->addRef();
+        ownLumenizer(pLumenizer);
+    }
+
+    bool sameAs(Lumenizer* pThemLumenizer) override
+    {
+        if (Lumenizer::sameAs(pThemLumenizer))
+        {
+            DelegatingLumenizer* pThem = static_cast<DelegatingLumenizer*>(pThemLumenizer);
+            if (_pLumenizer && pThem->_pLumenizer)
+            {
+                return _pLumenizer->sameAs(pThem->_pLumenizer);
+            }
+        }
+        return false;
+    }
+
+    void noteColorizeable(Colorizeable* pColorizeable) override
+    {
+        Lumenizer::noteColorizeable(pColorizeable);
+        if (_pLumenizer)
+        {
+            _pLumenizer->noteColorizeable(pColorizeable);
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Duration
+    //----------------------------------------------------------------------------------------------
+
+    void setDuration(Duration duration) override
+    {
+        if (_pLumenizer)
+        {
+            _pLumenizer->setDuration(duration);
+        }
+    }
+    int msDuration() override
+    {
+        if (_pLumenizer)
+        {
+            return _pLumenizer->msDuration();
+        }
+        else
+        {
+            return Duration::Infinite.ms();
+        }
+    }
+
+    int msLoopingDuration() override
+    {
+        if (_pLumenizer)
+        {
+            return _pLumenizer->msDuration();
+        }
+        else
+        {
+            return Duration::Infinite.ms();
+        }
+    }
+
+    bool hasExpired() override
+    {
+        if (_pLumenizer)
+        {
+            return _pLumenizer->hasExpired();
+        }
+        else
+        {
+            return Lumenizer::hasExpired();
         }
     }
 
@@ -108,6 +184,37 @@ protected:
         if (_pLumenizer)
         {
             _pLumenizer->setDimmerLevel(dimmerLevel);
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Looping
+    //----------------------------------------------------------------------------------------------
+
+    void begin() override
+    {
+        Lumenizer::begin();
+        if (_pLumenizer)
+        {
+            _pLumenizer->begin();
+        }
+    }
+
+    void loop() override
+    {
+        Lumenizer::loop();
+        if (_pLumenizer)
+        {
+            _pLumenizer->loop();
+        }
+    }
+
+    void report() override
+    {
+        Lumenizer::report();
+        if (_pLumenizer)
+        {
+            _pLumenizer->report();
         }
     }
 };

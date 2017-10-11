@@ -63,8 +63,55 @@ public:
         }
     }
 
+    bool sameAs(Lumenizer* pThemLumenizer) override
+    {
+        bool result = Lumenizer::sameAs(pThemLumenizer);
+        if (result)
+        {
+            LumenizerSequence* pThem = static_cast<LumenizerSequence*>(pThemLumenizer);
+            result = this->count() == pThem->count();
+            if (result)
+            {
+                for (int i = 0; i < count(); i++)
+                {
+                    Lumenizer* pOurs = this->_lumenizers[i];
+                    Lumenizer* pTheirs = pThem->_lumenizers[i];
+                    result = pOurs->sameAs(pTheirs);
+                    if (!result)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     //----------------------------------------------------------------------------------------------
-    // Accessing
+    // Sequence
+    //----------------------------------------------------------------------------------------------
+
+    void setLooping(bool looping)
+    {
+        _looping = looping;
+    }
+    bool looping()
+    {
+        return _looping;
+    }
+
+    bool isEmpty()
+    {
+        return _lumenizers.isEmpty();
+    }
+
+    int count()
+    {
+        return _lumenizers.count();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Duration
     //----------------------------------------------------------------------------------------------
 
     void setDuration(Duration duration) override
@@ -94,47 +141,16 @@ public:
         return ms;
     }
 
-    void setLooping(bool looping)
+    bool hasExpired() override
     {
-        _looping = looping;
-    }
-    bool looping()
-    {
-        return _looping;
-    }
-
-    bool isEmpty()
-    {
-        return _lumenizers.isEmpty();
-    }
-
-    int count()
-    {
-        return _lumenizers.count();
-    }
-
-    bool sameAs(Lumenizer* pThemBrightness) override
-    {
-        bool result = Lumenizer::sameAs(pThemBrightness);
-        if (result)
+        if (_looping)
         {
-            LumenizerSequence* pThem = static_cast<LumenizerSequence*>(pThemBrightness);
-            result = this->count() == pThem->count();
-            if (result)
-            {
-                for (int i = 0; i < count(); i++)
-                {
-                    Lumenizer* pOurs = this->_lumenizers[i];
-                    Lumenizer* pTheirs = pThem->_lumenizers[i];
-                    result = pOurs->sameAs(pTheirs);
-                    if (!result)
-                    {
-                        break;
-                    }
-                }
-            }
+            return false;
         }
-        return result;
+        else
+        {
+            return _currentLumenizer >= count();
+        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -206,16 +222,6 @@ public:
     }
 
     //----------------------------------------------------------------------------------------------
-    // Dmx
-    //----------------------------------------------------------------------------------------------
-public:
-
-    void processParameterBlock(ColorLuminanceParameterBlock& parameterBlock) override
-    {
-        Lumenizer::processParameterBlock(parameterBlock);
-    }
-
-    //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
 public:
@@ -226,20 +232,7 @@ public:
         _currentLumenizer = 0;
         if (_currentLumenizer < count())
         {
-            INFO("LumenizerSequence: beginning: %d", _currentLumenizer);
-            _lumenizers[_currentLumenizer]->begin();
-        }
-    }
-
-    bool hasExpired() override
-    {
-        if (_looping)
-        {
-            return false;
-        }
-        else
-        {
-            return _currentLumenizer >= count();
+            onAdvance();
         }
     }
 
@@ -261,11 +254,21 @@ public:
                 }
                 if (_currentLumenizer < count())
                 {
-                    INFO("LumenizerSequence: beginning: %d", _currentLumenizer);
-                    _lumenizers[_currentLumenizer]->begin();
+                    onAdvance();
                 }
             }
         }
+    }
+
+    virtual void onAdvance()
+    {
+        INFO("LumenizerSequence: beginning: %d", _currentLumenizer);
+        lumenizer()->begin();
+    }
+
+    Lumenizer* lumenizer()
+    {
+        return _lumenizers[_currentLumenizer];
     }
 
     void report() override

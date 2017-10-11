@@ -13,19 +13,18 @@ struct DecimatingLuminance : DelegatingLumenizer
     //----------------------------------------------------------------------------------------------
 protected:
 
-    int _decimation;
+    int _numerator;     // deicmate this many ...
+    int _denominator;   // ... out of this many
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
-
-    DecimatingLuminance(int decimation, Lumenizer* pLumenizer = nullptr) : DecimatingLuminance(Duration::Infinite, decimation, pLumenizer)
+public:
+    
+    DecimatingLuminance(int numerator, int denominator, Lumenizer* pLumenizer) : DelegatingLumenizer(Flavor::Decimating, pLumenizer)
     {
-    }
-
-    DecimatingLuminance(Duration duration, int decimation, Lumenizer* pLumenizer = nullptr) : DelegatingLumenizer(Flavor::Decimating, duration, pLumenizer)
-    {
-        _decimation = decimation;
+        _numerator = numerator;
+        _denominator = denominator;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -39,13 +38,13 @@ protected:
 
     BRIGHTNESS currentBrightness(int iPixel) override
     {
-        if (iPixel % _decimation == 0)
+        if (_denominator != 0 && modOne(iPixel, _denominator) <= _numerator)
         {
-            return DelegatingLumenizer::currentBrightness(iPixel);
+            return 0;
         }
         else
         {
-            return 0;
+            return DelegatingLumenizer::currentBrightness(iPixel);
         }
     }
 };
