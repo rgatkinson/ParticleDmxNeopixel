@@ -7,39 +7,39 @@
 #include "Util/Misc.h"
 #include "Artnet/DmxColorLuminanceParameters.h"
 
-struct PACKED KridaI2CDimmerParameters
+struct PACKED DmxKridaI2cChannel
 {
-    byte                dimmer;
+    DmxDimmer              dimmer;
     DmxEffectSpeedControl  luminance;
 };
 
-struct PACKED KridaI2CParameterBlockData
+struct PACKED DmxKridaI2cDimmer
 {
-    byte    dimmer0;       // 300
-    byte    dimmer1;       // 301
-    byte    dimmer2;       // 302
-    byte    dimmer3;       // 303
+    DmxKridaI2cChannel channels[4];
+
+    const DmxKridaI2cChannel& channel(int i) const
+    {
+        return channels[i];
+    }
 };
 
-struct KridaI2CParameterBlock
+struct DmxKridaI2cParameters
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
 
-    KridaI2CParameterBlockData* _pData;
-    byte*                       _pDimmers;
+    DmxKridaI2cDimmer* _pData;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    KridaI2CParameterBlock(void* pv)
+    DmxKridaI2cParameters(void* pv)
     {
-        _pData = reinterpret_cast<KridaI2CParameterBlockData*>(pv);
-        _pDimmers = &_pData->dimmer0;
+        _pData = reinterpret_cast<DmxKridaI2cDimmer*>(pv);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -47,18 +47,9 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    #define declare(memberName)  inline byte memberName() { return _pData->memberName; }
-
-    declare(dimmer0)
-    declare(dimmer1)
-    declare(dimmer2)
-    declare(dimmer3)
-
-    #undef declare
-
-    byte dimmer(int dimmer)
+    const DmxKridaI2cChannel& channel(int i) const
     {
-        return _pDimmers[dimmer];
+        return _pData->channel(i);
     }
 };
 

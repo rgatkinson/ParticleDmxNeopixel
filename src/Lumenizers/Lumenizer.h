@@ -171,7 +171,7 @@ public:
 
     virtual void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
     {
-        float dimmerLevel = scaleRange(parameterBlock.dimmer(), 0, 255, 0, 1);
+        float dimmerLevel = parameterBlock.dimmer().dimmerLevel();
         if (_dimmerLevel != dimmerLevel)
         {
             INFO("Lumenizer: dimmerLevel=%f", dimmerLevel);

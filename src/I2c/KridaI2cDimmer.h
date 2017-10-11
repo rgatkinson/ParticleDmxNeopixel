@@ -35,36 +35,32 @@ struct KridaI2cDimmer : DmxPacketConsumer
     // Types
     //----------------------------------------------------------------------------------------------
 protected:
-    typedef int DIMMER_VALUE;
+    typedef int ChannelValue;
+    static const ChannelValue _channelValueFirst = 0;
+    static const ChannelValue _channelValueOff   = _channelValueFirst;
+    static const ChannelValue _channelValueLast  = 100;
 
-    struct Dimmer
+    struct Channel
     {
     private:
-
-        KridaI2cDimmer* _parent;
-        DIMMER_VALUE    _dimmerValue;
-        int             _channelOffset;
+        KridaI2cDimmer* _pDimmer;
+        ChannelValue    _channelValue;
     public:
-        Dimmer(KridaI2cDimmer* parent, int channelOffset)
+        Channel(KridaI2cDimmer* pDimmer)
         {
-            _parent        = parent;
-            _dimmerValue   = _dimmerValueOff;
-            _channelOffset = channelOffset;
+            _pDimmer       = pDimmer;
+            _channelValue  = _channelValueOff;
         }
-        int channelOffset()
+        ChannelValue channelValue() const
         {
-            return _channelOffset;
+            return _channelValue;
         }
-        DIMMER_VALUE dimmerValue()
+        void setChannelValue(ChannelValue channelValue)
         {
-            return _dimmerValue;
-        }
-        void setDimmerValue(DIMMER_VALUE dimmerValue)
-        {
-            if (_dimmerValue != dimmerValue)
+            if (_channelValue != channelValue)
             {
-                _dimmerValue = dimmerValue;
-                _parent->noteChangedDimmer();
+                _channelValue = channelValue;
+                _pDimmer->noteChannelValueChange(this);
             }
         }
     };
@@ -78,19 +74,15 @@ protected:
 
 protected:
 
-    static const DIMMER_VALUE _dimmerValueFirst = 0;
-    static const DIMMER_VALUE _dimmerValueOff   = _dimmerValueFirst;
-    static const DIMMER_VALUE _dimmerValueLast  = 100;
-
     static const int _channelCount = 4;
     static const int _channelAddressFirst = 0x80;
-    static const int _msTransmissionInterval = 500;
+    static const int _msTransmissionInterval = 100;
 
-    bool         _transmissionNeeded;
-    int          _i2cAddress;
     ArtnetDevice _artnet;
-    Deadline     _deadline;
-    Dimmer       _dimmers[_channelCount];
+    int          _i2cAddress;
+    Channel      _channels[_channelCount];
+    Deadline     _transmissionDeadline;
+    bool         _transmissionNeeded;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -99,8 +91,8 @@ public:
 
     KridaI2cDimmer(int i2cAddressBase, int addressDipSwitch, LPCSTR shortName)
         : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(), shortName),
-          _deadline(_msTransmissionInterval),
-          _dimmers { {this,0}, {this,1}, {this,2}, {this,3} }
+          _transmissionDeadline(_msTransmissionInterval),
+          _channels { {this}, {this}, {this}, {this} }
     {
         Wire.setSpeed(CLOCK_SPEED_100KHZ);
         Wire.begin();
@@ -119,10 +111,10 @@ public:
     void transmit()
     {
         Wire.beginTransmission(_i2cAddress);
-        for (int i = 0; i < _channelCount; i++)
+        for (int channel = 0; channel < _channelCount; channel++)
         {
-            Wire.write(_dimmers[i].channelOffset() + _channelAddressFirst);
-            Wire.write(_dimmers[i].dimmerValue());
+            Wire.write(_channelAddressFirst + channel);
+            Wire.write(_channels[channel].channelValue());
         }
         Wire.endTransmission();
     }
@@ -131,7 +123,7 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    void noteChangedDimmer()
+    void noteChannelValueChange(Channel* pChannel)
     {
         _transmissionNeeded = true;
     }
@@ -139,19 +131,19 @@ public:
     virtual void begin()
     {
         _artnet.begin();
-        _deadline.expire();
+        _transmissionDeadline.expire();
         _transmissionNeeded = true;
     }
 
     virtual void loop()
     {
         _artnet.loop();
-        if (_deadline.hasExpired())
+        if (_transmissionDeadline.hasExpired())
         {
             if (_transmissionNeeded)
             {
                 transmit();
-                _deadline.reset();
+                _transmissionDeadline.reset();
             }
         }
     }
@@ -170,9 +162,9 @@ public:
         return sizeof(DmxColorLuminanceParametersData);
     }
 
-    DIMMER_VALUE dimmerValueFromDmx(byte dmx)
+    ChannelValue channelValueFromDimmerLevel(float dimmerLevel)
     {
-        return scaleRangeDiscrete(dmx, 0, 255, _dimmerValueFirst, _dimmerValueLast);
+        return scaleRangeDiscrete(dimmerLevel, 0, 1, _channelValueFirst, _channelValueLast);
     }
 
     void onDmxPacket(ArtDmxPacket& packet) override
@@ -180,11 +172,12 @@ public:
         byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount());
         if (dmxValuesPointer)
         {
-            KridaI2CParameterBlock parameterBlock = KridaI2CParameterBlock(dmxValuesPointer);
+            DmxKridaI2cParameters parameterBlock = DmxKridaI2cParameters(dmxValuesPointer);
             for (int channel = 0; channel < _channelCount; channel++)
             {
-                DIMMER_VALUE dimmerValue = dimmerValueFromDmx(parameterBlock.dimmer(channel));
-                _dimmers[channel].setDimmerValue(dimmerValue);
+                float dimmerLevel = parameterBlock.channel(channel).dimmer.dimmerLevel();
+                ChannelValue channelValue = channelValueFromDimmerLevel(channelValue);
+                _channels[channel].setChannelValue(channelValue);
             }
         }
     }

@@ -13,17 +13,33 @@ struct PACKED DmxEffectSpeedControl
     byte    control;
 };
 
+struct PACKED DmxRedGreenBlue
+{
+    byte    _red;
+    byte    _green;
+    byte    _blue;
+
+    byte red()   const { return _red;   }
+    byte green() const { return _green; }
+    byte blue()  const { return _blue;  }
+
+    COLOR_INT color() const { return Color::rgb(red(), green(), blue()); }
+};
+
 struct PACKED DmxDimmer
 {
-    byte    value;
+    byte _value;
+
+    float dimmerLevel() const
+    {
+        return scaleRange(_value, 0, 255, 0, 1);
+    }
 };
 
 struct PACKED DmxColorLuminanceParametersData
 {
     byte                    colorTemperature;       // 300
-    byte                    red;                    // 301
-    byte                    green;                  // 302
-    byte                    blue;                   // 303
+    DmxRedGreenBlue         redGreenBlue;           // 301-303
     DmxDimmer               dimmer;                 // 304
     DmxEffectSpeedControl   color;                  // 305, 306, 307
     DmxEffectSpeedControl   luminance;              // 308, 309, 310
@@ -53,18 +69,17 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    #define declare(memberName)  inline byte memberName() { return _pData->memberName; }
-    declare(colorTemperature)
-    declare(red)
-    declare(green)
-    declare(blue)
-    #undef declare
+    byte colorTemperature() { return _pData->colorTemperature; }
 
-    byte dimmer()       { return _pData->dimmer.value; }
+    byte red()              { return _pData->redGreenBlue.red(); }
+    byte green()            { return _pData->redGreenBlue.green(); }
+    byte blue()             { return _pData->redGreenBlue.blue(); }
 
-    byte colorEffect()  { return _pData->color.effect; }
-    byte colorSpeed()   { return _pData->color.speed; }
-    byte colorControl() { return _pData->color.control; }
+    const DmxDimmer& dimmer()   { return _pData->dimmer; }
+
+    byte colorEffect()      { return _pData->color.effect; }
+    byte colorSpeed()       { return _pData->color.speed; }
+    byte colorControl()     { return _pData->color.control; }
 
     byte luminanceEffect()  { return _pData->luminance.effect; }
     byte luminanceSpeed()   { return _pData->luminance.speed; }
@@ -143,7 +158,7 @@ public:
 
         if (dmxColorTemperature == 0)
         {
-            return Color::rgb(red(), green(), blue());
+            return _pData->redGreenBlue.color();
         }
         else if (dmxColorTemperature == 255)
         {
