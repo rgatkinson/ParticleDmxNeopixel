@@ -25,12 +25,12 @@ protected:
     int                 _pollReplyCount  = 0;
 
     PersistentIntSetting                            _dmxAddress;
-    VolatileIntSetting                              _dmxLast;
+    VolatileIntSetting                              _dmxCount;
     PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
     CloudVariable<int>                              _dmxAddressCloudVar;
-    CloudVariable<int>                              _dmxLastCloudVar;
+    ComputedCloudVariable<int>                      _dmxLastCloudVar;
     CloudVariable<LPCSTR>                           _nameCloudVar;
     CloudVariable<LPCSTR>                           _descriptionCloudVar;
 
@@ -40,24 +40,17 @@ protected:
 public:
     ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, int dmxCount, LPCSTR name="<name>", LPCSTR description="<description>")
         : _dmxAddress(dmxAddress),
-          _dmxLast(dmxAddress + dmxCount - 1),
+          _dmxCount(dmxCount),
           _name(name),
           _description(description),
           _dmxAddressCloudVar("dmxAddrFirst", &_dmxAddress),
-          _dmxLastCloudVar("dmxAddrLast", &_dmxLast, ReadWriteable::RO),
+          _dmxLastCloudVar("dmxAddrLast", [this]() { return dmxLast(); }),
           _nameCloudVar("name", &_name),
           _descriptionCloudVar("description", &_description)
     {
         _pOwner = pOwner;
         _initialized = false;
         _rgbUdpBuffer = reinterpret_cast<uint8_t*>(mallocNoFail(cbUdpBuffer));
-
-        _dmxAddress.setChangeNotification([this](int dmxAddressOld)
-        {
-            // If the first address changes, shift the last so as to track
-            int oldCount = _dmxLast.value() - dmxAddressOld + 1;
-            setDmxCount(oldCount);
-        });
     }
 
     ~ArtnetDevice()
@@ -87,20 +80,20 @@ public:
 
     DMX_ADDRESS dmxLast()
     {
-        return _dmxLast.value();
+        return dmxMax() -1;
     }
     DMX_ADDRESS dmxMax()
     {
-        return dmxLast() + 1;
+        return dmxFirst() + dmxCount();
     }
 
     int dmxCount()
     {
-        return dmxLast() - dmxFirst() + 1;
+        return _dmxCount.value();
     }
     void setDmxCount(int dmxCount)
     {
-        _dmxLast.setValue(dmxFirst() + dmxCount - 1);
+        _dmxCount.setValue(dmxCount);
     }
 
     void setName(LPCSTR sz)

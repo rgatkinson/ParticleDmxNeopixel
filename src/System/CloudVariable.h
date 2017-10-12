@@ -103,19 +103,6 @@ protected:
         return success;
     }
 
-    void* onUpdateIntVariable()
-    {
-        _lastValue = _fnGetValue();
-        INFO("variable %s=%d", _name.c_str(), _lastValue);
-        return &_lastValue;
-    }
-    void* onUpdateStringVariable()
-    {
-        _lastValue = _fnGetValue();
-        INFO("variable %s=%s", _name.c_str(), _lastValue);
-        return const_cast<LPSTR>(_lastValue);
-    }
-
     bool announceVariable(LPCSTR name, int var)
     {
         spark_variable_t extra;
@@ -142,6 +129,37 @@ protected:
         AbstractCloudVariable* pThis = reinterpret_cast<AbstractCloudVariable*>(const_cast<void*>(pvThis));
         return pThis->onUpdateStringVariable();
     }
+
+    void* onUpdateIntVariable()
+    {
+        _lastValue = _fnGetValue();
+        INFO("variable %s=%d", _name.c_str(), _lastValue);
+        return &_lastValue;
+    }
+    void* onUpdateStringVariable()
+    {
+        _lastValue = _fnGetValue();
+        INFO("variable %s=%s", _name.c_str(), _lastValue);
+        return const_cast<LPSTR>(_lastValue);
+    }
+};
+
+//==================================================================================================
+// ComputedCloudVariable
+//==================================================================================================
+
+template <typename VALUE>
+struct ComputedCloudVariable : AbstractCloudVariable<VALUE>
+{
+    //----------------------------------------------------------------------------------------------
+    // Construction
+    //----------------------------------------------------------------------------------------------
+public:
+    ComputedCloudVariable(LPCSTR name, std::function<VALUE()> fnGetValue)
+        : AbstractCloudVariable<VALUE>(name)
+    {
+        AbstractCloudVariable<VALUE>::_fnGetValue = fnGetValue;
+    }
 };
 
 //==================================================================================================
@@ -156,17 +174,17 @@ struct CloudVariable : AbstractCloudVariable<VALUE>
     //----------------------------------------------------------------------------------------------
 protected:
     typedef AbstractCloudVariable<VALUE> super;
+    typedef CloudSetting<VALUE> Setting;
 
-    typedef CloudSetting<VALUE> SETTING;
     ReadWriteable       _writeable;
-    SETTING*            _setting;
+    Setting*            _setting;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    CloudVariable(LPCSTR name, SETTING* pSetting, ReadWriteable writeable = ReadWriteable::RW)
+    CloudVariable(LPCSTR name, Setting* pSetting, ReadWriteable writeable = ReadWriteable::RW)
         : AbstractCloudVariable<VALUE>(name),
           _setting(pSetting),
           _writeable(writeable)
