@@ -46,8 +46,8 @@ void ArtPollPacket::pollReply(const IPAddress& remoteIP, ArtnetDevice& device)
 {
     ArtPollReplyPacket reply;
     reply.initialize();
-    reply.setShortName(device.shortName());
-    reply.setLongName(device.longName());
+    reply.setShortName(device.name());
+    reply.setLongName(device.description());
     reply.setNodeReport(device.reportCode(), device.pollReplyCount());
     //
     Log.info("sending ArtPollReply to %s", remoteIP.toString().c_str());

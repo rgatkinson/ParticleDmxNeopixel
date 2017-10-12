@@ -188,7 +188,7 @@ public:
 
 protected:
     template <typename T>
-    void unregister(std::vector<T>& vector, const T& value)
+    static void unregister(std::vector<T>& vector, const T& value)
     {
         for (auto it = vector.begin(); it != vector.end(); it++)
         {

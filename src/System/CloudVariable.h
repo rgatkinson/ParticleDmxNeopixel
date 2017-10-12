@@ -13,8 +13,9 @@ struct CloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
+protected:
 
-    SETTING*        _persistentSetting;
+    SETTING*        _setting;
     String          _name;
     ReadWriteable   _writeable;
     bool            _begun = false;
@@ -24,16 +25,17 @@ struct CloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
+public:
 
     CloudVariable(LPCSTR name, SETTING* pSetting, ReadWriteable writeable = ReadWriteable::RW)
-        : _persistentSetting(pSetting),
+        : _setting(pSetting),
           _name(name),
           _writeable(writeable)
     {
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
 
-    ~CloudVariable()
+    virtual ~CloudVariable()
     {
         SystemEventRegistrar::theInstance->unregisterSystemEvents(this);
     }
@@ -41,6 +43,7 @@ struct CloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
     // System
     //----------------------------------------------------------------------------------------------
+public:
 
     void onNetworkStatus(int netStatus) override
     {
@@ -51,7 +54,8 @@ struct CloudVariable : SystemEventNotifications
         {
             _connected = true;
             announce();
-        } else if (cloudStatus==cloud_status_disconnected)
+        }
+        else if (cloudStatus==cloud_status_disconnected)
         {
             _connected = false;
             _announced = false;
@@ -64,18 +68,17 @@ struct CloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
     // Cloud
     //----------------------------------------------------------------------------------------------
+public:
 
     const VALUE& valueRef()
     {
-        return _persistentSetting->valueRef();
+        return _setting->valueRef();
     }
-    void setValue(const VALUE& value)
+
+protected:
+    int cloudSetValue(String value)
     {
-        _persistentSetting->setValue(value);
-    }
-    int setValue(String value)
-    {
-        _persistentSetting->setValue(value);
+        _setting->setValue(value);
         return 0;
     }
 
@@ -84,11 +87,11 @@ struct CloudVariable : SystemEventNotifications
         if (_begun && _connected && !_announced)
         {
             _announced = true;
-            INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _persistentSetting->valueAsString().c_str());
+            INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _setting->valueAsString().c_str());
             bool success = Particle.variable(_name, this->valueRef());
             if (success && _writeable==ReadWriteable::RW)
             {
-                success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::setValue), this);
+                success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::cloudSetValue), this);
             }
             if (!success)
             {
@@ -100,6 +103,7 @@ struct CloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
+public:
 
     void begin()
     {

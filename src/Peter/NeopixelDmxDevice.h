@@ -29,11 +29,10 @@ public:
 
     NeoPixelDmxDevice(PixelSequence* pixels, LPCSTR shortName)
         : _pPixels(pixels),
-          _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(),  shortName)
+          _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(), shortName)
     {
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
         _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
-        _artnet.setShortName(shortName);
     }
 
     virtual ~NeoPixelDmxDevice()

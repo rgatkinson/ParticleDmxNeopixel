@@ -17,7 +17,6 @@ struct PACKED DmxKridaChannel
 struct PACKED DmxKridaDimmer
 {
     DmxKridaChannel channels[4];
-
     const DmxKridaChannel& channel(int i) const
     {
         return channels[i];

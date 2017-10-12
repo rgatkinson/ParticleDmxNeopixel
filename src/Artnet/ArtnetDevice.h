@@ -6,6 +6,8 @@
 
 #include "ArtnetConstants.h"
 #include "System/PersistentSettings.h"
+#include "System/PersistentValueSetting.h"
+#include "System/PersistentStringSetting.h"
 #include "System/CloudVariable.h"
 
 struct ArtnetDevice
@@ -72,20 +74,20 @@ public:
         return _dmxAddress.value();
     }
 
-    void setShortName(LPCSTR sz)
+    void setName(LPCSTR sz)
     {
         _name.setValue(sz);
     }
-    LPCSTR shortName()
+    LPCSTR name()
     {
         return _name.value();
     }
 
-    void setLongName(LPCSTR sz)
+    void setDescription(LPCSTR sz)
     {
         _description.setValue(sz);
     }
-    LPCSTR longName()
+    LPCSTR description()
     {
         return _description.value();
     }

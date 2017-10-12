@@ -5,9 +5,7 @@
 #define __KRIDA_I2C_DIMMER_H__
 
 #include "Util/Deadline.h"
-#include "Artnet/Artnet.h"
-#include "Artnet/DmxPacketConsumer.h"
-#include "I2c/KridaI2cParameterBlock.h"
+#include "Util/ReferenceCounted.h"
 #include "KridaDimmerChannel.h"
 
 // All the documentation we have :-( :
@@ -30,15 +28,23 @@
 //                     0 - Fully ON
 //                     100 - Fully OFF
 //
-struct KridaDimmer
+struct KridaDimmer : ReferenceCounted
 {
+    //----------------------------------------------------------------------------------------------
+    // Types
+    //----------------------------------------------------------------------------------------------
+
+    enum class Type
+    {
+        PCF8574T = 0x20,    // '7 bit addr'
+        PCF8574AT = 0x38,   // '7 bit addr'
+    };
+
+    static Type other(Type type) { return type==Type::PCF8574AT ? Type::PCF8574T : Type::PCF8574AT; }
+
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
-
-    static const int i2cAddressPCF8574T  = 0x20;   // '7 bit addr'
-    static const int i2cAddressPCF8574AT = 0x38;   // '7 bit addr'
-
 protected:
 
     static const int _channelCount = 4;
@@ -47,7 +53,8 @@ protected:
 
     Deadline           _transmissionDeadline;
     bool               _channelDirty;
-    int                _i2cAddress;
+    Type               _type;
+    int                _dipSwitch;
     KridaDimmerChannel _channels[_channelCount];
 
     //----------------------------------------------------------------------------------------------
@@ -55,27 +62,54 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    KridaDimmer(int i2cAddressBase, int addressDipSwitch)
+    KridaDimmer(int dipSwitch, Type type = Type::PCF8574AT)
         : _transmissionDeadline(_msTransmissionInterval),
           _channels { {this}, {this}, {this}, {this} }
     {
-        Wire.setSpeed(CLOCK_SPEED_100KHZ);
-        Wire.begin();
-        _i2cAddress = i2cAddressBase + addressDipSwitch;
+        _type = type;
+        _dipSwitch = dipSwitch;
+
+        // try to correct for erroneous type
+        if (!detect(i2cAddress()))
+        {
+            _type = other(_type);
+            if (!detect(i2cAddress()))
+            {
+                _type = other(type);  // may as well use what he said
+            }
+        }
     }
 
-    ~KridaDimmer()
+protected:
+
+    ~KridaDimmer() override
     {
-        Wire.end();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Accessing
+    //----------------------------------------------------------------------------------------------
+public:
+
+    int i2cAddress()
+    {
+        return (int)_type + _dipSwitch;
     }
 
     //----------------------------------------------------------------------------------------------
     // Transmission
     //----------------------------------------------------------------------------------------------
+protected:
+
+    static bool detect(int i2cAddress)
+    {
+        Wire.beginTransmission(i2cAddress);
+        return Wire.endTransmission() == 0;
+    }
 
     void transmit()
     {
-        Wire.beginTransmission(_i2cAddress);
+        Wire.beginTransmission(i2cAddress());
         for (int channel = 0; channel < _channelCount; channel++)
         {
             Wire.write(_channelAddressFirst + channel);
@@ -87,6 +121,7 @@ public:
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
+public:
 
     void noteChannelValueChange(KridaDimmerChannel* pChannel)
     {
