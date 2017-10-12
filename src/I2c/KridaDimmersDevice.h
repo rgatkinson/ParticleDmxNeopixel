@@ -22,7 +22,7 @@ protected:
     PersistentIntSetting                        _dimmerCount;   // the *persistent* number of dimmers that are attached
     CloudVariable<decltype(_dimmerCount), int>  _dimmerCountCloudVar;
 
-    std::vector<KridaDimmer*>                   _dimmers;       // size should be tracked to _dimmerCount
+    rga::vector<KridaDimmer*>                   _dimmers;       // size should be tracked to _dimmerCount
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -37,11 +37,19 @@ public:
         Wire.setSpeed(CLOCK_SPEED_100KHZ);
         Wire.begin();
         createOrDestroyDimmers();
+
+        _dimmerCount.setChangeNotification([this]()
+        {
+            INFO("Krida: dimmer count changed: old=%d new=%d", _dimmers.count(), _dimmerCount.value());
+            createOrDestroyDimmers();
+            _artnet.setDmxCount(dmxCount());
+        });
     }
 
     virtual ~KridaDimmersDevice()
     {
         clear();
+        _dimmerCount.setChangeNotification(nullptr);
         Wire.end();
     }
 
@@ -59,14 +67,16 @@ protected:
 
     void createOrDestroyDimmers(int count)
     {
-        while (_dimmers.size() < count)
+        while (_dimmers.count() < count)
         {
-            int dipSwitch = _dimmers.size();  // dipSwitches must be consecutive starting from zero
+            // dipSwitches of attached dimmers must be consecutive starting from zero
+            // though they may be in any *physical* order
+            int dipSwitch = _dimmers.size();
             _dimmers.push_back(new KridaDimmer(dipSwitch));
         }
-        while (_dimmers.size() > count)
+        while (_dimmers.count() > count)
         {
-            auto it = _dimmers.end();
+            auto it = _dimmers.last();
             releaseRef((*it));
             _dimmers.erase(it);
         }
@@ -89,6 +99,7 @@ public:
     virtual void begin()
     {
         _artnet.begin();
+        _dimmerCountCloudVar.begin();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)
         {
             (*it)->begin();

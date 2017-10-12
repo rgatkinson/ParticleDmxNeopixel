@@ -73,6 +73,22 @@ public:
     {
         return _dmxAddress.value();
     }
+    DMX_ADDRESS dmxLast()
+    {
+        return _dmxLast.value();
+    }
+    DMX_ADDRESS dmxFirst()
+    {
+        return dmxAddress();
+    }
+    int dmxCount()
+    {
+        return dmxLast() - dmxFirst() + 1;
+    }
+    void setDmxCount(int dmxCount)
+    {
+        _dmxLast.setValue(dmxFirst() + dmxCount - 1);
+    }
 
     void setName(LPCSTR sz)
     {

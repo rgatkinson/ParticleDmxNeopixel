@@ -5,6 +5,7 @@
 #define __PERSISTENT_SETTINGS_H__
 
 #include <vector>
+#include <functional>
 #include "Util/Misc.h"
 
 //==================================================================================================
@@ -20,13 +21,41 @@ struct PersistentSetting
 };
 
 template <typename T>
-struct PersistentTypedSetting : PersistentSetting
+struct TypedSetting
 {
     virtual T           value() = 0;
     virtual const T&    valueRef() = 0;
     virtual String      valueAsString() = 0;
     virtual void        setValue(const T& value) = 0;
-    virtual void        setValue(const String& string) = 0;
+    virtual void        setValueString(const String& string) = 0;
+};
+
+template <typename T>
+struct NotifyableSetting : TypedSetting<T>
+{
+    //----------------------------------------------------------------------------------------------
+    // State
+    //----------------------------------------------------------------------------------------------
+
+    typedef std::function<void()> Notifyee;
+    Notifyee _notifyee = static_cast<Notifyee>(nullptr);
+
+    //----------------------------------------------------------------------------------------------
+    // Notifications
+    //----------------------------------------------------------------------------------------------
+
+    template <typename U>
+    void setChangeNotification(U notifyee)
+    {
+        _notifyee = static_cast<Notifyee>(notifyee);
+    }
+    virtual void notifyChanged()
+    {
+        if (_notifyee)
+        {
+            _notifyee();
+        }
+    }
 };
 
 //==================================================================================================

@@ -34,7 +34,7 @@ public:
             System.enterSafeMode();
         }
 
-        Serial.blockOnOverrun(false);   // its just debug; don't hold things up
+        Serial.blockOnOverrun(true);   // while it's just debug, it's harder to debug if we miss things
         Serial.begin(115200);
         while (!Serial.isEnabled())
         {

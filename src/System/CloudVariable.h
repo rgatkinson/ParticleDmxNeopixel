@@ -69,7 +69,6 @@ public:
     // Cloud
     //----------------------------------------------------------------------------------------------
 public:
-
     const VALUE& valueRef()
     {
         return _setting->valueRef();
@@ -78,7 +77,7 @@ public:
 protected:
     int cloudSetValue(String value)
     {
-        _setting->setValue(value);
+        _setting->setValueString(value);
         return 0;
     }
 

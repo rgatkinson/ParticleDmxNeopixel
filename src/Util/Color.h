@@ -26,6 +26,9 @@ public:
     explicit Color(int color) : _value(color)
     {
     }
+    explicit Color(unsigned color) : _value((int)color)
+    {
+    }
 
     Color& operator=(const Color& them)
     {

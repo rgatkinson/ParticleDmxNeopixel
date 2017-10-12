@@ -9,7 +9,7 @@
 //==================================================================================================
 
 template <typename T>
-struct PersistentValueSetting : PersistentTypedSetting<T>
+struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -31,41 +31,6 @@ struct PersistentValueSetting : PersistentTypedSetting<T>
         PersistentSettings::theInstance->add(this);    // note: we lay out in declaration order!
     }
 
-    //----------------------------------------------------------------------------------------------
-    // Accessing
-    //----------------------------------------------------------------------------------------------
-
-    T value() override
-    {
-        return _value;
-    }
-    const T& valueRef() override
-    {
-        return _value;
-    }
-    void setValue(const T& value) override
-    {
-        _value = value;
-        save();
-        INFO("PersistentValueSetting: setValue: %s", valueAsString().c_str());
-    }
-    virtual void setValue(const String& string) override
-    {
-        // subclass responsibility
-    }
-    virtual String valueAsString() override
-    {
-        return String("<subclass responsibility>");
-    }
-
-    int size() override
-    {
-        return sizeof(_value);
-    }
-    void* pointer() override
-    {
-        return &_value;
-    }
     bool loadDefault() override
     {
         _value = _default;
@@ -86,6 +51,50 @@ struct PersistentValueSetting : PersistentTypedSetting<T>
             return false;
         }
     }
+
+    //----------------------------------------------------------------------------------------------
+    // Accessing
+    //----------------------------------------------------------------------------------------------
+
+    T value() override
+    {
+        return _value;
+    }
+    const T& valueRef() override
+    {
+        return _value;
+    }
+    void setValue(const T& value) override
+    {
+        if (_value != value)
+        {
+            _value = value;
+            save();
+            notifyChanged();
+        }
+    }
+    void notifyChanged() override
+    {
+        NotifyableSetting<T>::notifyChanged();
+    }
+
+    virtual void setValueString(const String& string) override
+    {
+        // subclass responsibility
+    }
+    virtual String valueAsString() override
+    {
+        return String("<subclass responsibility>");
+    }
+
+    int size() override
+    {
+        return sizeof(_value);
+    }
+    void* pointer() override
+    {
+        return &_value;
+    }
     void save()
     {
         PersistentSettings::theInstance->save(this);
@@ -105,7 +114,7 @@ struct PersistentIntSetting : PersistentValueSetting<int>
     {
         return String::format("%d", value());
     }
-    virtual void setValue(const String& value) override
+    virtual void setValueString(const String& value) override
     {
         PersistentValueSetting<int>::setValue(value.toInt());
     }
@@ -116,7 +125,7 @@ struct PersistentIntSetting : PersistentValueSetting<int>
 //==================================================================================================
 
 template <typename T>
-struct VolatileValueSetting
+struct VolatileValueSetting : TypedSetting<T>
 {
     T _value;
 
@@ -125,9 +134,16 @@ struct VolatileValueSetting
 
     T               value()                         { return _value; }
     const T&        valueRef()                      { return _value; }
-    void            setValue(const T& value)        { _value = value; }
     virtual String  valueAsString()                 { return "<subclassResponsibility>"; }
-    virtual void    setValue(const String& string)  { /*subclassResponsibility */ }
+    virtual void    setValueString(const String& string)  { /*subclassResponsibility */ }
+
+    void setValue(const T& value)
+    {
+        if (_value != value)
+        {
+            _value = value;
+        }
+    }
 };
 
 //==================================================================================================
@@ -143,7 +159,7 @@ struct VolatileIntSetting : VolatileValueSetting<int>
     {
         return String::format("%d", value());
     }
-    virtual void setValue(const String& value) override
+    virtual void setValueString(const String& value) override
     {
         VolatileValueSetting<int>::setValue(value.toInt());
     }

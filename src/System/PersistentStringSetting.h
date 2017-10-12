@@ -9,7 +9,7 @@
 //==================================================================================================
 
 template <int _cchValue>
-struct PersistentStringSetting : PersistentTypedSetting<LPCSTR>
+struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -41,6 +41,20 @@ struct PersistentStringSetting : PersistentTypedSetting<LPCSTR>
     {
         ::zero(&_rgchValue[0], _cchValue);
     }
+    bool loadDefault() override
+    {
+        zero();
+        safeStrncpy(_rgchValue, _cchValue, _defaultValue.c_str());
+        INFO("PersistentStringSetting: loaded default: %s", valueAsString().c_str());
+        return true;
+    }
+    bool load(void* pv, int cb) override
+    {
+        zero();
+        memcpy(&_rgchValue[0], pv, min(cb, _cchValue-1));  // ALWAYS null terminate
+        INFO("PersistentStringSetting: loaded: %s", valueAsString().c_str());
+        return true;
+    }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
@@ -60,12 +74,15 @@ struct PersistentStringSetting : PersistentTypedSetting<LPCSTR>
     }
     void setValue(const LPCSTR& sz) override
     {
-        zero();
-        safeStrncpy(_rgchValue, _cchValue, sz);
-        save();
-        INFO("PersistentStringSetting: setValue: %s", valueAsString().c_str());
+        if (strcmp(sz, value()) != 0)
+        {
+            zero();
+            safeStrncpy(_rgchValue, _cchValue, sz);
+            save();
+            notifyChanged();
+        }
     }
-    void setValue(const String& value) override
+    void setValueString(const String& value) override
     {
         setValue(value.c_str());
     }
@@ -78,20 +95,6 @@ struct PersistentStringSetting : PersistentTypedSetting<LPCSTR>
     {
         return &_rgchValue[0];
     }
-    bool loadDefault() override
-    {
-        zero();
-        safeStrncpy(_rgchValue, _cchValue, _defaultValue.c_str());
-        INFO("PersistentStringSetting: loaded default: %s", valueAsString().c_str());
-        return true;
-    }
-    bool load(void* pv, int cb) override
-    {
-        zero();
-        memcpy(&_rgchValue[0], pv, min(cb, _cchValue-1));  // ALWAYS null terminate
-        INFO("PersistentStringSetting: loaded: %s", valueAsString().c_str());
-        return true;
-    }
     void save()
     {
         PersistentSettings::theInstance->save(this);
@@ -102,18 +105,21 @@ struct PersistentStringSetting : PersistentTypedSetting<LPCSTR>
 // VolatileStringSetting
 //==================================================================================================
 
-struct VolatileStringSetting
+struct VolatileStringSetting : TypedSetting<String>
 {
     String _value;
 
     VolatileStringSetting() : VolatileStringSetting("") {}
-    VolatileStringSetting(LPCSTR defaultValue) : _value(defaultValue) {}
+    VolatileStringSetting(LPCSTR value) : _value(value) {}
+    VolatileStringSetting(const String& value) : _value(value) {}
 
-    String          value()                         { return _value; }
-    const String&   valueRef()                      { return _value; }
-    void            setValue(const String& value)   { _value = value; }
-    void            setValue(LPCSTR value)          { _value = value; }
-    String          valueAsString()                 { return value(); }
+    String          value()                             { return _value; }
+    const String&   valueRef()                          { return _value; }
+    String          valueAsString()                     { return value(); }
+    void            setValue(const String& value)       { _value = value; }
+    void            setValueString(const String& value) { _value = value; }
+
+    void            setValue(LPCSTR value)              { _value = value; }
 };
 
 #endif
