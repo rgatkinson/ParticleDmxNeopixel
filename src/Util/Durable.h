@@ -5,7 +5,7 @@
 #define __DURABLE_H__
 
 #include "ReferenceCounted.h"
-
+#include "Util/Deadline.h"
 
 struct Durable : ReferenceCounted
 {

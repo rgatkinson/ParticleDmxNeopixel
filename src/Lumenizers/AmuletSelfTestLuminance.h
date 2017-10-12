@@ -5,6 +5,9 @@
 #define __AMULET_SELF_TEST_LUMENIZER_H__
 
 #include "Lumenizers/DecimatingLuminance.h"
+#include "Lumenizers/UniformLuminance.h"
+#include "Lumenizers/LumenizerSequence.h"
+#include "System/SystemEventRegistrar.h"
 
 struct AmuletSelfTestLuminance : DelegatingLumenizer, SystemEventNotifications
 {

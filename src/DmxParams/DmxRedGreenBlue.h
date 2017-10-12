@@ -4,6 +4,8 @@
 #ifndef __DMX_RED_GREEN_BLUE_H__
 #define __DMX_RED_GREEN_BLUE_H__
 
+#include "Util/Color.h"
+
 struct PACKED DmxRedGreenBlue
 {
     byte    _red;

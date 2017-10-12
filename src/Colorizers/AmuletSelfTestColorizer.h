@@ -4,6 +4,9 @@
 #ifndef __AMULET_ELF_TEST_COLORIZER_H__
 #define __AMULET_ELF_TEST_COLORIZER_H__
 
+#include "ColorizerSequence.h"
+#include "System/SystemEventRegistrar.h"
+
 struct AmuletSelfTestColorizer : ColorizerSequence, SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
