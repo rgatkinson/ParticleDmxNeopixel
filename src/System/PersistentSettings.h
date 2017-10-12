@@ -37,7 +37,7 @@ struct NotifyableSetting : TypedSetting<T>
     // State
     //----------------------------------------------------------------------------------------------
 
-    typedef std::function<void()> Notifyee;
+    typedef std::function<void(const T&)> Notifyee;
     Notifyee _notifyee = static_cast<Notifyee>(nullptr);
 
     //----------------------------------------------------------------------------------------------
@@ -49,11 +49,11 @@ struct NotifyableSetting : TypedSetting<T>
     {
         _notifyee = static_cast<Notifyee>(notifyee);
     }
-    virtual void notifyChanged()
+    virtual void notifyChanged(const T& oldValue)
     {
         if (_notifyee)
         {
-            _notifyee();
+            _notifyee(oldValue);
         }
     }
 };

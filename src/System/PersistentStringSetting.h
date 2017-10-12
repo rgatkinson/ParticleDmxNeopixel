@@ -62,7 +62,7 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
 
     String valueAsString() override
     {
-        return String::format("%s", value());
+        return value();
     }
     LPCSTR value() override
     {
@@ -76,10 +76,11 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     {
         if (strcmp(sz, value()) != 0)
         {
+            String oldValue(value());
             zero();
             safeStrncpy(_rgchValue, _cchValue, sz);
             save();
-            notifyChanged();
+            notifyChanged(oldValue.c_str());
         }
     }
     void setValueString(const String& value) override

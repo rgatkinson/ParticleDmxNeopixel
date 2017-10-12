@@ -51,6 +51,13 @@ public:
         _pOwner = pOwner;
         _initialized = false;
         _rgbUdpBuffer = reinterpret_cast<uint8_t*>(mallocNoFail(cbUdpBuffer));
+
+        _dmxAddress.setChangeNotification([this](int dmxAddressOld)
+        {
+            // If the first address changes, shift the last so as to track
+            int oldCount = _dmxLast.value() - dmxAddressOld + 1;
+            setDmxCount(oldCount);
+        });
     }
 
     ~ArtnetDevice()
@@ -73,14 +80,20 @@ public:
     {
         return _dmxAddress.value();
     }
-    DMX_ADDRESS dmxLast()
-    {
-        return _dmxLast.value();
-    }
     DMX_ADDRESS dmxFirst()
     {
         return dmxAddress();
     }
+
+    DMX_ADDRESS dmxLast()
+    {
+        return _dmxLast.value();
+    }
+    DMX_ADDRESS dmxMax()
+    {
+        return dmxLast() + 1;
+    }
+    
     int dmxCount()
     {
         return dmxLast() - dmxFirst() + 1;

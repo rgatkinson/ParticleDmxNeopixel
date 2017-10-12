@@ -68,14 +68,15 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
     {
         if (_value != value)
         {
+            T oldValue = _value;
             _value = value;
             save();
-            notifyChanged();
+            notifyChanged(oldValue);
         }
     }
-    void notifyChanged() override
+    void notifyChanged(const T& oldValue) override
     {
-        NotifyableSetting<T>::notifyChanged();
+        NotifyableSetting<T>::notifyChanged(oldValue);
     }
 
     virtual void setValueString(const String& string) override

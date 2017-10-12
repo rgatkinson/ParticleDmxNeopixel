@@ -38,9 +38,9 @@ public:
         Wire.begin();
         createOrDestroyDimmers();
 
-        _dimmerCount.setChangeNotification([this]()
+        _dimmerCount.setChangeNotification([this](int oldCount)
         {
-            INFO("Krida: dimmer count changed: old=%d new=%d", _dimmers.count(), _dimmerCount.value());
+            INFO("Krida: dimmer count changed: old=%d new=%d", oldCount, _dimmerCount.value());
             createOrDestroyDimmers();
             _artnet.setDmxCount(dmxCount());
         });
