@@ -63,17 +63,27 @@ public:
 template <typename T>
 inline void releaseRef(T*& pt)
 {
-    if (pt != NULL)
+    if (pt != nullptr)
     {
         pt->release();
-        pt = NULL;
+        pt = nullptr;
+    }
+}
+
+template <typename T>
+inline void releaseRef(T*& pt, bool counted)
+{
+    if (pt != nullptr)
+    {
+        if (counted) pt->release();
+        pt = nullptr;
     }
 }
 
 template <typename T>
 inline void addRef(T* pt)
 {
-    if (pt != NULL)
+    if (pt != nullptr)
     {
         pt->addRef();
     }
@@ -84,6 +94,17 @@ inline void setRef(T*& variable, T* value)
 {
     addRef(value);          // do first in case value and variable have same value
     releaseRef(variable);
+    variable = value;
+}
+
+template <typename T>
+inline void setRef(T*& variable, T* value, bool counted)
+{
+    if (counted)
+    {
+        addRef(value);          // do first in case value and variable have same value
+        releaseRef(variable);
+    }
     variable = value;
 }
 
