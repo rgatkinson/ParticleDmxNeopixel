@@ -29,10 +29,10 @@ protected:
     PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
-    CloudVariable<decltype(_dmxAddress), int>       _dmxAddressCloudVar;
-    CloudVariable<decltype(_dmxLast), int>          _dmxLastCloudVar;
-    CloudVariable<decltype(_name), LPCSTR>          _nameCloudVar;
-    CloudVariable<decltype(_description), LPCSTR>   _descriptionCloudVar;
+    CloudVariable<int>                              _dmxAddressCloudVar;
+    CloudVariable<int>                              _dmxLastCloudVar;
+    CloudVariable<LPCSTR>                           _nameCloudVar;
+    CloudVariable<LPCSTR>                           _descriptionCloudVar;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -93,7 +93,7 @@ public:
     {
         return dmxLast() + 1;
     }
-    
+
     int dmxCount()
     {
         return dmxLast() - dmxFirst() + 1;

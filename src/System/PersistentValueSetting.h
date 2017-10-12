@@ -60,10 +60,6 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
     {
         return _value;
     }
-    const T& valueRef() override
-    {
-        return _value;
-    }
     void setValue(const T& value) override
     {
         if (_value != value)
@@ -134,7 +130,6 @@ struct VolatileValueSetting : TypedSetting<T>
     VolatileValueSetting(const T& defaultValue) : _value(defaultValue) {}
 
     T               value()                         { return _value; }
-    const T&        valueRef()                      { return _value; }
     virtual String  valueAsString()                 { return "<subclassResponsibility>"; }
     virtual void    setValueString(const String& string)  { /*subclassResponsibility */ }
 

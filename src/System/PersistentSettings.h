@@ -21,13 +21,17 @@ struct PersistentSetting
 };
 
 template <typename T>
-struct TypedSetting
+struct CloudSetting
 {
-    virtual T           value() = 0;
-    virtual const T&    valueRef() = 0;
-    virtual String      valueAsString() = 0;
-    virtual void        setValue(const T& value) = 0;
-    virtual void        setValueString(const String& string) = 0;
+    virtual T      value() = 0;
+    virtual String valueAsString() = 0;
+    virtual void   setValueString(const String& string) = 0;
+};
+
+template <typename T>
+struct TypedSetting : CloudSetting<T>
+{
+    virtual void setValue(const T& value) = 0;
 };
 
 template <typename T>

@@ -8,13 +8,15 @@
 #include "System/PersistentSettings.h"
 #include "System/SystemEventRegistrar.h"
 
-template <typename SETTING, typename VALUE>
+template <typename VALUE>
 struct CloudVariable : SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
+
+    typedef CloudSetting<VALUE> SETTING;
 
     SETTING*            _setting;
     String              _name;
@@ -73,12 +75,6 @@ public:
     //----------------------------------------------------------------------------------------------
     // Cloud
     //----------------------------------------------------------------------------------------------
-public:
-    const VALUE& valueRef()
-    {
-        return _setting->valueRef();
-    }
-
 protected:
     int cloudSetValue(String value)
     {
@@ -93,7 +89,7 @@ protected:
             _announced = true;
 
             INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _setting->valueAsString().c_str());
-            bool success = announceVariable(_name, this->valueRef());
+            bool success = announceVariable(_name, _setting->value());
             if (success && _writeable==ReadWriteable::RW)
             {
                 success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::cloudSetValue), this);
@@ -105,7 +101,7 @@ protected:
         }
     }
 
-    bool announceVariable(LPCSTR name, const int& var)
+    bool announceVariable(LPCSTR name, int var)
     {
         spark_variable_t extra;
         extra.size = sizeof(extra);

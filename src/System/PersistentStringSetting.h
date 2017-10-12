@@ -16,8 +16,7 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     //----------------------------------------------------------------------------------------------
 
     String  _defaultValue;
-    LPCSTR  _value;
-    char    _rgchValue[_cchValue];
+    char    _rgchValue[_cchValue];  // always null terminated
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -30,8 +29,7 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     {
     }
     PersistentStringSetting(LPCSTR defaultValue)
-        : _defaultValue(defaultValue),
-        _value(&_rgchValue[0])
+        : _defaultValue(defaultValue)
     {
         zero();
         loadDefault();
@@ -66,11 +64,7 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     }
     LPCSTR value() override
     {
-        return _value;
-    }
-    const LPCSTR& valueRef() override
-    {
-        return _value;
+        return &_rgchValue[0];
     }
     void setValue(const LPCSTR& sz) override
     {

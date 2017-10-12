@@ -18,11 +18,11 @@ struct KridaDimmersDevice : DmxPacketConsumer
     // State
     //----------------------------------------------------------------------------------------------
 protected:
-    ArtnetDevice                                _artnet;        // before _dimmerCount to keep EEPROM sane
-    PersistentIntSetting                        _dimmerCount;   // the *persistent* number of dimmers that are attached
-    CloudVariable<decltype(_dimmerCount), int>  _dimmerCountCloudVar;
+    ArtnetDevice                _artnet;        // before _dimmerCount to keep EEPROM sane
+    PersistentIntSetting        _dimmerCount;   // the *persistent* number of dimmers that are attached
+    CloudVariable<int>          _dimmerCountCloudVar;
 
-    rga::vector<KridaDimmer*>                   _dimmers;       // size should be tracked to _dimmerCount
+    rga::vector<KridaDimmer*>   _dimmers;       // size should be tracked to _dimmerCount
 
     //----------------------------------------------------------------------------------------------
     // Construction
