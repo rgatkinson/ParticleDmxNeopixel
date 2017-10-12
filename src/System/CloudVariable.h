@@ -114,6 +114,13 @@ protected:
     {
         spark_variable_t extra;
         extra.size = sizeof(extra);
+        extra.update = updateLPCSTRVariable;
+        return spark_variable(name, reinterpret_cast<void*>(this), CloudVariableTypeString::value(), &extra);
+    }
+    bool announceVariable(LPCSTR name, const String& var)
+    {
+        spark_variable_t extra;
+        extra.size = sizeof(extra);
         extra.update = updateStringVariable;
         return spark_variable(name, reinterpret_cast<void*>(this), CloudVariableTypeString::value(), &extra);
     }
@@ -123,6 +130,11 @@ protected:
     {
         AbstractCloudVariable* pThis = reinterpret_cast<AbstractCloudVariable*>(const_cast<void*>(pvThis));
         return pThis->onUpdateIntVariable();
+    }
+    static const void* updateLPCSTRVariable(const char* name, Spark_Data_TypeDef type, const void* pvThis, void* reserved)
+    {
+        AbstractCloudVariable* pThis = reinterpret_cast<AbstractCloudVariable*>(const_cast<void*>(pvThis));
+        return pThis->onUpdateLPCSTRVariable();
     }
     static const void* updateStringVariable(const char* name, Spark_Data_TypeDef type, const void* pvThis, void* reserved)
     {
@@ -136,11 +148,17 @@ protected:
         INFO("variable %s=%d", _name.c_str(), _lastValue);
         return &_lastValue;
     }
-    void* onUpdateStringVariable()
+    void* onUpdateLPCSTRVariable()
     {
         _lastValue = _fnGetValue();
         INFO("variable %s=%s", _name.c_str(), _lastValue);
         return const_cast<LPSTR>(_lastValue);
+    }
+    void* onUpdateStringVariable()
+    {
+        _lastValue = _fnGetValue();
+        INFO("variable %s=%s", _name.c_str(), _lastValue.c_str());
+        return const_cast<LPSTR>(_lastValue.c_str());
     }
 };
 
