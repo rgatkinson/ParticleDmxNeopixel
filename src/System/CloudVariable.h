@@ -4,6 +4,7 @@
 #ifndef __CLOUD_VARIABLE_H__
 #define __CLOUD_VARIABLE_H__
 
+#include <functional>
 #include "System/PersistentSettings.h"
 #include "System/SystemEventRegistrar.h"
 
@@ -15,12 +16,15 @@ struct CloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
 protected:
 
-    SETTING*        _setting;
-    String          _name;
-    ReadWriteable   _writeable;
-    bool            _begun = false;
-    bool            _connected = false;
-    bool            _announced = false;
+    SETTING*            _setting;
+    String              _name;
+    ReadWriteable       _writeable;
+    bool                _begun = false;
+    bool                _connected = false;
+    bool                _announced = false;
+
+    std::function<VALUE()> _fnGetValue;
+    VALUE               _lastValue;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -32,6 +36,7 @@ public:
           _name(name),
           _writeable(writeable)
     {
+        _fnGetValue = [this]() { return _setting->value(); };
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
 
@@ -86,8 +91,9 @@ protected:
         if (_begun && _connected && !_announced)
         {
             _announced = true;
+
             INFO("announcing cloud variable name=%s value=%s", _name.c_str(), _setting->valueAsString().c_str());
-            bool success = Particle.variable(_name, this->valueRef());
+            bool success = announceVariable(_name, this->valueRef());
             if (success && _writeable==ReadWriteable::RW)
             {
                 success = Particle.function(_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::cloudSetValue), this);
@@ -97,6 +103,46 @@ protected:
                 ERROR("announcing cloud variable FAILED: %s", _name.c_str());
             }
         }
+    }
+
+    bool announceVariable(LPCSTR name, const int& var)
+    {
+        spark_variable_t extra;
+        extra.size = sizeof(extra);
+        extra.update = updateIntVariable;
+        return spark_variable(name, reinterpret_cast<void*>(this), CloudVariableTypeInt::value(), &extra);
+    }
+    bool announceVariable(LPCSTR name, LPCSTR var)
+    {
+        spark_variable_t extra;
+        extra.size = sizeof(extra);
+        extra.update = updateStringVariable;
+        return spark_variable(name, reinterpret_cast<void*>(this), CloudVariableTypeString::value(), &extra);
+    }
+
+    void* onUpdateIntVariable()
+    {
+        _lastValue = _fnGetValue();
+        INFO("variable %s=%d", _name.c_str(), _lastValue);
+        return &_lastValue;
+    }
+    void* onUpdateStringVariable()
+    {
+        _lastValue = _fnGetValue();
+        INFO("variable %s=%s", _name.c_str(), _lastValue);
+        return const_cast<LPSTR>(_lastValue);
+    }
+
+    // called as: result = item->update(item->userVarKey, item->userVarType, item->userVar, nullptr);
+    static const void* updateIntVariable(const char* name, Spark_Data_TypeDef type, const void* pvThis, void* reserved)
+    {
+        CloudVariable* pThis = reinterpret_cast<CloudVariable*>(const_cast<void*>(pvThis));
+        return pThis->onUpdateIntVariable();
+    }
+    static const void* updateStringVariable(const char* name, Spark_Data_TypeDef type, const void* pvThis, void* reserved)
+    {
+        CloudVariable* pThis = reinterpret_cast<CloudVariable*>(const_cast<void*>(pvThis));
+        return pThis->onUpdateStringVariable();
     }
 
     //----------------------------------------------------------------------------------------------
