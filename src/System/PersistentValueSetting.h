@@ -4,6 +4,8 @@
 #ifndef __PERSISTENT_VALUE_SETTING_H__
 #define __PERSISTENT_VALUE_SETTING_H__
 
+#include "System/PersistentSettings.h"
+
 //==================================================================================================
 // PersistentValueSetting
 //==================================================================================================
@@ -28,7 +30,7 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
     PersistentValueSetting(const T& defaultValue) : _default(defaultValue)
     {
         loadDefault();
-        PersistentSettings::theInstance->add(this);    // note: we lay out in declaration order!
+        PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
 
     bool loadDefault() override

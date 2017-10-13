@@ -7,14 +7,43 @@
 #include <vector>
 #include <functional>
 #include "Util/Deadline.h"
+#include "System/Misc.h"
 
 //==================================================================================================
 // SystemEventNotifications
 //==================================================================================================
 
+enum class NetworkStatus
+{
+    PoweringOff     = network_status_powering_off,
+    Off             = network_status_off,
+    PoweringOn      = network_status_powering_on,
+    On              = network_status_on,
+    Connecting      = network_status_connecting,
+    Connected       = network_status_connected,
+    Disconnecting   = network_status_disconnecting,
+    Disconnected    = network_status_disconnected,
+};
+
+inline LPCSTR nameOf(NetworkStatus netStatus)
+{
+    switch (netStatus)
+    {
+        case NetworkStatus::PoweringOff:    return ("PoweringOff"); break;
+        case NetworkStatus::Off:            return ("Off"); break;
+        case NetworkStatus::PoweringOn:     return ("PoweringOn"); break;
+        case NetworkStatus::On:             return ("On"); break;
+        case NetworkStatus::Connecting:     return ("Connecting"); break;
+        case NetworkStatus::Connected:      return ("Connected"); break;      // DHCP acquired
+        case NetworkStatus::Disconnecting:  return ("Disconnecting"); break;
+        case NetworkStatus::Disconnected:   return ("Disconnected"); break;
+        default:                            return ("<unknown>"); break;
+    }
+}
+
 struct SystemEventNotifications
 {
-    virtual void onNetworkStatus(int netStatus) = 0;
+    virtual void onNetworkStatus(NetworkStatus) = 0;
     virtual void onCloudStatus(int cloudStatus) = 0;
     virtual void onTimeChanged(int timeStatus) = 0;
 };
@@ -111,7 +140,7 @@ public:
         // Deliver existing events if we have 'em
         if (_networkEvent.seen)
         {
-            registrant->onNetworkStatus(_networkEvent.eventParam);
+            registrant->onNetworkStatus((NetworkStatus)_networkEvent.eventParam);
         }
 
         if (_cloudEvent.seen)
@@ -227,17 +256,19 @@ protected:
 
     void onNetworkStatus(system_event_t event, int eventParam)
     {
+        resetSleepTimer("onNetworkStatus");
         _networkEvent.seen = true;
         _networkEvent.eventParam = eventParam;
 
         for (auto it = _systemNotifications.begin(); it != _systemNotifications.end(); it++)
         {
-            (*it)->onNetworkStatus(eventParam);
+            (*it)->onNetworkStatus((NetworkStatus)eventParam);
         }
     }
 
     void onCloudStatus(system_event_t event, int eventParam)
     {
+        resetSleepTimer("onCloudStatus");
         _cloudEvent.seen = true;
         _cloudEvent.eventParam = eventParam;
 
@@ -249,6 +280,7 @@ protected:
 
     void onCloudTimeChanged(system_event_t event, int eventParam)
     {
+        resetSleepTimer("onTimeChanged");
         _timeEvent.seen = true;
         _timeEvent.eventParam = eventParam;
 
@@ -310,6 +342,7 @@ protected:
 
     void onButtonClick(system_event_t event, int eventParam)
     {
+        resetSleepTimer("onButtonClick");
         int clickCount = system_button_clicks(eventParam);
 
         for (auto it = _buttonNotifications.begin(); it != _buttonNotifications.end(); it++)
@@ -325,6 +358,7 @@ protected:
 
     void onButtonFinalClick(system_event_t event, int eventParam)
     {
+        resetSleepTimer("onButtonFinalClick");
         int clickCount = system_button_clicks(eventParam);
 
         for (auto it = _buttonNotifications.begin(); it != _buttonNotifications.end(); it++)

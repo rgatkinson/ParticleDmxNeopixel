@@ -4,13 +4,15 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
-#include "SystemEventRegistrar.h"
-#include "PersistentSettings.h"
-#include "NetworkManager.h"
-#include "CloudVariable.h"
+#include "System/Misc.h"
+#include "System/SystemEventRegistrar.h"
+#include "System/NetworkStatusMonitor.h"
+#include "System/PersistentSettings.h"
+#include "System/NetworkManager.h"
+#include "System/CloudVariable.h"
 #include "Util/ElapsedTime.h"
 
-extern void setCredentials();
+extern void setCredentials();   // See AfterPasswords.h
 
 struct Globals
 {
@@ -20,12 +22,14 @@ public:
 private:
     SerialLogHandler        _logHandler;
     SystemEventRegistrar    _systemEventRegistrar;
+    NetworkStatusMonitor    _networkStatusMonitor;
     PersistentSettings      _persistentSettings;
     NetworkManager          _networkManager;
     int                     _buttonToken;
 
 public:
-    Globals()
+    Globals(LPCSTR szAppName) :
+        _networkManager(szAppName)
     {
         theInstance = this;
         System.enableFeature(FEATURE_RESET_INFO);
@@ -55,10 +59,16 @@ public:
     }
 
 public:
+
+    void announceLog()
+    {
+        delay(500); // try to allow the Log to become ready for output
+        INFO("*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*");
+    }
+
     void begin()
     {
-        delay(500); // try to allow the Log to become ready for output (naybe no longer needed w/ wait on serial above?)
-
+        announceLog();
         _persistentSettings.begin();
         _systemEventRegistrar.begin();
         _networkManager.begin();
@@ -77,5 +87,10 @@ public:
         _networkManager.report();
     }
 };
+
+inline void announceLog()
+{
+    Globals::theInstance->announceLog();
+}
 
 #endif

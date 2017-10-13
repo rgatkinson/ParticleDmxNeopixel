@@ -49,7 +49,7 @@ struct NotifyableSetting : TypedSetting<T>
     //----------------------------------------------------------------------------------------------
 
     template <typename U>
-    void setChangeNotification(U notifyee)
+    void registerNotifyChanged(U notifyee)
     {
         _notifyee = static_cast<Notifyee>(notifyee);
     }
@@ -90,7 +90,7 @@ public:
         theInstance = this;
     }
 
-    void add(PersistentSetting* persistentSetting)
+    void addSetting(PersistentSetting* persistentSetting)
     {
         _persistentSettings.push_back(persistentSetting);
     }
@@ -176,8 +176,16 @@ public:
 
     int factoryReset(String value)
     {
-        clear();
-        System.reset();
+        // Make caller put in a parameter as a safety check
+        if (value.length() > 0)
+        {
+            clear();
+            System.reset();
+        }
+        else
+        {
+            INFO("empty factoryReset request ignored");
+        }
         return 0;
     }
 

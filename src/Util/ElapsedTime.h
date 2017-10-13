@@ -36,6 +36,11 @@ struct ElapsedTime
     // Operations
     //----------------------------------------------------------------------------------------------
 
+    TIME seconds()
+    {
+        return milliseconds() / 1000;
+    }
+
     TIME milliseconds()
     {
         return msNow() - _msStartTime;

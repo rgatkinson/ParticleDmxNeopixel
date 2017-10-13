@@ -194,6 +194,7 @@ protected:
             ArtnetPacketHeader header(pbPacket, cbPacket);
             if (header.validate())
             {
+                resetSleepTimer("receiveArtnet");
                 ArtnetOpMode artnetOpMode = header.artnetOpMode();
                 if (artnetOpMode != ArtnetOpMode::Dmx)
                 {

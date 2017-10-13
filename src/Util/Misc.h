@@ -24,7 +24,8 @@ enum class ReadWriteable { RW, RO };
 
 // https://gcc.gnu.org/onlinedocs/gcc-4.4.2/gcc/Diagnostic-Pragmas.html
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
-#pragma GCC diagnostic error   "-Wreturn-type"
+#pragma GCC diagnostic ignored "-Wreorder"           // we KNOW it's decl order that matters; we don't need to be told every time
+#pragma GCC diagnostic error   "-Wreturn-type"       // cach missing return statements!
 // #pragma GCC diagnostic error "-Wsuggest-override" // not in the version of GCC we use, I think
 
 #undef TRACE

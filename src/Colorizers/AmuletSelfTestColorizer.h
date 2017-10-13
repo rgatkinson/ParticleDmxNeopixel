@@ -40,18 +40,18 @@ public:
         _pUniform->setColor(color);
     }
 
-    void onNetworkStatus(int netStatus) override
+    void onNetworkStatus(NetworkStatus netStatus) override
     {
         switch (netStatus)
         {
-            case network_status_powering_off:
-            case network_status_off:            setColor(Color::Red); break;
-            case network_status_powering_on:
-            case network_status_on:             setColor(Color::Yellow); break;
-            case network_status_connecting:
-            case network_status_connected:      setColor(Color::Green); break;
-            case network_status_disconnecting:
-            case network_status_disconnected:   setColor(Color::Magenta); break;
+            case NetworkStatus::PoweringOff:
+            case NetworkStatus::Off:            setColor(Color::Red); break;
+            case NetworkStatus::PoweringOn:
+            case NetworkStatus::On:             setColor(Color::Yellow); break;
+            case NetworkStatus::Connecting:
+            case NetworkStatus::Connected:      setColor(Color::Green); break;
+            case NetworkStatus::Disconnecting:
+            case NetworkStatus::Disconnected:   setColor(Color::Magenta); break;
         }
     }
     void onCloudStatus(int cloudStatus) override

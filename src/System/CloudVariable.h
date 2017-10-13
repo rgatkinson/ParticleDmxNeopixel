@@ -51,7 +51,7 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void onNetworkStatus(int netStatus) override
+    void onNetworkStatus(NetworkStatus netStatus) override
     {
     }
     void onCloudStatus(int cloudStatus) override
@@ -145,19 +145,19 @@ protected:
     void* onUpdateIntVariable()
     {
         _lastValue = _fnGetValue();
-        INFO("variable %s=%d", _name.c_str(), _lastValue);
+        INFO("read %s=%d", _name.c_str(), _lastValue);
         return &_lastValue;
     }
     void* onUpdateLPCSTRVariable()
     {
         _lastValue = _fnGetValue();
-        INFO("variable %s=%s", _name.c_str(), _lastValue);
+        INFO("read %s=%s", _name.c_str(), _lastValue);
         return const_cast<LPSTR>(_lastValue);
     }
     void* onUpdateStringVariable()
     {
         _lastValue = _fnGetValue();
-        INFO("variable %s=%s", _name.c_str(), _lastValue.c_str());
+        INFO("read %s=%s", _name.c_str(), _lastValue.c_str());
         return const_cast<LPSTR>(_lastValue.c_str());
     }
 };
@@ -216,6 +216,7 @@ public:
 protected:
     int cloudSetValue(String value)
     {
+        INFO("write %s=%s", super::_name.c_str(), value.c_str());
         _setting->setValueString(value);
         return 0;
     }

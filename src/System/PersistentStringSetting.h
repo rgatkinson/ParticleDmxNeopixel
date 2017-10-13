@@ -33,7 +33,7 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     {
         zero();
         loadDefault();
-        PersistentSettings::theInstance->add(this);    // note: we lay out in declaration order!
+        PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
     void zero()
     {

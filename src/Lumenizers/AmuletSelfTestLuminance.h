@@ -74,18 +74,18 @@ protected:
         _pSequence->setLooping(true);
     }
 
-    void onNetworkStatus(int netStatus) override
+    void onNetworkStatus(NetworkStatus netStatus) override
     {
         switch (netStatus)
         {
-            case network_status_powering_off:
-            case network_status_off:            blinkFast(); break;
-            case network_status_powering_on:    breatheSlow(); break;
-            case network_status_on:             breatheSlow(); break;
-            case network_status_connecting:     blinkFast(); break;
-            case network_status_connected:      breatheSlow(); break;
-            case network_status_disconnecting:  blinkFast(); break;
-            case network_status_disconnected:   breatheSlow(); break;
+            case NetworkStatus::PoweringOff:
+            case NetworkStatus::Off:            blinkFast(); break;
+            case NetworkStatus::PoweringOn:     breatheSlow(); break;
+            case NetworkStatus::On:             breatheSlow(); break;
+            case NetworkStatus::Connecting:     blinkFast(); break;
+            case NetworkStatus::Connected:      breatheSlow(); break;
+            case NetworkStatus::Disconnecting:  blinkFast(); break;
+            case NetworkStatus::Disconnected:   breatheSlow(); break;
         }
     }
     void onCloudStatus(int cloudStatus) override
