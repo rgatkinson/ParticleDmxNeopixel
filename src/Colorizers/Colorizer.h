@@ -9,14 +9,13 @@
 #include "Util/Deadline.h"
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
-#include "Pixels/ColorizeableHolder.h"
 #include "DmxParams/DmxColorLuminanceParameters.h"
 
 //==================================================================================================
 // Colorizer
 //==================================================================================================
 
-struct Colorizer : Durable, protected ColorizeableHolder
+struct Colorizer : Durable
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -48,21 +47,26 @@ public:
 
 protected:
 
-    Flavor _flavor;
+    Flavor          _flavor;
+    Colorizeable*   _pColorizeable;     // no ref
+    int             _pixelCount;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Colorizer(Flavor flavor, Duration duration) : Durable(duration), ColorizeableHolder()
+    Colorizer(Flavor flavor, Duration duration) : Durable(duration)
     {
         _flavor = flavor;
+        _pColorizeable = nullptr;
+        _pixelCount = 0;
     }
 
     virtual void noteColorizeable(Colorizeable* pColorizeable)
     {
-        ColorizeableHolder::noteColorizeable(pColorizeable);
+        _pColorizeable = pColorizeable;
+        _pixelCount = pColorizeable ? 0 : pColorizeable->numberOfPixels();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -90,8 +94,9 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
+    virtual void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock)
     {
+        // nothing, generically, to do
     }
 
     //----------------------------------------------------------------------------------------------

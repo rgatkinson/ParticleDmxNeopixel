@@ -32,9 +32,9 @@ struct UniformLuminance : Lumenizer
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
     {
-        Lumenizer::processParameterBlock(parameterBlock);
+        Lumenizer::processDmxColorLuminance(parameterBlock);
         // Nothing special to do: dimmer will be applied
     }
 

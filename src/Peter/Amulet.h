@@ -9,7 +9,7 @@
 #include "Util/Color.h"
 #include "Lumenizers/AmuletSelfTestLuminance.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"
-#include "Artnet/DmxEffectSelector.h"
+#include "Artnet/DmxDemoManager.h"
 
 struct Amulet : NeoPixelDmxDevice
 {
@@ -18,7 +18,7 @@ struct Amulet : NeoPixelDmxDevice
     //----------------------------------------------------------------------------------------------
 protected:
 
-    DmxEffectSelector::Demo _demo = DmxEffectSelector::Demo::Default;
+    DmxDemoManager::Demo _demo = DmxDemoManager::Demo::Default;
     int                     _buttonToken;
 
     //----------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ public:
         INFO("amulet demo #%d", (int)_demo);
         Colorizer* pColorizer = new AmuletSelfTestColorizer();
         Lumenizer* pLumenizer = new AmuletSelfTestLuminance(2,3);
-        DmxEffectSelector::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
+        DmxDemoManager::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
         releaseRef(pColorizer);
         releaseRef(pLumenizer);
     }
@@ -58,7 +58,7 @@ public:
 
     void cycleDemo()
     {
-        _demo = DmxEffectSelector::cycle(_demo);
+        _demo = DmxDemoManager::cycle(_demo);
         setDemo();
     }
 };

@@ -19,8 +19,11 @@ protected:
 
     PixelSequence*              _pPixels;
     ArtnetDevice                _artnet;
-    DmxLuminanceEffectSelector* _pLuminanceEffectSelector;
-    DmxColorEffectSelector*     _pColorEffectSelector;
+    DmxLuminanceEffectSelector<false>* _pLuminanceEffectSelector;
+    DmxColorEffectSelector<false>*     _pColorEffectSelector;
+
+    ComputedCloudVariable<String> _cloudLuminanceEffect;
+    ComputedCloudVariable<String> _cloudColorEffect;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -29,10 +32,12 @@ public:
 
     NeoPixelDmxDevice(PixelSequence* pixels, LPCSTR shortName)
         : _pPixels(pixels),
+          _pLuminanceEffectSelector(new DmxLuminanceEffectSelector<false>(_pPixels)),
+          _pColorEffectSelector(new DmxColorEffectSelector<false>(_pPixels)),
+          _cloudLuminanceEffect("lumEffect", [this]() { return _pLuminanceEffectSelector->effectName(); }),
+          _cloudColorEffect("colorEffect", [this]() { return _pColorEffectSelector->effectName(); }),
           _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(), shortName)
     {
-        _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(_pPixels);
-        _pColorEffectSelector = new DmxColorEffectSelector(_pPixels);
     }
 
     virtual ~NeoPixelDmxDevice()
@@ -50,8 +55,8 @@ public:
     {
         _pPixels->begin();
         _artnet.begin();
-        _pLuminanceEffectSelector->begin();
-        _pColorEffectSelector->begin();
+        _cloudLuminanceEffect.begin();
+        _cloudColorEffect.begin();
     }
 
     virtual void loop()
@@ -83,19 +88,19 @@ public:
         {
             DmxColorLuminanceParameters parameterBlock = DmxColorLuminanceParameters(dmxValuesPointer);
 
-            _pColorEffectSelector->processParameterBlock(parameterBlock);
-            _pLuminanceEffectSelector->processParameterBlock(parameterBlock);
+            _pColorEffectSelector->processDmxColorLuminance(parameterBlock);
+            _pLuminanceEffectSelector->processDmxColorLuminance(parameterBlock);
 
             Colorizer* pColorizer = _pPixels->colorizer();
             if (pColorizer)
             {
-                pColorizer->processParameterBlock(parameterBlock);
+                pColorizer->processDmxColorLuminance(parameterBlock);
             }
 
             Lumenizer* pLumenizer = _pPixels->lumenizer();
             if (pLumenizer)
             {
-                pLumenizer->processParameterBlock(parameterBlock);
+                pLumenizer->processDmxColorLuminance(parameterBlock);
             }
         }
     }

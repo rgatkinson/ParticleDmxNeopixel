@@ -28,7 +28,7 @@ public:
     // directional:     [-1,1], neg=CW, pos=CCW
     // non-directional: [0,1]
     // zero is stopped
-    float speedLevel(bool directional) const
+    float speedLevel(bool directional = true) const
     {
         return directional
             ? directionalSpeedLevel(speed())

@@ -1,12 +1,18 @@
 //
 // KridaDimmerChannel.h
 //
-#ifndef __KRIDA_I2C_CHANNEL_H__
-#define __KRIDA_I2C_CHANNEL_H__
+#ifndef __KRIDA_DIMMER_CHANNEL_H__
+#define __KRIDA_DIMMER_CHANNEL_H__
+
+#include "DmxParams/DmxKridaParameters.h"
+#include "Artnet/DmxLuminanceEffectSelector.h"
 
 struct KridaDimmer;
 
-struct KridaDimmerChannel
+// Dimming value range 0...100
+//                     0 - Fully ON
+//                     100 - Fully OFF
+struct KridaDimmerChannel : ReferenceCounted, Lumenizeable
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -19,8 +25,10 @@ struct KridaDimmerChannel
 
 private:
 
-    KridaDimmer* _pDimmer;
-    Value        _value;
+    KridaDimmer*                        _pParent;
+    Value                               _value;
+    Lumenizer*                          _pLumenizer;
+    DmxLuminanceEffectSelector<false>*  _pLuminanceEffectSelector;
 
 public:
 
@@ -30,13 +38,32 @@ public:
 
     KridaDimmerChannel(KridaDimmer* pDimmer)
     {
-        _pDimmer = pDimmer;
-        _value  = ValueOff;
+        _pParent = pDimmer;
+        _value = ValueOff;
+        _pLumenizer = nullptr;
+        _pLuminanceEffectSelector = new DmxLuminanceEffectSelector<false>(this);
     }
+
+    ~KridaDimmerChannel()
+    {
+        releaseRef(_pLuminanceEffectSelector);
+        releaseRef(_pLumenizer);
+    }
+
+    DELEGATE_REF_COUNTING
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
+
+    void ownLumenizer(Lumenizer* pLumenizer) override
+    {
+        setRef(_pLumenizer, pLumenizer);
+    }
+    Lumenizer* lumenizer() override
+    {
+        return _pLumenizer;
+    }
 
     Value value() const
     {
@@ -44,6 +71,48 @@ public:
     }
 
     void setValue(Value value);
+
+    //----------------------------------------------------------------------------------------------
+    // Loop
+    //----------------------------------------------------------------------------------------------
+
+    void begin()
+    {
+        if (_pLumenizer)
+        {
+            _pLumenizer->begin();
+        }
+    }
+
+    void loop()
+    {
+        if (_pLumenizer)
+        {
+            _pLumenizer->loop();
+        }
+    }
+
+    void report()
+    {
+        if (_pLumenizer)
+        {
+            _pLumenizer->report();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Packets
+    //----------------------------------------------------------------------------------------------
+
+    void processDmxKridaChannel(const DmxKridaChannel& parameterBlock)
+    {
+        _pLuminanceEffectSelector->processDmxEffectSpeedControl(parameterBlock.luminance);
+
+        if (_pLumenizer)
+        {
+            _pLumenizer->processDmxDimmer(parameterBlock.dimmer);
+        }
+    }
 };
 
 #endif

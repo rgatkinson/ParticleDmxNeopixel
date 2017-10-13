@@ -49,22 +49,16 @@ public:
 
     const DmxDimmer& dimmer() const { return _pData->dimmer; }
 
+    const DmxEffectSpeedControl& color() const { return _pData->color; }
     byte colorEffect() const      { return _pData->color.effect(); }
     byte colorSpeed() const       { return _pData->color.speed(); }
     byte colorControl() const     { return _pData->color.control(); }
 
-    byte luminanceEffect() const  { return _pData->luminance.effect(); }
-    byte luminanceSpeed() const   { return _pData->luminance.speed(); }
-    byte luminanceControl() const { return _pData->luminance.control(); }
+    const DmxEffectSpeedControl& luminance() const { return _pData->luminance; }
 
     float colorSpeedLevel(bool directional = true) const
     {
         return _pData->color.speedLevel(directional);
-    }
-
-    float luminanceSpeedLevel(bool directional = true) const
-    {
-        return _pData->luminance.speedLevel(directional);
     }
 
 public:

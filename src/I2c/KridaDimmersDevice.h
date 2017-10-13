@@ -9,7 +9,7 @@
 #include <vector>
 #include "Artnet/Artnet.h"
 #include "Artnet/DmxPacketConsumer.h"
-#include "DmxKridaParameters.h"
+#include "DmxParams/DmxKridaParameters.h"
 #include "KridaDimmer.h"
 
 struct KridaDimmersDevice : DmxPacketConsumer
@@ -140,9 +140,15 @@ public:
 
     void onDmxPacket(ArtDmxPacket& packet) override
     {
-        byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount());
+        int dimmerCount = this->dimmerCount();
+        byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount(dimmerCount));
         if (dmxValuesPointer)
         {
+            DmxKridaParameters dmxParameters(dmxValuesPointer, dimmerCount);
+            for (int i = 0; i < dimmerCount; i++)
+            {
+                _dimmers[i]->processDmxKridaDimmer(dmxParameters.dimmer(i));
+            }
         }
     }
 

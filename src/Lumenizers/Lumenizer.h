@@ -6,13 +6,12 @@
 
 #include "Util/Durable.h"
 #include "Pixels/Colorizeable.h"
-#include "Pixels/ColorizeableHolder.h"
 #include "DmxParams/DmxColorLuminanceParameters.h"
 
 const BRIGHTNESS BRIGHTNESS_MIN = 0;
 const BRIGHTNESS BRIGHTNESS_MAX = 256;
 
-struct Lumenizer : Durable, protected ColorizeableHolder
+struct Lumenizer : Durable
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -48,18 +47,20 @@ public:
 
 protected:
 
-    Flavor      _flavor;
-    BRIGHTNESS  _brightnessMin;      // min we ever report
-    BRIGHTNESS  _brightnessMax;      // max we ever report
-    float       _currentLevel;       // controlled by us
-    float       _dimmerLevel;        // controlled externally
+    Flavor          _flavor;
+    BRIGHTNESS      _brightnessMin;     // min we ever report
+    BRIGHTNESS      _brightnessMax;     // max we ever report
+    float           _currentLevel;      // controlled by us
+    float           _dimmerLevel;       // controlled externally
+    Colorizeable*   _pColorizeable;     // no ref
+    int             _pixelCount;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    Lumenizer(Flavor flavor, Duration duration) : Durable(duration), ColorizeableHolder()
+    Lumenizer(Flavor flavor, Duration duration) : Durable(duration)
     {
         _flavor = flavor;
 
@@ -70,11 +71,14 @@ public:
         _brightnessMin = 0;
         setCurrentLevel(1.0f);
         setDimmerLevel(1.0f);
+        _pColorizeable = nullptr;
+        _pixelCount = 0;
     }
 
     virtual void noteColorizeable(Colorizeable* pColorizeable)
     {
-        ColorizeableHolder::noteColorizeable(pColorizeable);
+        _pColorizeable = pColorizeable;
+        _pixelCount = pColorizeable ? 0 : pColorizeable->numberOfPixels();
     }
 
 protected:
@@ -169,9 +173,14 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
+    virtual void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
     {
-        float dimmerLevel = parameterBlock.dimmer().dimmerLevel();
+        processDmxDimmer(parameterBlock.dimmer());
+    }
+
+    virtual void processDmxDimmer(const DmxDimmer& parameterBlock)
+    {
+        float dimmerLevel = parameterBlock.dimmerLevel();
         if (_dimmerLevel != dimmerLevel)
         {
             INFO("Lumenizer: dimmerLevel=%f", dimmerLevel);

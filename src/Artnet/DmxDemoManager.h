@@ -1,8 +1,8 @@
 //
-// DmxEffectSelector.h
+// DmxDemoManager.h
 //
-#ifndef __DMX_EFFECT_SELECTOR_H__
-#define __DMX_EFFECT_SELECTOR_H__
+#ifndef __DMX_DEMO_MANAGER_H__
+#define __DMX_DEMO_MANAGER_H__
 
 #include "Util/Color.h"
 #include "Lumenizers/BreathingLuminance.h"
@@ -11,21 +11,12 @@
 #include "Lumenizers/AmuletSelfTestLuminance.h"
 #include "Lumenizers/MorseCodeLuminance.h"
 #include "Colorizers/ColorizerSequence.h"
+#include "Colorizers/RainbowColors.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"
 #include "Pixels/Colorizeable.h"
 
-struct DmxEffectSelector : ReferenceCounted, protected ColorizeableHolder
+struct DmxDemoManager
 {
-    //----------------------------------------------------------------------------------------------
-    // Construction
-    //----------------------------------------------------------------------------------------------
-protected:
-
-    DmxEffectSelector(Colorizeable* pColorizeable) : ColorizeableHolder()
-    {
-        ColorizeableHolder::setColorizeable(pColorizeable);
-    }
-
     //----------------------------------------------------------------------------------------------
     // Demo management
     //----------------------------------------------------------------------------------------------
@@ -50,8 +41,8 @@ public:
 
     static void setDemo(Colorizeable* pPixels, Demo demo, Colorizer* pSelfTestColor, Lumenizer* pSelfTestLuminance) // nb: _usual_ ref counting rules
     {
-        pPixels->ownColorizer(DmxEffectSelector::demoColorizer(demo, pSelfTestColor));
-        pPixels->ownLumenizer(DmxEffectSelector::demoLumenizer(demo, pSelfTestLuminance));
+        pPixels->ownColorizer(DmxDemoManager::demoColorizer(demo, pSelfTestColor));
+        pPixels->ownLumenizer(DmxDemoManager::demoLumenizer(demo, pSelfTestLuminance));
     }
 
     static Colorizer* demoColorizer(Demo demo, Colorizer* pSelfTest)
@@ -126,8 +117,6 @@ public:
         }
         return pResult;
     }
-
-
 };
 
 #endif

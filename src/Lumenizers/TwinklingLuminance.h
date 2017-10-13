@@ -104,24 +104,28 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
     {
-        Lumenizer::processParameterBlock(parameterBlock);
+        Lumenizer::processDmxColorLuminance(parameterBlock);
+        processDmxEffectSpeedControl(parameterBlock.luminance());
+    }
 
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
+    {
         // 0 is default; otherwise scale from 0 to twice default (so default is also in middle)
         int msTwinklePause = msTwinklePauseDefault;
-        if (parameterBlock.luminanceSpeed()!=0)
+        if (luminance.speed()!=0)
         {
-            float speed = 1 - parameterBlock.luminanceSpeedLevel(false);
+            float speed = 1 - luminance.speedLevel(false);
             float msMin = 0;
             float msMax = 2 * msTwinklePauseDefault;
             msTwinklePause = scaleRange(speed, 0, 1, msMin, msMax);
         }
 
         int msTwinkleBreathe = msTwinkleBreatheDefault;
-        if (parameterBlock.luminanceControl()!=0)
+        if (luminance.control()!=0)
         {
-            float speed = 1 - DmxEffectSpeedControl::nonDirectionalSpeedLevel(parameterBlock.luminanceControl());
+            float speed = 1 - DmxEffectSpeedControl::nonDirectionalSpeedLevel(luminance.control());
             float msMin = 100;
             float msMax = 2 * msTwinkleBreatheDefault;
             msTwinkleBreathe = scaleRange(speed, 0, 1, msMin, msMax);

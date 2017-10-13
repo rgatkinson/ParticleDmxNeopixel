@@ -76,11 +76,15 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
     {
-        Lumenizer::processParameterBlock(parameterBlock);
+        Lumenizer::processDmxColorLuminance(parameterBlock);
+        processDmxEffectSpeedControl(parameterBlock.luminance());
+    }
 
-        float breathingRate = fabs(parameterBlock.luminanceSpeedLevel());
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
+    {
+        float breathingRate = fabs(luminance.speedLevel());
         float ms = breathingRate == 0
             ? msBreatheDefault
             : scaleRange(breathingRate, 0, 1, msBreatheMin, 2 * msBreatheDefault);

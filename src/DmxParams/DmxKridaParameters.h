@@ -1,8 +1,8 @@
 //
-// KridaParameterBlock.h
+// DmxKridaParameters.h
 //
-#ifndef __KDRIDA_I2C_PARAMETER_BLOCK_H__
-#define __KDRIDA_I2C_PARAMETER_BLOCK_H__
+#ifndef __DMX_KRIDA_PARAMTERS_H__
+#define __DMX_KRIDA_PARAMTERS_H__
 
 #include "Util/Misc.h"
 #include "DmxParams/DmxDimmer.h"
@@ -30,16 +30,18 @@ struct DmxKridaParameters
     //----------------------------------------------------------------------------------------------
 protected:
 
-    DmxKridaDimmer* _pData; // how many?
+    DmxKridaDimmer* _rgDimmers;
+    int             _dimmerCount;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
 
-    DmxKridaParameters(void* pv)
+    DmxKridaParameters(void* pv, int dimmerCount)
     {
-        _pData = reinterpret_cast<DmxKridaDimmer*>(pv);
+        _rgDimmers = reinterpret_cast<DmxKridaDimmer*>(pv);
+        _dimmerCount = dimmerCount;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -47,9 +49,9 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    const DmxKridaChannel& channel(int i) const
+    const DmxKridaDimmer& dimmer(int i) const
     {
-        return _pData->channel(i);
+        return _rgDimmers[i];
     }
 };
 

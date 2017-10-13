@@ -10,6 +10,6 @@ void KridaDimmerChannel::setValue(Value value)
     if (_value != value)
     {
         _value = value;
-        _pDimmer->noteChannelValueChange(this);
+        _pParent->noteChannelValueChange(this);
     }
 }

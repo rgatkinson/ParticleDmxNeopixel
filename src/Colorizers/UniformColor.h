@@ -43,7 +43,7 @@ public:
     {
         if (_color != color)
         {
-            INFO("UniformColor: color=0x%08x", color);
+            INFO("UniformColor: color=0x%08x", color.value());
             _color = color;
             _colorUpdateDeadline.expire();
         }
@@ -54,9 +54,9 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock) override
     {
-        Colorizer::processParameterBlock(parameterBlock);
+        Colorizer::processDmxColorLuminance(parameterBlock);
         Color colorDesired = parameterBlock.effectiveColor();
         setColor(colorDesired);
     }
@@ -88,7 +88,7 @@ public:
     void report() override
     {
         Colorizer::report(); // pro forma
-        INFO("UniformColor: color=0x%04x", _color);
+        INFO("UniformColor: color=0x%04x", _color.value());
     }
 };
 

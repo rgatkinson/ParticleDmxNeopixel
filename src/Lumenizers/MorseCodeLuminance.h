@@ -103,28 +103,32 @@ protected:
 
 public:
 
-    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
     {
-        Lumenizer::processParameterBlock(parameterBlock);
+        Lumenizer::processDmxColorLuminance(parameterBlock);
+        processDmxEffectSpeedControl(parameterBlock.luminance());
+    }
 
-        if (parameterBlock.luminanceSpeed() == 0)
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
+    {
+        if (luminance.speed() == 0)
         {
             setDotLength(msDotLengthDefault);
         }
         else
         {
-            float speed = parameterBlock.luminanceSpeedLevel(false); // not directional
+            float speed = luminance.speedLevel(false); // not directional
             int msDotLength = scaleRangeDiscrete(1-speed, 0, 1, msDotLengthMin, msDotLengthLast+1);
             setDotLength(msDotLength);
         }
 
-        if (parameterBlock.luminanceControl() == 0)
+        if (luminance.control() == 0)
         {
             setMessage(Message::Default);
         }
         else
         {
-            Message message = scaleRangeDiscrete(parameterBlock.luminanceControl(), 1, 255, Message::First, Message::Last);
+            Message message = scaleRangeDiscrete(luminance.control(), 1, 255, Message::First, Message::Last);
             setMessage(message);
         }
     }

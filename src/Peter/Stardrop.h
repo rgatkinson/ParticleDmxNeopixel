@@ -143,19 +143,19 @@ public:
     {
         DmxColorLuminanceParameters parameterBlock = DmxColorLuminanceParameters(packet.pDmx(_dmxAddress));
 
-        _pColorEffectSelector->processParameterBlock(parameterBlock);
-        _pLuminanceEffectSelector->processParameterBlock(parameterBlock);
+        _pColorEffectSelector->processDmxColorLuminance(parameterBlock);
+        _pLuminanceEffectSelector->processDmxColorLuminance(parameterBlock);
 
         Colorizer* pColorizer = _pPixels->colorizer();
         if (pColorizer)
         {
-            pColorizer->processParameterBlock(parameterBlock);
+            pColorizer->processDmxColorLuminance(parameterBlock);
         }
 
         Lumenizer* pLumenizer = _pPixels->lumenizer();
         if (pLumenizer)
         {
-            pLumenizer->processParameterBlock(parameterBlock);
+            pLumenizer->processDmxColorLuminance(parameterBlock);
         }
     }
 };

@@ -4,12 +4,15 @@
 #ifndef __DMX_COLOR_EFFECT_SELECTOR_H__
 #define __DMX_COLOR_EFFECT_SELECTOR_H__
 
-#include "DmxParams/DmxColorLuminanceParameters.h"
-#include "DmxEffectSelector.h"
 #include "System/PersistentSettings.h"
+#include "System/PersistentStringSetting.h"
 #include "System/CloudVariable.h"
+#include "DmxParams/DmxColorLuminanceParameters.h"
+#include "Colorizers/RainbowColors.h"
+#include "Colorizers/AmuletSelfTestColorizer.h"
 
-struct DmxColorEffectSelector : DmxEffectSelector
+template<bool _refCounted>
+struct DmxColorEffectSelector : ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -40,9 +43,9 @@ public:
 
 protected:
 
-    Effect _currentEffect;
-    VolatileStringSetting _currentEffectName;
-    CloudVariable<decltype(_currentEffectName), String> _currentEffectCloud;
+    Effect          _currentEffect;
+    Colorizeable*   _pColorizeable;
+    int             _pixelCount;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -50,32 +53,31 @@ protected:
 public:
 
     DmxColorEffectSelector(Colorizeable* pColorizeable)
-        : DmxEffectSelector(pColorizeable),
-          _currentEffectCloud("colorEffect", &_currentEffectName, ReadWriteable::RO)
+        : _pColorizeable(nullptr)
     {
+        setRef(_pColorizeable, pColorizeable, _refCounted);
+        _pixelCount = pColorizeable ? 0 : pColorizeable->numberOfPixels();
         setEffect(Effect::None);
+    }
+    ~DmxColorEffectSelector()
+    {
+        releaseRef(_pColorizeable, _refCounted);
+    }
+
+    Effect effect()
+    {
+        return _currentEffect;
+    }
+    LPCSTR effectName()
+    {
+        return nameOf(effect());
     }
 
 protected:
 
-    ~DmxColorEffectSelector() override
-    {
-    }
-
     void setEffect(Effect effect)
     {
         _currentEffect = effect;
-        _currentEffectName.setValue(nameOf(effect));
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Loop
-    //----------------------------------------------------------------------------------------------
-public:
-
-    void begin()
-    {
-        _currentEffectCloud.begin();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -83,12 +85,12 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    static Effect colorEffect(DmxColorLuminanceParameters& parameterBlock)
+    static Effect colorEffect(const DmxColorLuminanceParameters& parameterBlock)
     {
         return scaleRangeDiscrete(parameterBlock.colorEffect(), 0, 255, Effect::First, Effect::Last);
     }
 
-    void processParameterBlock(DmxColorLuminanceParameters& parameterBlock)
+    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
     {
         Effect effectDesired = colorEffect(parameterBlock);
         if (_currentEffect != effectDesired)
@@ -114,7 +116,7 @@ public:
             {
                 if (!pColorizer->sameAs(_pColorizeable->colorizer()))
                 {
-                    INFO("switching to color effect %s", _currentEffectName.value().c_str());
+                    INFO("switching to color effect %s", effectName());
                     _pColorizeable->ownColorizer(pColorizer);
                 }
                 else

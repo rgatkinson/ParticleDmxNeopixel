@@ -7,6 +7,7 @@
 #include "Util/Deadline.h"
 #include "Util/ReferenceCounted.h"
 #include "KridaDimmerChannel.h"
+#include "DmxParams/DmxKridaParameters.h"
 
 // All the documentation we have :-( :
 //
@@ -51,11 +52,11 @@ protected:
     static const int _channelAddressFirst = 0x80;
     static const int _msTransmissionInterval = 100;
 
-    Deadline           _transmissionDeadline;
-    bool               _channelDirty;
-    Type               _type;
-    int                _dipSwitch;
-    KridaDimmerChannel _channels[_channelCount];
+    Deadline            _transmissionDeadline;
+    bool                _channelDirty;
+    Type                _type;
+    int                 _dipSwitch;
+    KridaDimmerChannel* _channels[_channelCount];
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -64,7 +65,7 @@ public:
 
     KridaDimmer(int dipSwitch, Type type = Type::PCF8574AT)
         : _transmissionDeadline(_msTransmissionInterval),
-          _channels { {this}, {this}, {this}, {this} }
+          _channels { new KridaDimmerChannel{this}, new KridaDimmerChannel{this}, new KridaDimmerChannel{this}, new KridaDimmerChannel{this} }
     {
         _type = type;
         _dipSwitch = dipSwitch;
@@ -84,6 +85,10 @@ protected:
 
     ~KridaDimmer() override
     {
+        for (int i = 0; i < _channelCount; i++)
+        {
+            releaseRef(_channels[i]);
+        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -113,7 +118,7 @@ protected:
         for (int channel = 0; channel < _channelCount; channel++)
         {
             Wire.write(_channelAddressFirst + channel);
-            Wire.write(_channels[channel].value());
+            Wire.write(_channels[channel]->value());
         }
         Wire.endTransmission();
     }
@@ -132,10 +137,18 @@ public:
     {
         _transmissionDeadline.expire();
         _channelDirty = true;
+        for (int i = 0; i < _channelCount; i++)
+        {
+            _channels[i]->begin();
+        }
     }
 
     virtual void loop()
     {
+        for (int i = 0; i < _channelCount; i++)
+        {
+            _channels[i]->loop();
+        }
         if (_transmissionDeadline.hasExpired())
         {
             transmit();
@@ -146,6 +159,22 @@ public:
 
     virtual void report()
     {
+        for (int i = 0; i < _channelCount; i++)
+        {
+            _channels[i]->report();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Packets
+    //----------------------------------------------------------------------------------------------
+
+    void processDmxKridaDimmer(const DmxKridaDimmer& parameters)
+    {
+        for (int i = 0; i < _channelCount; i++)
+        {
+            _channels[i]->processDmxKridaChannel(parameters.channel(i));
+        }
     }
 };
 
