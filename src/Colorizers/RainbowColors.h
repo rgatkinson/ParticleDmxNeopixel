@@ -47,7 +47,12 @@ public:
     void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock) override
     {
         Colorizer::processDmxColorLuminance(parameterBlock);
-        float speed = parameterBlock.colorSpeedLevel();
+        processDmxEffectSpeedControl(parameterBlock.color());
+    }
+
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& color)
+    {
+        float speed = color.speedLevel();
         int pixelIncrement = speed > 0 ? 1 : (speed < 0 ? -1 : 0);
 
         const float msMin = 5;      const float maxPerSecond = 1000 / msMin;
@@ -57,16 +62,16 @@ public:
         int msInterval = 1000 / perSecond;
 
         // Zero is a non-stopped default
-        if (parameterBlock.colorSpeed()==0)
+        if (color.speed()==0)
         {
             pixelIncrement = -1;
             msInterval = msIntervalDefault;
         }
 
         // Zero is a pleasant default
-        float fraction = parameterBlock.colorControl()==0
+        float fraction = color.control()==0
             ? wheelFractionVisibleDefault
-            : scaleRange(parameterBlock.colorControl(), 0, 255, 0, 1);
+            : scaleRange(color.control(), 0, 255, 0, 1);
 
         if (pixelIncrement != _pixelIncrement || msInterval != _timer.msDuration() || fraction != _wheelFractionVisible)
         {

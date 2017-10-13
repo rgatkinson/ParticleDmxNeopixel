@@ -85,14 +85,19 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    static Effect colorEffect(const DmxColorLuminanceParameters& parameterBlock)
+    static Effect colorEffect(const DmxEffectSpeedControl& color)
     {
-        return scaleRangeDiscrete(parameterBlock.colorEffect(), 0, 255, Effect::First, Effect::Last);
+        return scaleRangeDiscrete(color.effect(), 0, 255, Effect::First, Effect::Last);
     }
 
     void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
     {
-        Effect effectDesired = colorEffect(parameterBlock);
+        processDmxEffectSpeedControl(parameterBlock.color());
+    }
+
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& color)
+    {
+        Effect effectDesired = colorEffect(color);
         if (_currentEffect != effectDesired)
         {
             setEffect(effectDesired);

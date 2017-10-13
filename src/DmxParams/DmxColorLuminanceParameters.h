@@ -47,19 +47,9 @@ public:
     byte green() const            { return _pData->redGreenBlue.green(); }
     byte blue() const             { return _pData->redGreenBlue.blue(); }
 
-    const DmxDimmer& dimmer() const { return _pData->dimmer; }
-
-    const DmxEffectSpeedControl& color() const { return _pData->color; }
-    byte colorEffect() const      { return _pData->color.effect(); }
-    byte colorSpeed() const       { return _pData->color.speed(); }
-    byte colorControl() const     { return _pData->color.control(); }
-
+    const DmxDimmer&             dimmer()    const { return _pData->dimmer; }
+    const DmxEffectSpeedControl& color()     const { return _pData->color; }
     const DmxEffectSpeedControl& luminance() const { return _pData->luminance; }
-
-    float colorSpeedLevel(bool directional = true) const
-    {
-        return _pData->color.speedLevel(directional);
-    }
 
 public:
 

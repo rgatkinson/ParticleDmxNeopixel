@@ -98,7 +98,7 @@ public:
     void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
     {
         // Use a self test if the COLOR it set to self test
-        Effect effectDesired = DmxColorEffectSelector<true>::Effect::SelfTest == DmxColorEffectSelector<true>::colorEffect(parameterBlock)
+        Effect effectDesired = DmxColorEffectSelector<true>::Effect::SelfTest == DmxColorEffectSelector<true>::colorEffect(parameterBlock.color())
             ? Effect::SelfTest
             : luminanceEffect(parameterBlock.luminance());
 
