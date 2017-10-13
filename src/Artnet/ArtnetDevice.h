@@ -24,11 +24,13 @@ protected:
     ArtnetReportCode    _reportCode = ArtnetReportCode::PowerOk;
     int                 _pollReplyCount  = 0;
 
+    PersistentIntSetting                            _dmxUniverse;
     PersistentIntSetting                            _dmxAddress;
     int                                             _dmxCount;
     PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
+    CloudVariable<int>                              _dmxUniverseCloudVar;
     CloudVariable<int>                              _dmxAddressCloudVar;
     ComputedCloudVariable<int>                      _dmxLastCloudVar;
     CloudVariable<LPCSTR>                           _nameCloudVar;
@@ -39,10 +41,12 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
     ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, int dmxCount, LPCSTR name="<name>", LPCSTR description="<description>")
-        : _dmxAddress(dmxAddress),
+        : _dmxUniverse(0),
+          _dmxAddress(dmxAddress),
           _dmxCount(dmxCount),
           _name(name),
           _description(description),
+          _dmxUniverseCloudVar("dmxUniverse", &_dmxUniverse),
           _dmxAddressCloudVar("dmxAddrFirst", &_dmxAddress),
           _dmxLastCloudVar("dmxAddrLast", [this]() { return dmxLast(); }),
           _nameCloudVar("name", &_name),
@@ -69,6 +73,10 @@ protected:
     // Accessing
     //----------------------------------------------------------------------------------------------
 public:
+    int dmxUniverse()
+    {
+        return _dmxUniverse.value();
+    }
     DMX_ADDRESS dmxAddress()
     {
         return _dmxAddress.value();
@@ -134,6 +142,7 @@ public:
 public:
     virtual void begin()
     {
+        _dmxUniverseCloudVar.begin();
         _dmxAddressCloudVar.begin();
         _dmxLastCloudVar.begin();
         _nameCloudVar.begin();
@@ -203,7 +212,10 @@ protected:
                             ArtDmxPacket dmxPacket(pbPacket, cbPacket);
                             if (_pOwner != NULL)
                             {
-                                _pOwner->onDmxPacket(dmxPacket);
+                                if (dmxPacket.universe() == dmxUniverse())
+                                {
+                                    _pOwner->onDmxPacket(dmxPacket);
+                                }
                             }
                         }
                         break;
