@@ -25,7 +25,7 @@ protected:
     int                 _pollReplyCount  = 0;
 
     PersistentIntSetting                            _dmxAddress;
-    VolatileIntSetting                              _dmxCount;
+    int                                             _dmxCount;
     PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
     PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
 
@@ -89,11 +89,11 @@ public:
 
     int dmxCount()
     {
-        return _dmxCount.value();
+        return _dmxCount;
     }
     void setDmxCount(int dmxCount)
     {
-        _dmxCount.setValue(dmxCount);
+        _dmxCount = dmxCount;
     }
 
     void setName(LPCSTR sz)

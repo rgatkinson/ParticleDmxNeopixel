@@ -117,47 +117,4 @@ struct PersistentIntSetting : PersistentValueSetting<int>
     }
 };
 
-//==================================================================================================
-// VolatileValueSetting
-//==================================================================================================
-
-template <typename T>
-struct VolatileValueSetting : TypedSetting<T>
-{
-    T _value;
-
-    VolatileValueSetting() : VolatileValueSetting(T{}) {}
-    VolatileValueSetting(const T& defaultValue) : _value(defaultValue) {}
-
-    T               value()                         { return _value; }
-    virtual String  valueAsString()                 { return "<subclassResponsibility>"; }
-    virtual void    setValueString(const String& string)  { /*subclassResponsibility */ }
-
-    void setValue(const T& value)
-    {
-        if (_value != value)
-        {
-            _value = value;
-        }
-    }
-};
-
-//==================================================================================================
-// VolatileIntSetting
-//==================================================================================================
-
-struct VolatileIntSetting : VolatileValueSetting<int>
-{
-    VolatileIntSetting() : VolatileIntSetting(0) {}
-    VolatileIntSetting(int defaultValue) : VolatileValueSetting<int>(defaultValue) {}
-
-    virtual String valueAsString() override
-    {
-        return String::format("%d", value());
-    }
-    virtual void setValueString(const String& value) override
-    {
-        VolatileValueSetting<int>::setValue(value.toInt());
-    }
-};
 #endif

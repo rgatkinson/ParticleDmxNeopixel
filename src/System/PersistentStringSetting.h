@@ -96,25 +96,5 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     }
 };
 
-//==================================================================================================
-// VolatileStringSetting
-//==================================================================================================
-
-struct VolatileStringSetting : TypedSetting<String>
-{
-    String _value;
-
-    VolatileStringSetting() : VolatileStringSetting("") {}
-    VolatileStringSetting(LPCSTR value) : _value(value) {}
-    VolatileStringSetting(const String& value) : _value(value) {}
-
-    String          value()                             { return _value; }
-    const String&   valueRef()                          { return _value; }
-    String          valueAsString()                     { return value(); }
-    void            setValue(const String& value)       { _value = value; }
-    void            setValueString(const String& value) { _value = value; }
-
-    void            setValue(LPCSTR value)              { _value = value; }
-};
 
 #endif
