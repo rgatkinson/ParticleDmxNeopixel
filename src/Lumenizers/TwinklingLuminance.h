@@ -66,7 +66,7 @@ public:
         return false;
     }
 
-    BRIGHTNESS currentBrightness(int iPixel) override
+    BRIGHTNESS currentBrightness(int iPixel, bool allowGammaCorrection) override
     {
         return rawCurrentBrightness(_twinklers[iPixel].currentLevel());
     }

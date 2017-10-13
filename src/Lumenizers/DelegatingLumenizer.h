@@ -123,15 +123,15 @@ public:
     // Brightness
     //----------------------------------------------------------------------------------------------
 
-    BRIGHTNESS currentBrightness(int iPixel) override
+    BRIGHTNESS currentBrightness(int iPixel, bool allowGammaCorrection) override
     {
         if (_pLumenizer)
         {
-            return _pLumenizer->currentBrightness(iPixel);
+            return _pLumenizer->currentBrightness(iPixel, allowGammaCorrection);
         }
         else
         {
-            return Lumenizer::currentBrightness(iPixel);
+            return Lumenizer::currentBrightness(iPixel, allowGammaCorrection);
         }
     }
 

@@ -141,7 +141,7 @@ public:
             {
                 if (_pLumenizer && (_pLumenizer->hasPixelizedBrightness() || iPixel==0))
                 {
-                    brightness = _pLumenizer->currentBrightness(iPixel);
+                    brightness = _pLumenizer->currentBrightness(iPixel, true);
                 }
                 Color color = _pixelValues[iPixel];
                 _neopixels.setColorScaled(iPixel, color.red(), color.green(), color.blue(), brightness);

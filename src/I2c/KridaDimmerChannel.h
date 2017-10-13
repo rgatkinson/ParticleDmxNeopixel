@@ -20,8 +20,8 @@ struct KridaDimmerChannel : ReferenceCounted, Lumenizeable
 
     typedef int Value;
     static const Value ValueFirst = 0;
-    static const Value ValueOff   = ValueFirst;
     static const Value ValueLast  = 100;
+    static const Value ValueOff   = ValueLast;
 
 private:
 
@@ -72,6 +72,14 @@ public:
 
     void setValue(Value value);
 
+    void setBrightness(int brightness)
+    {
+        // Careful: 0 is ON and 100 is OFF!
+        brightness = BRIGHTNESS_LAST - (brightness - BRIGHTNESS_FIRST);
+        Value value = scaleRangeDiscrete(brightness, BRIGHTNESS_FIRST, BRIGHTNESS_LAST, ValueFirst, ValueLast);
+        setValue(value);
+    }
+
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
@@ -89,6 +97,9 @@ public:
         if (_pLumenizer)
         {
             _pLumenizer->loop();
+
+            BRIGHTNESS brightness = brightness = _pLumenizer->currentBrightness(0, false);
+            setBrightness(brightness);
         }
     }
 

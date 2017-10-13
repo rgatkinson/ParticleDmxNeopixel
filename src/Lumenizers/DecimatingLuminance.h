@@ -20,7 +20,7 @@ protected:
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
-    
+
     DecimatingLuminance(int numerator, int denominator, Lumenizer* pLumenizer) : DelegatingLumenizer(Flavor::Decimating, pLumenizer)
     {
         _numerator = numerator;
@@ -36,7 +36,7 @@ public:
         return true;
     }
 
-    BRIGHTNESS currentBrightness(int iPixel) override
+    BRIGHTNESS currentBrightness(int iPixel, bool allowGammaCorrection) override
     {
         if (_denominator != 0 && modOne(iPixel, _denominator) <= _numerator)
         {
@@ -44,7 +44,7 @@ public:
         }
         else
         {
-            return DelegatingLumenizer::currentBrightness(iPixel);
+            return DelegatingLumenizer::currentBrightness(iPixel, allowGammaCorrection);
         }
     }
 };

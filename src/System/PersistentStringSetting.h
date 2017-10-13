@@ -96,5 +96,4 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     }
 };
 
-
 #endif

@@ -9,6 +9,8 @@
 #include "DmxParams/DmxColorLuminanceParameters.h"
 
 const BRIGHTNESS BRIGHTNESS_MIN = 0;
+const BRIGHTNESS BRIGHTNESS_FIRST = 0;
+const BRIGHTNESS BRIGHTNESS_LAST = 255;
 const BRIGHTNESS BRIGHTNESS_MAX = 256;
 
 struct Lumenizer : Durable
@@ -123,11 +125,11 @@ public:
         // INFO("setDimmerLevel: %f flavor=%s", dimmerLevel, nameOf(_flavor));
     }
 
-    virtual BRIGHTNESS currentBrightness(int iPixel)
+    virtual BRIGHTNESS currentBrightness(int iPixel, bool allowGammaCorrection)
     {
         // Ignore iPixel
         BRIGHTNESS result = this->rawCurrentBrightness(_currentLevel);
-        if (usesGammaCorrection())
+        if (allowGammaCorrection && usesGammaCorrection())
         {
             result = gammaCorrect(result);
         }
