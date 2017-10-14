@@ -16,7 +16,7 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     //----------------------------------------------------------------------------------------------
 
     String  _defaultValue;
-    char    _rgchValue[_cchValue];  // always null terminated
+    char    _rgchValue[_cchValue];  // always null terminated, include that in your count!
 
     //----------------------------------------------------------------------------------------------
     // Construction
