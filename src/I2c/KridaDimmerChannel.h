@@ -97,7 +97,6 @@ public:
         if (_pLumenizer)
         {
             _pLumenizer->loop();
-
             BRIGHTNESS brightness = _pLumenizer->currentBrightness(0, false);
             setBrightness(brightness);
         }

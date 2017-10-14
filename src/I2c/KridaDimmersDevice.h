@@ -96,7 +96,7 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    virtual void begin()
+    void begin()
     {
         _artnet.begin();
         _dimmerCountCloudVar.begin();
@@ -106,7 +106,7 @@ public:
         }
     }
 
-    virtual void loop()
+    void loop()
     {
         _artnet.loop();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)
@@ -115,7 +115,7 @@ public:
         }
     }
 
-    virtual void report()
+    void report()
     {
         _artnet.report();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)

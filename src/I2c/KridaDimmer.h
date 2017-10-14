@@ -48,6 +48,7 @@ struct KridaDimmer : ReferenceCounted
     //----------------------------------------------------------------------------------------------
 protected:
 
+    static const int _dipSwitchMax = 8;
     static const int _channelCount = 4;
     static const int _channelAddressFirst = 0x80;
     static const int _msTransmissionInterval = 100;
@@ -67,18 +68,8 @@ public:
         : _transmissionDeadline(_msTransmissionInterval),
           _channels { new KridaDimmerChannel{this}, new KridaDimmerChannel{this}, new KridaDimmerChannel{this}, new KridaDimmerChannel{this} }
     {
-        _type = type;
         _dipSwitch = dipSwitch;
-
-        // try to correct for erroneous type
-        if (!detect(i2cAddress()))
-        {
-            _type = other(_type);
-            if (!detect(i2cAddress()))
-            {
-                _type = other(type);  // may as well use what he said
-            }
-        }
+        _type = type;
     }
 
 protected:
@@ -98,7 +89,7 @@ public:
 
     int i2cAddress()
     {
-        return (int)_type + _dipSwitch;
+        return (int)_type + (_dipSwitchMax-1 - _dipSwitch);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -110,6 +101,28 @@ protected:
     {
         Wire.beginTransmission(i2cAddress);
         return Wire.endTransmission() == 0;
+    }
+
+    void detect()
+    {
+        // try to correct for erroneous type
+        if (!detect(i2cAddress()))
+        {
+            _type = other(_type);
+            if (!detect(i2cAddress()))
+            {
+                _type = other(_type);  // may as well use what he said
+                WARN("KRIDA: unable to detect dimmer addr=0x%02x", i2cAddress());
+            }
+            else
+            {
+                INFO("KRIDA: detected alt-dimmer addr=0x%02x", i2cAddress());
+            }
+        }
+        else
+        {
+            INFO("KRIDA: detected dimmer addr=0x%02x", i2cAddress());
+        }
     }
 
     void transmit()
@@ -133,8 +146,9 @@ public:
         _channelDirty = true;
     }
 
-    virtual void begin()
+    void begin()
     {
+        detect();
         _transmissionDeadline.expire();
         _channelDirty = true;
         for (int i = 0; i < _channelCount; i++)
@@ -143,7 +157,7 @@ public:
         }
     }
 
-    virtual void loop()
+    void loop()
     {
         for (int i = 0; i < _channelCount; i++)
         {
@@ -157,7 +171,7 @@ public:
         }
     }
 
-    virtual void report()
+    void report()
     {
         for (int i = 0; i < _channelCount; i++)
         {
