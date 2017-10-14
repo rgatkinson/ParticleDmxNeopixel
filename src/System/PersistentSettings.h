@@ -25,7 +25,7 @@ struct CloudSetting
 {
     virtual T      value() = 0;
     virtual String valueAsString() = 0;
-    virtual void   setValueString(const String& string) = 0;
+    virtual int    setValueString(const String& string) = 0;
 };
 
 template <typename T>

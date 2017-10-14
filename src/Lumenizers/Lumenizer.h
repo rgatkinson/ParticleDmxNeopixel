@@ -9,8 +9,8 @@
 #include "DmxParams/DmxColorLuminanceParameters.h"
 
 const BRIGHTNESS BRIGHTNESS_MIN = 0;
-const BRIGHTNESS BRIGHTNESS_FIRST = 0;
-const BRIGHTNESS BRIGHTNESS_LAST = 255;
+const BRIGHTNESS BRIGHTNESS_OFF = 0;
+const BRIGHTNESS BRIGHTNESS_FULL = 255;
 const BRIGHTNESS BRIGHTNESS_MAX = 256;
 
 struct Lumenizer : Durable

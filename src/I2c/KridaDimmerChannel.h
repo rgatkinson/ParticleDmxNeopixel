@@ -6,6 +6,7 @@
 
 #include "DmxParams/DmxKridaParameters.h"
 #include "Artnet/DmxLuminanceEffectSelector.h"
+#include "I2c/KridaGlobals.h"
 
 struct KridaDimmer;
 
@@ -21,7 +22,8 @@ struct KridaDimmerChannel : ReferenceCounted, Lumenizeable
     typedef int Value;
     static const Value ValueFirst = 0;
     static const Value ValueLast  = 100;
-    static const Value ValueOff   = ValueLast;
+    static const Value ValueOff   = ValueFirst;
+    static const Value ValueFull  = ValueLast;
 
 private:
 
@@ -42,6 +44,7 @@ public:
         _value = ValueOff;
         _pLumenizer = nullptr;
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector<false>(this);
+        KridaGlobals::createInstance();
     }
 
     ~KridaDimmerChannel()
@@ -65,19 +68,39 @@ public:
         return _pLumenizer;
     }
 
-    Value value() const
+    Value transmissionValue() const
     {
-        return _value;
+        // In actuality, 0 is full and 100 is off. Silly. But there you have it.
+        return ValueLast - _value;
     }
 
     void setValue(Value value);
 
     void setBrightness(int brightness)
     {
-        // Careful: 0 is ON and 100 is OFF!
-        brightness = BRIGHTNESS_LAST - (brightness - BRIGHTNESS_FIRST);
-        Value value = scaleRangeDiscrete(brightness, BRIGHTNESS_FIRST, BRIGHTNESS_LAST, ValueFirst, ValueLast);
-        setValue(value);
+        if (brightness == BRIGHTNESS_OFF)
+        {
+            // Honor blackout
+            setValue(ValueOff);
+        }
+        else
+        {
+            // Percent is of the range [ValueFirst, ValueLast]
+            int percentFirst = KridaGlobals::theInstance->percentFirst();
+            int percentLast  = KridaGlobals::theInstance->percentLast();
+
+            // Sanitize
+            percentFirst = max(0, min(100, percentFirst));
+            percentLast  = max(0, min(100, percentLast));
+            percentFirst = min(percentFirst, percentLast);
+            percentLast  = max(percentFirst, percentLast);
+
+            int valueFirst = scaleRangeDiscrete(percentFirst, 0, 100, ValueFirst, ValueLast);
+            int valueLast  = scaleRangeDiscrete(percentLast,  0, 100, ValueFirst, ValueLast);
+
+            Value value = scaleRangeDiscrete(brightness, BRIGHTNESS_OFF, BRIGHTNESS_FULL, valueFirst, valueLast);
+            setValue(value);
+        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -86,6 +109,7 @@ public:
 
     void begin()
     {
+        KridaGlobals::theInstance->begin();
         if (_pLumenizer)
         {
             _pLumenizer->begin();

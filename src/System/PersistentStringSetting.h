@@ -77,9 +77,10 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
             notifyChanged(oldValue.c_str());
         }
     }
-    void setValueString(const String& value) override
+    int setValueString(const String& value) override
     {
         setValue(value.c_str());
+        return value.length();
     }
 
     int size() override

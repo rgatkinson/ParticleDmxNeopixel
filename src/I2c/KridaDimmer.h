@@ -131,7 +131,7 @@ protected:
         for (int channel = 0; channel < _channelCount; channel++)
         {
             Wire.write(_channelAddressFirst + channel);
-            Wire.write(_channels[channel]->value());
+            Wire.write(_channels[channel]->transmissionValue());
         }
         Wire.endTransmission();
     }

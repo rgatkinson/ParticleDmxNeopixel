@@ -217,8 +217,7 @@ protected:
     int cloudSetValue(String value)
     {
         INFO("write %s=%s", super::_name.c_str(), value.c_str());
-        _setting->setValueString(value);
-        return 0;
+        return _setting->setValueString(value);
     }
 
     bool announce() override

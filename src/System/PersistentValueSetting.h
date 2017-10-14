@@ -77,9 +77,9 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
         NotifyableSetting<T>::notifyChanged(oldValue);
     }
 
-    virtual void setValueString(const String& string) override
+    virtual int setValueString(const String& string) override
     {
-        // subclass responsibility
+        return 0; // subclass responsibility
     }
     virtual String valueAsString() override
     {
@@ -113,9 +113,11 @@ struct PersistentIntSetting : PersistentValueSetting<int>
     {
         return String::format("%d", value());
     }
-    virtual void setValueString(const String& value) override
+    virtual int setValueString(const String& value) override
     {
-        PersistentValueSetting<int>::setValue(value.toInt());
+        int intValue = value.toInt();
+        PersistentValueSetting<int>::setValue(intValue);
+        return intValue;
     }
 };
 
