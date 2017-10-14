@@ -27,10 +27,10 @@ struct KridaDimmerChannel : ReferenceCounted, Lumenizeable
 
 private:
 
-    KridaDimmer*                        _pParent;
-    Value                               _value;
-    Lumenizer*                          _pLumenizer;
-    DmxLuminanceEffectSelector<false>*  _pLuminanceEffectSelector;
+    KridaDimmer*                 _pParent;
+    Value                        _value;
+    Lumenizer*                   _pLumenizer;
+    DmxLuminanceEffectSelector*  _pLuminanceEffectSelector;
 
 public:
 
@@ -43,7 +43,7 @@ public:
         _pParent = pDimmer;
         _value = ValueOff;
         _pLumenizer = nullptr;
-        _pLuminanceEffectSelector = new DmxLuminanceEffectSelector<false>(this);
+        _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(this);
         KridaGlobals::createInstance();
     }
 

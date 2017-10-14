@@ -19,8 +19,8 @@ protected:
 
     PixelSequence*              _pPixels;
     ArtnetDevice                _artnet;
-    DmxLuminanceEffectSelector<false>* _pLuminanceEffectSelector;
-    DmxColorEffectSelector<false>*     _pColorEffectSelector;
+    DmxLuminanceEffectSelector* _pLuminanceEffectSelector;
+    DmxColorEffectSelector*     _pColorEffectSelector;
 
     ComputedCloudVariable<String> _cloudLuminanceEffect;
     ComputedCloudVariable<String> _cloudColorEffect;
@@ -30,10 +30,10 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    NeoPixelDmxDevice(PixelSequence* pixels, LPCSTR shortName)
+    NeoPixelDmxDevice(PixelSequence* pixels /*takes ownership*/, LPCSTR shortName)
         : _pPixels(pixels),
-          _pLuminanceEffectSelector(new DmxLuminanceEffectSelector<false>(_pPixels)),
-          _pColorEffectSelector(new DmxColorEffectSelector<false>(_pPixels)),
+          _pLuminanceEffectSelector(new DmxLuminanceEffectSelector(_pPixels)),
+          _pColorEffectSelector(new DmxColorEffectSelector(_pPixels)),
           _cloudLuminanceEffect("lumEffect", [this]() { return _pLuminanceEffectSelector->effectName(); }),
           _cloudColorEffect("colorEffect", [this]() { return _pColorEffectSelector->effectName(); }),
           _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(), shortName)

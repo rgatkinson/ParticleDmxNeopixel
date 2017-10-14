@@ -12,7 +12,6 @@
 #include "Lumenizers/TwinklingLuminance.h"
 #include "DmxColorEffectSelector.h"
 
-template <bool _refCounted>
 struct DmxLuminanceEffectSelector : ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
@@ -46,6 +45,7 @@ public:
 
 protected:
 
+    static const bool _refCountLumenizeable = false;
     Effect          _currentEffect;
     Lumenizeable*   _pLumenizeable;
 
@@ -57,13 +57,13 @@ public:
         : _pLumenizeable(nullptr)
     {
         setEffect(Effect::None);
-        setRef(_pLumenizeable, pLumenizeable, _refCounted);
+        setRef(_pLumenizeable, pLumenizeable, _refCountLumenizeable);
     }
 
 protected:
     ~DmxLuminanceEffectSelector() override
     {
-        releaseRef(_pLumenizeable, _refCounted);
+        releaseRef(_pLumenizeable, _refCountLumenizeable);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ public:
     void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
     {
         // Use a self test if the COLOR it set to self test
-        Effect effectDesired = DmxColorEffectSelector<true>::Effect::SelfTest == DmxColorEffectSelector<true>::colorEffect(parameterBlock.color())
+        Effect effectDesired = DmxColorEffectSelector::Effect::SelfTest == DmxColorEffectSelector::colorEffect(parameterBlock.color())
             ? Effect::SelfTest
             : luminanceEffect(parameterBlock.luminance());
 

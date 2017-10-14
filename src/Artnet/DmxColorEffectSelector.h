@@ -11,7 +11,6 @@
 #include "Colorizers/RainbowColors.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"
 
-template<bool _refCounted>
 struct DmxColorEffectSelector : ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
@@ -43,6 +42,7 @@ public:
 
 protected:
 
+    static const bool _refCountColorizeable = false;
     Effect          _currentEffect;
     Colorizeable*   _pColorizeable;
     int             _pixelCount;
@@ -55,13 +55,13 @@ public:
     DmxColorEffectSelector(Colorizeable* pColorizeable)
         : _pColorizeable(nullptr)
     {
-        setRef(_pColorizeable, pColorizeable, _refCounted);
+        setRef(_pColorizeable, pColorizeable, _refCountColorizeable);
         _pixelCount = pColorizeable ? pColorizeable->numberOfPixels() : 0;
         setEffect(Effect::None);
     }
     ~DmxColorEffectSelector()
     {
-        releaseRef(_pColorizeable, _refCounted);
+        releaseRef(_pColorizeable, _refCountColorizeable);
     }
 
     Effect effect()
