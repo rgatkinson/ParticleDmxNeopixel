@@ -56,7 +56,7 @@ public:
         : _pColorizeable(nullptr)
     {
         setRef(_pColorizeable, pColorizeable, _refCounted);
-        _pixelCount = pColorizeable ? 0 : pColorizeable->numberOfPixels();
+        _pixelCount = pColorizeable ? pColorizeable->numberOfPixels() : 0;
         setEffect(Effect::None);
     }
     ~DmxColorEffectSelector()

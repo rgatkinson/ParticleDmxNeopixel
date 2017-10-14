@@ -19,7 +19,7 @@ struct Amulet : NeoPixelDmxDevice
 protected:
 
     DmxDemoManager::Demo _demo = DmxDemoManager::Demo::Default;
-    int                     _buttonToken;
+    int                  _buttonToken;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -48,8 +48,8 @@ public:
         Colorizer* pColorizer = new AmuletSelfTestColorizer();
         Lumenizer* pLumenizer = new AmuletSelfTestLuminance(2,3);
         DmxDemoManager::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
-        releaseRef(pColorizer);
         releaseRef(pLumenizer);
+        releaseRef(pColorizer);
     }
 
     //----------------------------------------------------------------------------------------------

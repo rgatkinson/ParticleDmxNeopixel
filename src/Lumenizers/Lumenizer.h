@@ -80,7 +80,7 @@ public:
     virtual void noteColorizeable(Colorizeable* pColorizeable)
     {
         _pColorizeable = pColorizeable;
-        _pixelCount = pColorizeable ? 0 : pColorizeable->numberOfPixels();
+        _pixelCount = pColorizeable ? pColorizeable->numberOfPixels() : 0;
     }
 
 protected:
