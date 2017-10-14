@@ -5,20 +5,21 @@
 #define __ARTNET_DEVICE_H__
 
 #include "ArtnetConstants.h"
+#include "System/NetworkStatusMonitor.h"
 #include "System/PersistentSettings.h"
 #include "System/PersistentValueSetting.h"
 #include "System/PersistentStringSetting.h"
 #include "System/CloudVariable.h"
 
-struct ArtnetDevice
+struct ArtnetDevice : SystemEventNotifications
 {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
 protected:
-    static const int cbUdpBuffer = 1024;
+    static const int _cbUdpBuffer = 1024;
     DmxPacketConsumer*  _pOwner;
-    bool                _initialized;
+    bool                _udpBegun;
     uint8_t*            _rgbUdpBuffer;
     UDP                 _udp;
     ArtnetReportCode    _reportCode = ArtnetReportCode::PowerOk;
@@ -53,20 +54,22 @@ public:
           _descriptionCloudVar("description", &_description)
     {
         _pOwner = pOwner;
-        _initialized = false;
-        _rgbUdpBuffer = reinterpret_cast<uint8_t*>(mallocNoFail(cbUdpBuffer));
+        _udpBegun = false;
+        _rgbUdpBuffer = reinterpret_cast<uint8_t*>(mallocNoFail(_cbUdpBuffer));
+        SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
 
     ~ArtnetDevice()
     {
+        SystemEventRegistrar::theInstance->unregisterSystemEvents(this);
         free(_rgbUdpBuffer);
     }
 
 protected:
-    void initialize()
+    void beginUdp()
     {
         _udp.begin(ARTNET_PORT);
-        _initialized = true;
+        _udpBegun = true;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -137,7 +140,31 @@ public:
     }
 
     //----------------------------------------------------------------------------------------------
-    // Main loop
+    // System Events
+    //----------------------------------------------------------------------------------------------
+
+    void onNetworkStatus(NetworkStatus netStatus) override
+    {
+        switch (netStatus)
+        {
+            case NetworkStatus::Disconnecting:
+            case NetworkStatus::Disconnected:
+                _udpBegun = false;
+                _udp.stop();
+                break;
+        }
+    }
+
+    void onCloudStatus(int cloudStatus) override
+    {
+    }
+
+    void onTimeChanged(int timeStatus) override
+    {
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Loop
     //----------------------------------------------------------------------------------------------
 public:
     virtual void begin()
@@ -151,11 +178,11 @@ public:
 
     virtual void loop()
     {
-        if (!_initialized && WiFi.ready())
+        if (!_udpBegun && NetworkStatusMonitor::theInstance->status()==NetworkStatus::Connected)
         {
-            initialize();
+            beginUdp();
         }
-        if (_initialized)
+        if (_udpBegun)
         {
             receivePacket();
         }
@@ -163,7 +190,7 @@ public:
 
     virtual void report()
     {
-        if (_initialized)
+        if (_udpBegun)
         {
             Log.info("local address = %s", WiFi.localIP().toString().c_str());
             Log.info("subnet mask = %s", WiFi.subnetMask().toString().c_str());
@@ -171,7 +198,7 @@ public:
         }
         else
         {
-            Log.info("Artnet not yet initialized");
+            Log.info("Artnet not yet beginUdpd");
         }
 
         Log.info("sizeof(ArtPollReplyPacketData)==%d", sizeof(ArtPollReplyPacketData));
@@ -187,10 +214,10 @@ protected:
     void receivePacket()
     {
         byte* pbPacket = &_rgbUdpBuffer[0];
-        int cbPacket = _udp.receivePacket(pbPacket, cbUdpBuffer);
+        int cbPacket = _udp.receivePacket(pbPacket, _cbUdpBuffer);
         if (cbPacket > 0)
         {
-            // INFO("packet received: cb=%d addr=%s", cbPacket, _udp.remoteIP().toString().c_str());
+            // INFO("packet received: cb=%d addr=%s port=%d", cbPacket, _udp.remoteIP().toString().c_str(), _udp.remotePort());
             ArtnetPacketHeader header(pbPacket, cbPacket);
             if (header.validate())
             {
