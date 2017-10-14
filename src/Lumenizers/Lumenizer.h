@@ -175,19 +175,24 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
+    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock)
     {
         processDmxDimmer(parameterBlock.dimmer());
+        processDmxEffectSpeedControl(parameterBlock.luminance());
     }
 
-    virtual void processDmxDimmer(const DmxDimmer& parameterBlock)
+    virtual void processDmxDimmer(const DmxDimmer& dimmer)
     {
-        float dimmerLevel = parameterBlock.dimmerLevel();
+        float dimmerLevel = dimmer.dimmerLevel();
         if (_dimmerLevel != dimmerLevel)
         {
             INFO("Lumenizer: dimmerLevel=%f", dimmerLevel);
             setDimmerLevel(dimmerLevel);
         }
+    }
+
+    virtual void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
+    {
     }
 
     //----------------------------------------------------------------------------------------------

@@ -104,14 +104,10 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance) override
     {
-        Lumenizer::processDmxColorLuminance(parameterBlock);
-        processDmxEffectSpeedControl(parameterBlock.luminance());
-    }
+        Lumenizer::processDmxEffectSpeedControl(luminance);
 
-    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
-    {
         // 0 is default; otherwise scale from 0 to twice default (so default is also in middle)
         int msTwinklePause = msTwinklePauseDefault;
         if (luminance.speed()!=0)

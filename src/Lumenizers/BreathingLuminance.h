@@ -22,7 +22,7 @@ protected:
 
     int _msPause;
     int _msBreathe;
-    Breather<> _breather;
+    Breather<triWave> _breather;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -53,21 +53,25 @@ protected:
         return false;
     }
 
-    void setPauseInterval(int msPauseInterval) // mostly for debugging / development
-    {
-        if (_msPause != msPauseInterval)
-        {
-            _msPause = msPauseInterval;
-            _breather.setPauseInterval(msPauseInterval);
-        }
-    }
-
     void setBreatheInterval(int msBreatheInterval)
     {
         if (_msBreathe != msBreatheInterval)
         {
             _msBreathe = msBreatheInterval;
             _breather.setBreatheInterval(msBreatheInterval);
+            _breather.begin();
+            INFO("BreathingLuminance: msBreatheInterval=%d", msBreatheInterval);
+        }
+    }
+
+    void setPauseInterval(int msPauseInterval) // mostly for debugging / development
+    {
+        if (_msPause != msPauseInterval)
+        {
+            _msPause = msPauseInterval;
+            _breather.setPauseInterval(msPauseInterval);
+            _breather.begin();
+            INFO("BreathingLuminance: msPauseInterval=%d", msPauseInterval);
         }
     }
 
@@ -76,15 +80,10 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance) override
     {
-        Lumenizer::processDmxColorLuminance(parameterBlock);
-        processDmxEffectSpeedControl(parameterBlock.luminance());
-    }
-
-    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
-    {
-        float breathingRate = fabs(luminance.speedLevel());
+        Lumenizer::processDmxEffectSpeedControl(luminance);
+        float breathingRate = fabs(luminance.speedLevel(false));
         float ms = breathingRate == 0
             ? msBreatheDefault
             : scaleRange(breathingRate, 0, 1, msBreatheMin, 2 * msBreatheDefault);
@@ -114,7 +113,6 @@ public:
         Lumenizer::report();
         INFO("BreathingLuminance: breathe interval=%d", _breather.breatheInterval());
     }
-
 };
 
 #endif

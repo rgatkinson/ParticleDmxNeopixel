@@ -145,19 +145,19 @@ protected:
     void* onUpdateIntVariable()
     {
         _lastValue = _fnGetValue();
-        INFO("read %s=%d", _name.c_str(), _lastValue);
+        // INFO("read %s=%d", _name.c_str(), _lastValue);
         return &_lastValue;
     }
     void* onUpdateLPCSTRVariable()
     {
         _lastValue = _fnGetValue();
-        INFO("read %s=%s", _name.c_str(), _lastValue);
+        // INFO("read %s=%s", _name.c_str(), _lastValue);
         return const_cast<LPSTR>(_lastValue);
     }
     void* onUpdateStringVariable()
     {
         _lastValue = _fnGetValue();
-        INFO("read %s=%s", _name.c_str(), _lastValue.c_str());
+        // INFO("read %s=%s", _name.c_str(), _lastValue.c_str());
         return const_cast<LPSTR>(_lastValue.c_str());
     }
 };

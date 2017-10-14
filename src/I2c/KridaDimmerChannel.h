@@ -145,6 +145,7 @@ public:
         if (_pLumenizer)
         {
             _pLumenizer->processDmxDimmer(parameterBlock.dimmer);
+            _pLumenizer->processDmxEffectSpeedControl(parameterBlock.luminance);
         }
     }
 };

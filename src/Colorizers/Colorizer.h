@@ -94,9 +94,18 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    virtual void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock)
+    void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock)
     {
-        // nothing, generically, to do
+        processEffectiveColor(parameterBlock);
+        processDmxEffectSpeedControl(parameterBlock.color());
+    }
+
+    virtual void processEffectiveColor(DmxColorLuminanceParameters& parameterBlock)
+    {
+    }
+
+    virtual void processDmxEffectSpeedControl(const DmxEffectSpeedControl& color)
+    {
     }
 
     //----------------------------------------------------------------------------------------------

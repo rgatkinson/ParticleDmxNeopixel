@@ -44,15 +44,9 @@ public:
 
     // colorSpeedLevel() controls rate and direction of rainbow rotation
     // colorControl() controls fraction of color wheel visible
-    void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& color) override
     {
-        Colorizer::processDmxColorLuminance(parameterBlock);
-        processDmxEffectSpeedControl(parameterBlock.color());
-    }
-
-    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& color)
-    {
-        float speed = color.speedLevel();
+        float speed = color.speedLevel(true);
         int pixelIncrement = speed > 0 ? 1 : (speed < 0 ? -1 : 0);
 
         const float msMin = 5;      const float maxPerSecond = 1000 / msMin;

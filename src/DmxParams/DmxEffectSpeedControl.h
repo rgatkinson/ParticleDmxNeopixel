@@ -25,10 +25,10 @@ public:
     byte speed()   const { return _speed;   }
     byte control() const { return _control; }
 
-    // directional:     [-1,1], neg=CW, pos=CCW
+    // directional:     [-1,1], often interpreted as neg=CW, pos=CCW
     // non-directional: [0,1]
     // zero is stopped
-    float speedLevel(bool directional = true) const
+    float speedLevel(bool directional) const
     {
         return directional
             ? directionalSpeedLevel(speed())

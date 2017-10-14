@@ -217,6 +217,28 @@ public:
             _pLumenizer->report();
         }
     }
+
+    //----------------------------------------------------------------------------------------------
+    // Dmx
+    //----------------------------------------------------------------------------------------------
+
+    virtual void processDmxDimmer(const DmxDimmer& dimmer) override
+    {
+        Lumenizer::processDmxDimmer(dimmer);
+        if (_pLumenizer)
+        {
+            _pLumenizer->processDmxDimmer(dimmer);
+        }
+    }
+
+    virtual void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance) override
+    {
+        Lumenizer::processDmxEffectSpeedControl(luminance);
+        if (_pLumenizer)
+        {
+            _pLumenizer->processDmxEffectSpeedControl(luminance);
+        }
+    }
 };
 
 #endif

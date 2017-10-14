@@ -6,7 +6,7 @@
 
 typedef float (*PFN_WAVE)(float, float);
 
-template <PFN_WAVE pfnWave=triWave>
+template <PFN_WAVE pfnWave>
 struct Breather
 {
     //----------------------------------------------------------------------------------------------

@@ -103,14 +103,9 @@ protected:
 
 public:
 
-    void processDmxColorLuminance(const DmxColorLuminanceParameters& parameterBlock) override
+    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance) override
     {
-        Lumenizer::processDmxColorLuminance(parameterBlock);
-        processDmxEffectSpeedControl(parameterBlock.luminance());
-    }
-
-    void processDmxEffectSpeedControl(const DmxEffectSpeedControl& luminance)
-    {
+        Lumenizer::processDmxEffectSpeedControl(luminance);
         if (luminance.speed() == 0)
         {
             setDotLength(msDotLengthDefault);

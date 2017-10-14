@@ -54,9 +54,8 @@ public:
     //----------------------------------------------------------------------------------------------
 public:
 
-    void processDmxColorLuminance(DmxColorLuminanceParameters& parameterBlock) override
+    void processEffectiveColor(DmxColorLuminanceParameters& parameterBlock) override
     {
-        Colorizer::processDmxColorLuminance(parameterBlock);
         Color colorDesired = parameterBlock.effectiveColor();
         setColor(colorDesired);
     }
