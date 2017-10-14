@@ -21,7 +21,7 @@ struct KridaDimmerChannel : ReferenceCounted, Lumenizeable
 
     typedef int Value;
     static const Value ValueFirst = 0;
-    static const Value ValueLast  = 100;
+    static const Value ValueLast  = 99;
     static const Value ValueOff   = ValueFirst;
     static const Value ValueFull  = ValueLast;
 
@@ -71,7 +71,7 @@ public:
     Value transmissionValue() const
     {
         // In actuality, 0 is full and 100 is off. Silly. But there you have it.
-        return ValueLast - _value;
+        return 100 - _value;
     }
 
     void setValue(Value value);

@@ -11,5 +11,6 @@ void KridaDimmerChannel::setValue(Value value)
     {
         _value = value;
         _pParent->noteChannelValueChange(this);
+        // INFO("KridaDimmerChannel: value=%d", _value);
     }
 }
