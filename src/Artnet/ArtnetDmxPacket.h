@@ -1,14 +1,14 @@
 //
-// ArtDmxPacket.h
+// ArtnetDmxPacket.h
 //
-#ifndef _ARTDMXPACKET_H_
-#define _ARTDMXPACKET_H_
+#ifndef __ARTNET_DMX_PACKET_H__
+#define __ARTNET_DMX_PACKET_H__
 
 #include "Util/Color.h"
 #include "DmxPacketConsumer.h"
 
 //==================================================================================================
-// ArtDmxPacket
+// ArtnetDmxPacket
 //==================================================================================================
 
 // Port-Address: one of the 32,768 possible addresses to which a DMX frame can be directed. The
@@ -33,10 +33,10 @@ struct PACKED ArtDmxPacketData : ArtnetPacketHeaderData
 };
 
 //==================================================================================================
-// ArtDmxPacket
+// ArtnetDmxPacket
 //==================================================================================================
 
-struct ArtDmxPacket : ArtnetPacketHeader
+struct ArtnetDmxPacket : ArtnetPacketHeader
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -50,12 +50,12 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    ArtDmxPacket(int channelCount) : ArtnetPacketHeader(ArtDmxPacketData::cb(channelCount), ArtnetOpMode::Poll)
+    ArtnetDmxPacket(int channelCount) : ArtnetPacketHeader(ArtDmxPacketData::cb(channelCount), ArtnetOpMode::Poll)
     {
         pData = reinterpret_cast<ArtDmxPacketData*>(ArtnetPacketHeader::pData);
     }
 
-    ArtDmxPacket(void* pb, int cb) : ArtnetPacketHeader(pb, cb)
+    ArtnetDmxPacket(void* pb, int cb) : ArtnetPacketHeader(pb, cb)
     {
         pData = reinterpret_cast<ArtDmxPacketData*>(ArtnetPacketHeader::pData);
     }

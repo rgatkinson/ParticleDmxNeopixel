@@ -32,7 +32,7 @@ bool ArtnetPacketHeader::validate()
                     break;
                 case ArtnetOpMode::Dmx:
                     {
-                        ArtDmxPacket dmxPacket(pData, cbData);
+                        ArtnetDmxPacket dmxPacket(pData, cbData);
                         result = dmxPacket.validate();
                     }
                     break;

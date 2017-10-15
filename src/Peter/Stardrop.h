@@ -139,7 +139,7 @@ public:
     // Packets
     //----------------------------------------------------------------------------------------------
 
-    void onDmxPacket(ArtDmxPacket& packet) override
+    void onDmxPacket(ArtnetDmxPacket& packet) override
     {
         DmxColorLuminanceParameters parameterBlock = DmxColorLuminanceParameters(packet.pDmx(_dmxAddress));
 

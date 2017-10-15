@@ -4,11 +4,11 @@
 #ifndef __DMX_PACKET_CONSUMER_H__
 #define __DMX_PACKET_CONSUMER_H__
 
-struct ArtDmxPacket;
+struct ArtnetDmxPacket;
 
 struct DmxPacketConsumer
 {
-    virtual void onDmxPacket(ArtDmxPacket& packet) = 0;
+    virtual void onDmxPacket(ArtnetDmxPacket& packet) = 0;
 };
 
 #endif

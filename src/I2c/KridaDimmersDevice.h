@@ -149,7 +149,7 @@ public:
         return dmxCount(dimmerCount());
     }
 
-    void onDmxPacket(ArtDmxPacket& packet) override
+    void onDmxPacket(ArtnetDmxPacket& packet) override
     {
         int dimmerCount = this->dimmerCount();
         byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount(dimmerCount));

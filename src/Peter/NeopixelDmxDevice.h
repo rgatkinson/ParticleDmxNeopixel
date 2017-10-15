@@ -88,7 +88,7 @@ public:
         return sizeof(DmxColorLuminanceParametersData);
     }
 
-    void onDmxPacket(ArtDmxPacket& packet) override
+    void onDmxPacket(ArtnetDmxPacket& packet) override
     {
         byte* dmxValuesPointer = packet.dmxValuesPointer(_artnet.dmxAddress(), dmxCount());
         if (dmxValuesPointer)

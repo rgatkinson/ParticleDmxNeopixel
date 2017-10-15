@@ -1,6 +1,10 @@
 //
 // ArtnetPollReplyPacket.h
 //
+#ifndef __ARTNET_POLL_REPLY_PACKET_H__
+#define __ARTNET_POLL_REPLY_PACKET_H__
+
+#include "Artnet/ArtnetPacketHeader.h"
 
 //==================================================================================================
 // ArtPollReplyPacketData
@@ -155,3 +159,5 @@ public:
         setNodeReport(sz);
     }
 };
+
+#endif

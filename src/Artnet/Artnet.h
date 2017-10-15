@@ -10,14 +10,14 @@
 struct ArtnetPacketHeader;
 struct ArtPollPacket;
 struct ArtPollReplyPacket;
-struct ArtDmxPacket;
+struct ArtnetDmxPacket;
 struct ArtnetDevice;
 
 #include "ArtnetConstants.h"
 #include "ArtnetPacketHeader.h"
 #include "ArtnetPollPacket.h"
 #include "ArtnetPollReplyPacket.h"
-#include "ArtDmxPacket.h"
+#include "ArtnetDmxPacket.h"
 #include "ArtnetDevice.h"
 
 #endif

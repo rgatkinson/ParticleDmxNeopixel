@@ -4,7 +4,11 @@
 #ifndef __ARTNET_DEVICE_H__
 #define __ARTNET_DEVICE_H__
 
-#include "ArtnetConstants.h"
+#include "Artnet/ArtnetConstants.h"
+#include "Artnet/DmxPacketConsumer.h"
+#include "Artnet/ArtnetPollPacket.h"
+#include "Artnet/ArtnetPollReplyPacket.h"
+#include "Artnet/ArtnetDmxPacket.h"
 #include "System/NetworkStatusMonitor.h"
 #include "System/PersistentSettings.h"
 #include "System/PersistentValueSetting.h"
@@ -250,7 +254,7 @@ protected:
                         break;
                     case ArtnetOpMode::Dmx:
                         {
-                            ArtDmxPacket dmxPacket(pbPacket, cbPacket);
+                            ArtnetDmxPacket dmxPacket(pbPacket, cbPacket);
                             if (_pOwner != NULL)
                             {
                                 if (dmxPacket.universe() == dmxUniverse())
@@ -315,10 +319,5 @@ protected:
         return result;
     }
 };
-
-decltype(ArtnetDevice::_dmxUniverse) SELECTANY ArtnetDevice::_dmxUniverse;
-decltype(ArtnetDevice::_dmxAddress)  SELECTANY ArtnetDevice::_dmxAddress;
-decltype(ArtnetDevice::_name)        SELECTANY ArtnetDevice::_name;
-decltype(ArtnetDevice::_description) SELECTANY ArtnetDevice::_description;
 
 #endif

@@ -1,6 +1,10 @@
 //
 // ArtnetPacketHeader.h
 //
+#ifndef __ARNET_PACKET_HEADER_H__
+#define __ARNET_PACKET_HEADER_H__
+
+#include "Util/TypeConversion.h"
 
 //==================================================================================================
 // ArtnetPacketHeaderData
@@ -86,3 +90,5 @@ public:
         TypeConversion::intToBytes((int)artnetOpMode, &pData->_opMode, 2, LittleEndian);
     }
 };
+
+#endif

@@ -1,6 +1,12 @@
 //
 // ArtnetPollPacket.h
 //
+#ifndef __ARNET_POLL_PACKET_H__
+#define __ARNET_POLL_PACKET_H__
+
+#include "Artnet/ArtnetPacketHeader.h"
+
+struct ArtnetDevice;
 
 //==================================================================================================
 // ArtPollPacketData
@@ -73,3 +79,5 @@ public:
 
     void pollReply(const IPAddress&, ArtnetDevice&);
 };
+
+#endif
