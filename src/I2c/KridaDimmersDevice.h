@@ -164,6 +164,4 @@ public:
     }
 };
 
-decltype(KridaDimmersDevice::_dimmerCount) SELECTANY KridaDimmersDevice::_dimmerCount;
-
 #endif

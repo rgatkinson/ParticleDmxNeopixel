@@ -345,10 +345,7 @@ public:
 
 };
 
-decltype(NetworkManager::_appName)      SELECTANY NetworkManager::_appName;
-decltype(NetworkManager::_sleepTimeout) SELECTANY NetworkManager::_sleepTimeout;
-decltype(NetworkManager::_sleepLength)  SELECTANY NetworkManager::_sleepLength;
-decltype(NetworkManager::theInstance)   SELECTANY NetworkManager::theInstance;
+decltype(NetworkManager::theInstance) SELECTANY NetworkManager::theInstance;
 
 inline void resetSleepTimer(LPCSTR sz)
 {

@@ -73,7 +73,5 @@ public:
 };
 
 decltype(KridaGlobals::theInstance)   SELECTANY KridaGlobals::theInstance;
-decltype(KridaGlobals::_percentFirst) SELECTANY KridaGlobals::_percentFirst;
-decltype(KridaGlobals::_percentLast)  SELECTANY KridaGlobals::_percentLast;
 
 #endif
