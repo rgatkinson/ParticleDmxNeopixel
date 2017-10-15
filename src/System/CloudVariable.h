@@ -20,6 +20,7 @@ struct AbstractCloudVariable : SystemEventNotifications
     //----------------------------------------------------------------------------------------------
 public:
     String                  _name;
+    bool                    _systemEventsRegistered = false;
     bool                    _begun = false;
     bool                    _connected = false;
     bool                    _announced = false;
@@ -38,7 +39,11 @@ public:
 
     void registerSystemEvents()
     {
-        SystemEventRegistrar::theInstance->registerSystemEvents(this);
+        if (!_systemEventsRegistered)
+        {
+            SystemEventRegistrar::theInstance->registerSystemEvents(this);
+            _systemEventsRegistered = true;
+        }
     }
 
     virtual ~AbstractCloudVariable()
@@ -59,7 +64,7 @@ public:
         if (cloudStatus==cloud_status_connected)
         {
             _connected = true;
-            announce();
+            announceIfReady();
         }
         else if (cloudStatus==cloud_status_disconnected)
         {
@@ -78,20 +83,35 @@ public:
 
     void begin()
     {
+        registerAndAnnounce();
+    }
+
+    void loop()
+    {
+        registerAndAnnounce();
+    }
+
+    void report()
+    {
+    }
+
+    void registerAndAnnounce()
+    {
         // Do this late because we want to be fully constructed. And there's little
         // point in doing earlier. So here works fine.
         registerSystemEvents();
 
         _begun = true;
-        announce();
+        announceIfReady();
     }
+
 
     //----------------------------------------------------------------------------------------------
     // Cloud
     //----------------------------------------------------------------------------------------------
 protected:
 
-    virtual bool announce()
+    virtual bool announceIfReady()
     {
         bool success = false;
         if (_begun && _connected && !_announced)
@@ -99,6 +119,10 @@ protected:
             _announced = true;
             INFO("announcing cloud variable name=%s", _name.c_str());
             success = announceVariable(_name, VALUE{});
+            if (!success)
+            {
+                WARN("failed to announce cloud variable name=%s", _name.c_str());
+            }
         }
         return success;
     }
@@ -220,9 +244,9 @@ protected:
         return _setting->setValueString(value);
     }
 
-    bool announce() override
+    bool announceIfReady() override
     {
-        bool success = super::announce();
+        bool success = super::announceIfReady();
         if (success && _writeable==ReadWriteable::RW)
         {
             success = Particle.function(super::_name, static_cast<int (CloudVariable::*)(String)>(&CloudVariable::cloudSetValue), this);

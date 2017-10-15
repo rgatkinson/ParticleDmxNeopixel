@@ -14,8 +14,16 @@
 
 extern void setCredentials();   // See AfterPasswords.h
 
+//==================================================================================================
+// Globals
+//==================================================================================================
+
 struct Globals
 {
+    //----------------------------------------------------------------------------------------------
+    // State
+    //----------------------------------------------------------------------------------------------
+
 public:
     static Globals* theInstance;
 
@@ -27,9 +35,13 @@ private:
     NetworkManager          _networkManager;
     int                     _buttonToken;
 
+    //----------------------------------------------------------------------------------------------
+    // Construction
+    //----------------------------------------------------------------------------------------------
+
 public:
-    Globals(LPCSTR szAppName) :
-        _networkManager(szAppName)
+    Globals(NetworkManager::InitializerType applications)
+        : _networkManager(applications)
     {
         theInstance = this;
         System.enableFeature(FEATURE_RESET_INFO);
@@ -53,10 +65,16 @@ public:
                 report();
             });
     }
+
+public:
     ~Globals()
     {
         SystemEventRegistrar::theInstance->unregisterButtonFinalClick(_buttonToken);
     }
+
+    //----------------------------------------------------------------------------------------------
+    // Accessing
+    //----------------------------------------------------------------------------------------------
 
 public:
 

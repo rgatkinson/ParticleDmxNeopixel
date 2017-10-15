@@ -7,12 +7,14 @@
 #define __KRIDA_DIMMERS_DEVICE_H__
 
 #include <vector>
+#include "System/Looper.h"
 #include "Artnet/Artnet.h"
 #include "Artnet/DmxPacketConsumer.h"
 #include "DmxParams/DmxKridaParameters.h"
-#include "KridaDimmer.h"
+#include "I2c/KridaDimmer.h"
+#include "I2c/KridaGlobals.h"
 
-struct KridaDimmersDevice : DmxPacketConsumer
+struct KridaDimmersDevice : DmxPacketConsumer, Looper, ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -29,7 +31,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    KridaDimmersDevice(LPCSTR shortName, int dimmerCount)
+    KridaDimmersDevice(int dimmerCount=1, LPCSTR shortName="Dimmers")
         : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(dimmerCount), shortName),
           _dimmerCount(dimmerCount),
           _dimmerCountCloudVar("dimmerCount", &_dimmerCount)
@@ -46,12 +48,14 @@ public:
         });
     }
 
-    virtual ~KridaDimmersDevice()
+    ~KridaDimmersDevice() override
     {
         clear();
         _dimmerCount.registerNotifyChanged(nullptr);
         Wire.end();
     }
+
+    DELEGATE_REF_COUNTING
 
     void clear()
     {
@@ -96,28 +100,33 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    void begin()
+    void begin() override
     {
         _artnet.begin();
         _dimmerCountCloudVar.begin();
+        KridaGlobals::theInstance->begin();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)
         {
             (*it)->begin();
         }
     }
 
-    void loop()
+    void loop() override
     {
         _artnet.loop();
+        _dimmerCountCloudVar.loop();
+        KridaGlobals::theInstance->loop();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)
         {
             (*it)->loop();
         }
     }
 
-    void report()
+    void report() override
     {
         _artnet.report();
+        _dimmerCountCloudVar.report();
+        KridaGlobals::theInstance->report();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)
         {
             (*it)->report();

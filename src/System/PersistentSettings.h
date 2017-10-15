@@ -16,7 +16,7 @@ struct PersistentSetting
 {
     virtual int     size() = 0;
     virtual void*   pointer() = 0;
-    virtual bool    loadDefault() = 0;
+    virtual bool    ensureLoaded() = 0;
     virtual bool    load(void* pv, int cb) = 0;
 };
 
@@ -75,7 +75,6 @@ struct PersistentSettings
     //----------------------------------------------------------------------------------------------
 protected:
 
-    static const int ibVersion = 0;
     std::vector<PersistentSetting*> _persistentSettings;
 
 public:
@@ -96,31 +95,99 @@ public:
     }
 
     //----------------------------------------------------------------------------------------------
-    // Storage
+    // Header management
     //----------------------------------------------------------------------------------------------
+
+    static const byte INVALID_BYTE = (byte)0xFF;
+    static const byte VALID_BYTE   = (byte)0;
+
+    static const int ibHeader = 0;
+
+    int ibDataFirst()
+    {
+        return ibHeader + sizeof(Header);
+    }
+    int ibValidMax()
+    {
+        return readHeader().ibValidMax();
+    }
+
+    struct Header
+    {
+        byte _flag;
+        int  _ibValidMax;
+
+        bool isInitialized()
+        {
+            return _flag != INVALID_BYTE;
+        }
+        bool initialize()
+        {
+            bool result = false;
+            if (!isInitialized())
+            {
+                _flag = 0;
+                _ibValidMax = 0;
+                result = true;
+            }
+            return result;
+        }
+        int ibValidMax()
+        {
+            return isInitialized() ? _ibValidMax : 0;
+        }
+        bool noteValidMax(int ibValidMax)
+        {
+            bool result = initialize();
+            if (_ibValidMax < ibValidMax)
+            {
+                _ibValidMax = ibValidMax;
+                result = true;
+            }
+            return result;
+        }
+    };
+
+    Header readHeader()
+    {
+        Header header;
+        readBytes(ibHeader, &header, sizeof(header));
+        return header;
+    }
+    void writeHeader(const Header& header)
+    {
+        writeBytes(ibHeader, &header, sizeof(header));
+    }
 
     bool isInitialized()
     {
-        return (int)EEPROM.read(ibVersion) != 0xFF;
+        return readHeader().isInitialized();
     }
     void saveInitialized()
     {
-        EEPROM.write(ibVersion, 0);
+        Header header = readHeader();
+        if (!isInitialized())
+        {
+            header.initialize();
+            writeHeader(header);
+        }
     }
-    void clear()
+    void noteValid(int ibValidMax)
     {
-        INFO("clearing EEPROM");
-        EEPROM.clear();
+        Header header = readHeader();
+        if (header.noteValidMax(ibValidMax))
+        {
+            writeHeader(header);
+        }
     }
 
-    int ibFirst()
-    {
-        return ibVersion + 1;
-    }
+    //----------------------------------------------------------------------------------------------
+    // Storage
+    //----------------------------------------------------------------------------------------------
 
     int ibFirst(PersistentSetting* persistentSetting)
     {
-        int ib = ibFirst();
+        int ib = ibDataFirst();
         for (auto it = _persistentSettings.begin(); it != _persistentSettings.end(); it++)
         {
             if ((*it)==persistentSetting)
@@ -137,37 +204,80 @@ public:
         int ibFirst = this->ibFirst(persistentSetting);
         if (ibFirst >= 0)
         {
+            persistentSetting->ensureLoaded();
             byte* pb = reinterpret_cast<byte*>(persistentSetting->pointer());
             int cb = persistentSetting->size();
-            #if USE_HAL
-                HAL_EEPROM_Put(ibFirst, pb, cb);
-            #else
-                for (int dib = 0; dib < cb; dib++)
-                {
-                    EEPROM.write(ibFirst + dib, pb[dib]);
-                }
-            #endif
+            writeBytes(ibFirst, pb, cb);
+            int ibMax = ibFirst + cb;
+            noteValid(ibMax);
         }
     }
 
-    void load(PersistentSetting* persistentSetting)
+    bool load(PersistentSetting* persistentSetting)
     {
+        bool result = false;
         int ibFirst = this->ibFirst(persistentSetting);
         if (ibFirst >= 0)
         {
             int cb = persistentSetting->size();
-            byte* pb = reinterpret_cast<byte*>(mallocNoFail(cb));
-            #if USE_HAL
-                HAL_EEPROM_Get(ibFirst, pb, cb);
-            #else
-                for (int dib = 0; dib < cb; dib++)
-                {
-                    pb[dib] = EEPROM.read(ibFirst + dib);
-                }
-            #endif
-            persistentSetting->load(pb, cb);
-            free(pb);
+            int ibMax = ibFirst + cb;
+
+            // Is the space occupied by the setting a valid region of data?
+            if (ibMax <= ibValidMax())
+            {
+                byte* pb = reinterpret_cast<byte*>(mallocNoFail(cb));
+                readBytes(ibFirst, pb, cb);
+                result = persistentSetting->load(pb, cb);
+                free(pb);
+            }
         }
+        return result;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Low level
+    //----------------------------------------------------------------------------------------------
+
+    void clear()
+    {
+        INFO("clearing EEPROM");
+        EEPROM.clear();
+    }
+
+    void writeBytes(int ibFirst, const byte* pb, int cb)
+    {
+        #if USE_HAL
+            HAL_EEPROM_Put(ibFirst, pb, cb);
+        #else
+            for (int dib = 0; dib < cb; dib++)
+            {
+                EEPROM.write(ibFirst + dib, pb[dib]);
+            }
+        #endif
+    }
+
+    void readBytes(int ibFirst, byte*pb, int cb)
+    {
+        #if USE_HAL
+            HAL_EEPROM_Get(ibFirst, pb, cb);
+        #else
+            for (int dib = 0; dib < cb; dib++)
+            {
+                pb[dib] = EEPROM.read(ibFirst + dib);
+            }
+        #endif
+    }
+
+    template <typename T>
+    void writeBytes(int ibFirst, T* pt, int cb)
+    {
+        return writeBytes(ibFirst, reinterpret_cast<const byte*>(pt), cb);
+    }
+
+    template <typename T>
+    void readBytes(int ibFirst, T* pt, int cb)
+    {
+        return readBytes(ibFirst, reinterpret_cast<byte*>(pt), cb);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -199,35 +309,15 @@ public:
 
         if (!isInitialized())
         {
-            // Tell all the settings that we're starting anew
-            for (auto it = _persistentSettings.begin(); it != _persistentSettings.end(); it++)
-            {
-                (*it)->loadDefault();
-            }
-
-            // Persistently store that new state
-            INFO("saving EEPROM");
-            for (auto it = _persistentSettings.begin(); it != _persistentSettings.end(); it++)
-            {
-                save(*it);
-            }
-
-            // Appear initialized next time
+            INFO("initializing EEPROM");
             saveInitialized();
         }
         else
         {
-            // Load from persistent storage
             INFO("loading EEPROM");
-            for (auto it = _persistentSettings.begin(); it != _persistentSettings.end(); it++)
-            {
-                load(*it);
-            }
         }
     }
 };
-
-
 
 #undef USE_HAL
 #endif

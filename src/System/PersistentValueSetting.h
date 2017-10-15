@@ -17,26 +17,70 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
     // State
     //----------------------------------------------------------------------------------------------
 
-    T _value;
-    T _default;
+private:
+    struct State
+    {
+    private:
+        T    _value;
+        byte _flag;
+    public:
+        State()
+        {
+            _flag = PersistentSettings::INVALID_BYTE;
+        }
+        bool isValid() const
+        {
+            return _flag != PersistentSettings::INVALID_BYTE;
+        }
+        const T& value() const
+        {
+            return _value;
+        }
+        void setValue(const T& value)
+        {
+            _value = value;
+            _flag = PersistentSettings::VALID_BYTE;
+        }
+    };
+
+    T       _default;
+    State   _state;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
+public:
 
     PersistentValueSetting() : PersistentValueSetting(T{})
     {
     }
     PersistentValueSetting(const T& defaultValue) : _default(defaultValue)
     {
-        loadDefault();
         PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
 
-    bool loadDefault() override
+    bool ensureLoaded() override
     {
-        _value = _default;
-        INFO("PersistentValueSetting: loaded default: %s", valueAsString().c_str());
+        bool result = _state.isValid();
+        if (!result)
+        {
+            result = PersistentSettings::theInstance->load(this);
+        }
+        if (!result)
+        {
+            result = loadDefault();
+            if (result)
+            {
+                save();
+            }
+        }
+        return result;
+    }
+
+    bool loadDefault()
+    {
+        _state.setValue(defaultValue());
+        trace("loaded default", _state.value());
         return true;
     }
     bool load(void* pv, int cb) override
@@ -44,30 +88,54 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
         if (cb == size())
         {
             memcpy(pointer(), pv, cb);
-            INFO("PersistentValueSetting: loaded: %s", valueAsString().c_str());
-            return true;
+            if (_state.isValid())
+            {
+                trace("loaded", _state.value());
+                return true;
+            }
         }
-        else
-        {
-            ERROR("PersistentValueSetting: invalid size: %d", cb);
-            return false;
-        }
+        return false;
+    }
+
+    int size() override
+    {
+        return sizeof(_state);
+    }
+    void* pointer() override
+    {
+        return &_state;
+    }
+    void save()
+    {
+        PersistentSettings::theInstance->save(this);
+        trace("saved", _state.value());
+    }
+
+    virtual void trace(LPCSTR message, T t)
+    {
+        INFO("PersistentValueSetting: %s: <subclass responsibility>", message);
     }
 
     //----------------------------------------------------------------------------------------------
     // Accessing
     //----------------------------------------------------------------------------------------------
 
+    T defaultValue() const
+    {
+        return _default;
+    }
+
     T value() override
     {
-        return _value;
+        ensureLoaded();
+        return _state.value();
     }
     void setValue(const T& value) override
     {
-        if (_value != value)
+        T oldValue = this->value();
+        if (oldValue != value)
         {
-            T oldValue = _value;
-            _value = value;
+            _state.setValue(value);
             save();
             notifyChanged(oldValue);
         }
@@ -85,19 +153,6 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
     {
         return String("<subclass responsibility>");
     }
-
-    int size() override
-    {
-        return sizeof(_value);
-    }
-    void* pointer() override
-    {
-        return &_value;
-    }
-    void save()
-    {
-        PersistentSettings::theInstance->save(this);
-    }
 };
 
 //==================================================================================================
@@ -107,7 +162,7 @@ struct PersistentValueSetting : PersistentSetting, NotifyableSetting<T>
 struct PersistentIntSetting : PersistentValueSetting<int>
 {
     PersistentIntSetting() : PersistentIntSetting(0) {}
-    PersistentIntSetting(int defaultValue) : PersistentValueSetting<int>(defaultValue) {}
+    PersistentIntSetting(int defaultValue) : PersistentValueSetting<int>(defaultValue) { }
 
     virtual String valueAsString() override
     {
@@ -118,6 +173,10 @@ struct PersistentIntSetting : PersistentValueSetting<int>
         int intValue = value.toInt();
         PersistentValueSetting<int>::setValue(intValue);
         return intValue;
+    }
+    void trace(LPCSTR message, int value) override
+    {
+        INFO("PersistentIntSetting: %s: %d", message, value);
     }
 };
 

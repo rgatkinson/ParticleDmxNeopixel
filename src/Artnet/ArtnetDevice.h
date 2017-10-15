@@ -178,6 +178,12 @@ public:
 
     virtual void loop()
     {
+        _dmxUniverseCloudVar.loop();
+        _dmxAddressCloudVar.loop();
+        _dmxLastCloudVar.loop();
+        _nameCloudVar.loop();
+        _descriptionCloudVar.loop();
+
         if (!_udpBegun && NetworkStatusMonitor::theInstance->status()==NetworkStatus::Connected)
         {
             beginUdp();
@@ -190,6 +196,12 @@ public:
 
     virtual void report()
     {
+        _dmxUniverseCloudVar.report();
+        _dmxAddressCloudVar.report();
+        _dmxLastCloudVar.report();
+        _nameCloudVar.report();
+        _descriptionCloudVar.report();
+
         if (_udpBegun)
         {
             Log.info("local address = %s", WiFi.localIP().toString().c_str());

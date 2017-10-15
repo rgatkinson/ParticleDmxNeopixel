@@ -4,9 +4,10 @@
 #ifndef __CRATE_H__
 #define __CRATE_H__
 
-#include "NeopixelDmxDevice.h"
-#include "Pixels/MiniSkinnyNeoPixelStrip.h"
+#include "Util/Misc.h"
 #include "Util/Color.h"
+#include "Peter/NeopixelDmxDevice.h"
+#include "Pixels/MiniSkinnyNeoPixelStrip.h"
 #include "Lumenizers/AmuletSelfTestLuminance.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"
 #include "Artnet/DmxDemoManager.h"
@@ -26,7 +27,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Crate(int pixelCount, LPCSTR shortName="Crate")
+    Crate(int pixelCount=60, LPCSTR shortName="Crate")
         : NeoPixelDmxDevice(new MiniSkinnyNeoPixelStrip(pixelCount), shortName)
     {
         setDemo();

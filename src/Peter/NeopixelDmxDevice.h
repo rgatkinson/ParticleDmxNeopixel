@@ -4,13 +4,14 @@
 #ifndef __NEOPIXEL_DMX_DEVICE_H__
 #define __NEOPIXEL_DMX_DEVICE_H__
 
+#include "System/Looper.h"
 #include "Artnet/Artnet.h"
 #include "Pixels/PixelSequence.h"
 #include "DmxParams/DmxColorLuminanceParameters.h"
 #include "Artnet/DmxLuminanceEffectSelector.h"
 #include "Artnet/DmxColorEffectSelector.h"
 
-struct NeoPixelDmxDevice : DmxPacketConsumer
+struct NeoPixelDmxDevice : DmxPacketConsumer, Looper, ReferenceCounted
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -40,18 +41,20 @@ public:
     {
     }
 
-    virtual ~NeoPixelDmxDevice()
+    ~NeoPixelDmxDevice() override
     {
         releaseRef(_pLuminanceEffectSelector);
         releaseRef(_pColorEffectSelector);
         releaseRef(_pPixels);
     }
 
+    DELEGATE_REF_COUNTING
+
     //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
 
-    virtual void begin()
+    void begin() override
     {
         _pPixels->begin();
         _artnet.begin();
@@ -59,16 +62,20 @@ public:
         _cloudColorEffect.begin();
     }
 
-    virtual void loop()
+    void loop() override
     {
         _pPixels->loop();
         _artnet.loop();
+        _cloudLuminanceEffect.loop();
+        _cloudColorEffect.loop();
     }
 
-    virtual void report()
+    void report() override
     {
         _pPixels->report();
         _artnet.report();
+        _cloudLuminanceEffect.report();
+        _cloudColorEffect.report();
         INFO("offsetof(ArtDmxPacketData, _data)=%d", offsetof(ArtDmxPacketData, _data));
     }
 

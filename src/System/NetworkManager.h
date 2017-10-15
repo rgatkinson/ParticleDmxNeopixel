@@ -4,11 +4,16 @@
 #ifndef __NETWORK_MANAGER_H_
 #define __NETWORK_MANAGER_H_
 
+#include <initializer_list>
+#include <functional>
+#include <map>
 #include <vector>
 #include "Util/Misc.h"
+#include "System/Looper.h"
 #include "System/SystemEventRegistrar.h"
 #include "System/NetworkStatusMonitor.h"
 #include "System/PersistentValueSetting.h"
+#include "System/PersistentStringSetting.h"
 #include "System/CloudVariable.h"
 
 //==================================================================================================
@@ -50,6 +55,13 @@ struct NetworkManager : SystemEventNotifications
     // State
     //----------------------------------------------------------------------------------------------
 protected:
+
+    typedef String                                         AppNameType;
+    typedef std::function<Looper*()>                       CreateLooperType;
+    typedef std::pair<const AppNameType, CreateLooperType> AppMapPairType;
+          const LPCSTR            _nullAppName           = "null";
+          const LPCSTR            _defaultAppName        = _nullAppName;
+
     /*
      * wakeUpPin: the wakeup pin number. supports external interrupts on the following pins:
      *   D1, D2, D3, D4, A0, A1, A3, A4, A6, A7 (WKP)
@@ -65,16 +77,21 @@ protected:
     bool                            _connectAttempted = false;
     bool                            _clearCredentials = false;
     rga::vector<WiFiPassword>       _passwords;
-    String                          _appName;
     ElapsedTime                     _upTime;
     Deadline                        _sleepTimer;
+
+    PersistentStringSetting<14>     _appName;
     PersistentIntSetting            _sleepTimeout;
     PersistentIntSetting            _sleepLength;
 
-    ComputedCloudVariable<LPCSTR>   _cloudAppName;
-    ComputedCloudVariable<int>      _cloudUptime;
+    CloudVariable<LPCSTR>           _cloudAppName;
     CloudVariable<int>              _cloudSleepTimeout;
     CloudVariable<int>              _cloudSleepLength;
+    ComputedCloudVariable<int>      _cloudUptime;
+
+    std::map<AppNameType, CreateLooperType> _appMap;
+    Looper*                         _pLooper;
+    bool                            _begun;
 
 public:
     static NetworkManager* theInstance;
@@ -83,25 +100,34 @@ public:
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
-    NetworkManager(LPCSTR szAppName)
+
+    typedef std::initializer_list<AppMapPairType> InitializerType;
+
+    NetworkManager(InitializerType applications)
         : _sleepTimeout(_sSleepTimeoutDefault),
           _sleepLength(_sSleepLengthDefault),
-          _appName(szAppName),
-          _cloudAppName("app", [this]() { return _appName.c_str(); }),
-          _cloudUptime("uptime", [this]() { return _upTime.seconds(); }),
+          _appName(_defaultAppName),
+          _cloudAppName("app", &_appName),
           _cloudSleepTimeout("sleepTimeout", &_sleepTimeout),
-          _cloudSleepLength("sleepLength", &_sleepLength)
+          _cloudSleepLength("sleepLength", &_sleepLength),
+          _cloudUptime("uptime", [this]() { return _upTime.seconds(); }),
+          _appMap(applications),
+          _pLooper(nullptr),
+          _begun(false)
     {
         pinMode(_wakeUpPin, _wakeUpPinMode);
         theInstance = this;
         WiFi.selectAntenna(ANT_INTERNAL);   // persistently remembered
         _sleepTimeout.registerNotifyChanged([this](int oldValue) { resetSleepTimer("sleepTimeout changed"); });
+        _appName.registerNotifyChanged([this](LPCSTR oldValue) { onAppNameChanged(); });
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
+
+        _appMap[_nullAppName] = []() { return nullptr; };
     }
     ~NetworkManager()
     {
-        _sleepTimeout.registerNotifyChanged(nullptr);
         SystemEventRegistrar::theInstance->unregisterSystemEvents(this);
+        releaseRef(_pLooper);
     }
 
     void addPassword(WiFiPassword& password)
@@ -116,7 +142,6 @@ public:
 
     void addPasswords(WiFiPassword wifiPasswords[], int cb)
     {
-
         int passwordCount = cb / sizeof(wifiPasswords[0]);
         for (int i = 0; i < passwordCount; i++)
         {
@@ -175,7 +200,6 @@ public:
 
     void resetSleepTimer(LPCSTR caller)
     {
-        // INFO("resetSleepTimer(%s)", caller);
         _sleepTimer = Deadline(_sleepTimeout.value() * 1000);
     }
 
@@ -197,11 +221,60 @@ public:
     }
 
     //----------------------------------------------------------------------------------------------
+    // App management
+    //----------------------------------------------------------------------------------------------
+
+    void onAppNameLoad()
+    {
+        ensureApp();
+    }
+
+    void onAppNameChanged()
+    {
+        if (ensureApp())
+        {
+            // Start over to ensure clean code path. In particular, to ensure
+            // that the cloud variables get published correctly (we don't seem)
+            // to be able to add dynamically after our initial publishing bunch;
+            // don't understand why.
+            INFO("restarting system");
+            System.reset();
+        }
+    }
+
+    bool ensureApp()
+    {
+        bool result = false;
+        const String name = String(_appName.value()).toLowerCase();
+
+        auto query = _appMap.find(name);
+        if (query != _appMap.end())
+        {
+            INFO("creating app name '%s'", name.c_str());
+
+            CreateLooperType& creator = query->second;
+            releaseRef(_pLooper);
+            _pLooper = creator();
+            if (_begun)
+            {
+                if (_pLooper) _pLooper->begin();
+            }
+            result = true;
+        }
+        else
+        {
+            WARN("unrecognized app name '%s': ignored", name.c_str());
+        }
+        return result;
+    }
+
+    //----------------------------------------------------------------------------------------------
     // Loop
     //----------------------------------------------------------------------------------------------
 
     void begin()
     {
+        onAppNameLoad();
         resetSleepTimer("NetworkManager::begin");
 
         WiFi.on();  // must be on first before we call setCredentials()
@@ -223,6 +296,9 @@ public:
         _cloudSleepTimeout.begin();
         _cloudSleepLength.begin();
         report();
+
+        if (_pLooper) _pLooper->begin();
+        _begun = true;
     }
 
     void loop()
@@ -237,6 +313,12 @@ public:
         }
         Particle.process();
         checkForSleep();
+
+        _cloudAppName.loop();
+        _cloudUptime.loop();
+        _cloudSleepTimeout.loop();
+        _cloudSleepLength.loop();
+        if (_pLooper) _pLooper->loop();
     }
 
     void report()
@@ -248,6 +330,12 @@ public:
         {
             INFO("credential: ssid=\"%s\" security=%d cipher=%d", ap[i].ssid, ap[i].security, ap[i].cipher);
         }
+
+        _cloudAppName.report();
+        _cloudUptime.report();
+        _cloudSleepTimeout.report();
+        _cloudSleepLength.report();
+        if (_pLooper) _pLooper->report();
     }
 
 };

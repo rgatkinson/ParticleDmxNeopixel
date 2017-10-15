@@ -109,7 +109,6 @@ public:
 
     void begin()
     {
-        KridaGlobals::theInstance->begin();
         if (_pLumenizer)
         {
             _pLumenizer->begin();

@@ -14,14 +14,45 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
+private:
+    struct State
+    {
+    private:
+        byte _flag;
+        char _rgchValue[_cchValue];  // always null terminated, include that in your count!
+    public:
+        State()
+        {
+            _flag = PersistentSettings::INVALID_BYTE;
+            zero();
+        }
+        bool isValid()
+        {
+            return _flag != PersistentSettings::INVALID_BYTE;
+        }
+        LPCSTR value()
+        {
+            return &_rgchValue[0];
+        }
+        void setValue(LPCSTR value)
+        {
+            zero();
+            safeStrncpy(_rgchValue, _cchValue, value);
+            _flag = PersistentSettings::VALID_BYTE;
+        }
+        void zero()
+        {
+            ::zero(&_rgchValue[0], _cchValue);
+        }
+    };
 
     String  _defaultValue;
-    char    _rgchValue[_cchValue];  // always null terminated, include that in your count!
+    State   _state;
 
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
-
+public:
     PersistentStringSetting() : PersistentStringSetting("")
     {
     }
@@ -31,27 +62,57 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     PersistentStringSetting(LPCSTR defaultValue)
         : _defaultValue(defaultValue)
     {
-        zero();
-        loadDefault();
         PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
-    void zero()
+    bool ensureLoaded() override
     {
-        ::zero(&_rgchValue[0], _cchValue);
+        bool result = _state.isValid();
+        if (!result)
+        {
+            result = PersistentSettings::theInstance->load(this);
+        }
+        if (!result)
+        {
+            result = loadDefault();
+            if (result)
+            {
+                save();
+            }
+        }
+        return result;
     }
-    bool loadDefault() override
+    bool loadDefault()
     {
-        zero();
-        safeStrncpy(_rgchValue, _cchValue, _defaultValue.c_str());
+        _state.setValue(_defaultValue.c_str());
         INFO("PersistentStringSetting: loaded default: %s", valueAsString().c_str());
         return true;
     }
     bool load(void* pv, int cb) override
     {
-        zero();
-        memcpy(&_rgchValue[0], pv, min(cb, _cchValue-1));  // ALWAYS null terminate
-        INFO("PersistentStringSetting: loaded: %s", valueAsString().c_str());
-        return true;
+        if (cb == size())
+        {
+            memcpy(pointer(), pv, cb);
+            if (_state.isValid())
+            {
+                INFO("PersistentStringSetting: loaded: %s", valueAsString().c_str());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int size() override
+    {
+        return sizeof(_state);
+    }
+    void* pointer() override
+    {
+        return &_state;
+    }
+    void save()
+    {
+        PersistentSettings::theInstance->save(this);
+        INFO("PersistentStringSetting: saved: %s", valueAsString().c_str());
     }
 
     //----------------------------------------------------------------------------------------------
@@ -64,17 +125,18 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
     }
     LPCSTR value() override
     {
-        return &_rgchValue[0];
+        ensureLoaded();
+        return _state.value();
     }
-    void setValue(const LPCSTR& sz) override
+    void setValue(const LPCSTR& value) override
     {
-        if (strcmp(sz, value()) != 0)
+        LPCSTR oldValue = this->value();
+        if (strcmp(value, oldValue) != 0)
         {
-            String oldValue(value());
-            zero();
-            safeStrncpy(_rgchValue, _cchValue, sz);
+            String capturedOldValue(oldValue);
+            _state.setValue(value);
             save();
-            notifyChanged(oldValue.c_str());
+            notifyChanged(capturedOldValue.c_str());
         }
     }
     int setValueString(const String& value) override
@@ -83,18 +145,6 @@ struct PersistentStringSetting : PersistentSetting, NotifyableSetting<LPCSTR>
         return value.length();
     }
 
-    int size() override
-    {
-        return _cchValue;
-    }
-    void* pointer() override
-    {
-        return &_rgchValue[0];
-    }
-    void save()
-    {
-        PersistentSettings::theInstance->save(this);
-    }
 };
 
 #endif

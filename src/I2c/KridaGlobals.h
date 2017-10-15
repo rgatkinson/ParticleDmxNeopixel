@@ -67,6 +67,18 @@ public:
         _percentFirstCloudVar.begin();
         _percentLastCloudVar.begin();
     }
+
+    void loop()
+    {
+        _percentFirstCloudVar.loop();
+        _percentLastCloudVar.loop();
+    }
+
+    void report()
+    {
+        _percentFirstCloudVar.report();
+        _percentLastCloudVar.report();
+    }
 };
 
 KridaGlobals* SELECTANY KridaGlobals::theInstance = nullptr;
