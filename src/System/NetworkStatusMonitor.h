@@ -15,7 +15,7 @@ struct NetworkStatusMonitor : SystemEventNotifications
     NetworkStatus _status = NetworkStatus::Off;
 
 public:
-    static NetworkStatusMonitor* theInstance;
+    static InstanceHolder<NetworkStatusMonitor> theInstance;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -24,7 +24,6 @@ public:
 public:
     NetworkStatusMonitor()
     {
-        theInstance = this;
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
     }
     ~NetworkStatusMonitor()
@@ -53,7 +52,9 @@ public:
     void onTimeChanged(int timeStatus) override
     {
     }
-
 };
+
+decltype(NetworkStatusMonitor::theInstance) SELECTANY NetworkStatusMonitor::theInstance;
+
 
 #endif

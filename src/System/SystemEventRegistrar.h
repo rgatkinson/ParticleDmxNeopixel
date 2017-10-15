@@ -65,7 +65,7 @@ struct SystemEventRegistrar
     // State
     //----------------------------------------------------------------------------------------------
 
-    static SystemEventRegistrar* theInstance;
+    static InstanceHolder<SystemEventRegistrar> theInstance;
 
 protected:
     struct Event
@@ -109,7 +109,6 @@ public:
     SystemEventRegistrar()
         : _buttonUpTimer(500)
     {
-        theInstance = this;
         registerSystemEvents();
     }
 
@@ -388,5 +387,7 @@ public:
     }
 
 };
+
+decltype(SystemEventRegistrar::theInstance) SELECTANY SystemEventRegistrar::theInstance;
 
 #endif

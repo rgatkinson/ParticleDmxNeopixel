@@ -21,10 +21,11 @@ struct KridaDimmersDevice : DmxPacketConsumer, Looper, ReferenceCounted
     //----------------------------------------------------------------------------------------------
 protected:
     ArtnetDevice                _artnet;        // before _dimmerCount to keep EEPROM sane
-    PersistentIntSetting        _dimmerCount;   // the *persistent* number of dimmers that are attached
     CloudVariable<int>          _dimmerCountCloudVar;
 
     rga::vector<KridaDimmer*>   _dimmers;       // size should be tracked to _dimmerCount
+
+    static PersistentIntSetting _dimmerCount;   // the *persistent* number of dimmers that are attached
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -33,9 +34,10 @@ public:
 
     KridaDimmersDevice(int dimmerCount=1, LPCSTR shortName="Dimmers")
         : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(dimmerCount), shortName),
-          _dimmerCount(dimmerCount),
           _dimmerCountCloudVar("dimmerCount", &_dimmerCount)
     {
+        _dimmerCount.setDefault(dimmerCount);
+
         Wire.setSpeed(CLOCK_SPEED_100KHZ);
         Wire.begin();
         createOrDestroyDimmers();
@@ -160,7 +162,8 @@ public:
             }
         }
     }
-
 };
+
+decltype(KridaDimmersDevice::_dimmerCount) SELECTANY KridaDimmersDevice::_dimmerCount;
 
 #endif

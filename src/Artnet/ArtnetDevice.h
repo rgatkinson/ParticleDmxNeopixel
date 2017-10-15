@@ -25,34 +25,35 @@ protected:
     ArtnetReportCode    _reportCode = ArtnetReportCode::PowerOk;
     int                 _pollReplyCount  = 0;
 
-    PersistentIntSetting                            _dmxUniverse;
-    PersistentIntSetting                            _dmxAddress;
     int                                             _dmxCount;
-    PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
-    PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
-
     CloudVariable<int>                              _dmxUniverseCloudVar;
     CloudVariable<int>                              _dmxAddressCloudVar;
     ComputedCloudVariable<int>                      _dmxLastCloudVar;
     CloudVariable<LPCSTR>                           _nameCloudVar;
     CloudVariable<LPCSTR>                           _descriptionCloudVar;
 
+    static PersistentIntSetting                            _dmxUniverse;
+    static PersistentIntSetting                            _dmxAddress;
+    static PersistentStringSetting<CCH_ARTNET_SHORT_NAME>  _name;
+    static PersistentStringSetting<CCH_ARTNET_LONG_NAME>   _description;
+
     //----------------------------------------------------------------------------------------------
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
     ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, int dmxCount, LPCSTR name="<name>", LPCSTR description="<description>")
-        : _dmxUniverse(0),
-          _dmxAddress(dmxAddress),
-          _dmxCount(dmxCount),
-          _name(name),
-          _description(description),
+        : _dmxCount(dmxCount),
           _dmxUniverseCloudVar("dmxUniverse", &_dmxUniverse),
           _dmxAddressCloudVar("dmxAddrFirst", &_dmxAddress),
           _dmxLastCloudVar("dmxAddrLast", [this]() { return dmxLast(); }),
           _nameCloudVar("name", &_name),
           _descriptionCloudVar("description", &_description)
     {
+        _dmxUniverse.setDefault(0);
+        _dmxAddress.setDefault(dmxAddress);
+        _name.setDefault(name);
+        _description.setDefault(description);
+
         _pOwner = pOwner;
         _udpBegun = false;
         _rgbUdpBuffer = reinterpret_cast<uint8_t*>(mallocNoFail(_cbUdpBuffer));
@@ -314,5 +315,10 @@ protected:
         return result;
     }
 };
+
+decltype(ArtnetDevice::_dmxUniverse) SELECTANY ArtnetDevice::_dmxUniverse;
+decltype(ArtnetDevice::_dmxAddress)  SELECTANY ArtnetDevice::_dmxAddress;
+decltype(ArtnetDevice::_name)        SELECTANY ArtnetDevice::_name;
+decltype(ArtnetDevice::_description) SELECTANY ArtnetDevice::_description;
 
 #endif

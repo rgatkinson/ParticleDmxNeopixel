@@ -14,8 +14,4 @@
 SYSTEM_THREAD(ENABLED);
 SYSTEM_MODE(MANUAL);
 
-SystemEventRegistrar*   SystemEventRegistrar::theInstance;
-NetworkStatusMonitor*   NetworkStatusMonitor::theInstance;
-PersistentSettings*     PersistentSettings::theInstance;
-NetworkManager*         NetworkManager::theInstance;
-Globals*                Globals::theInstance;
+Globals* Globals::theInstance;

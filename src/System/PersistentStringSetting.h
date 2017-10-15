@@ -60,10 +60,16 @@ public:
     {
     }
     PersistentStringSetting(LPCSTR defaultValue)
-        : _defaultValue(defaultValue)
     {
+        setDefault(defaultValue);
         PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
+    void setDefault(LPCSTR defaultValue)
+    {
+        _defaultValue = defaultValue;
+    }
+
+
     bool ensureLoaded() override
     {
         bool result = _state.isValid();

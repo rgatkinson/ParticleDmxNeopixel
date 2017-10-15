@@ -44,7 +44,6 @@ public:
         _value = ValueOff;
         _pLumenizer = nullptr;
         _pLuminanceEffectSelector = new DmxLuminanceEffectSelector(this);
-        KridaGlobals::createInstance();
     }
 
     ~KridaDimmerChannel()

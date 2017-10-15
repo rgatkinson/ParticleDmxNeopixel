@@ -43,7 +43,7 @@ private:
         }
     };
 
-    T       _default;
+    T       _defaultValue;
     State   _state;
 
     //----------------------------------------------------------------------------------------------
@@ -54,9 +54,15 @@ public:
     PersistentValueSetting() : PersistentValueSetting(T{})
     {
     }
-    PersistentValueSetting(const T& defaultValue) : _default(defaultValue)
+    PersistentValueSetting(const T& defaultValue)
     {
+        setDefault(defaultValue);
         PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
+    }
+
+    void setDefault(const T& defaultValue)
+    {
+        _defaultValue = defaultValue;
     }
 
     bool ensureLoaded() override
@@ -122,7 +128,7 @@ public:
 
     T defaultValue() const
     {
-        return _default;
+        return _defaultValue;
     }
 
     T value() override

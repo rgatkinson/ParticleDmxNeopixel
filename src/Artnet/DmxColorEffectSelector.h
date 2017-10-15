@@ -4,9 +4,6 @@
 #ifndef __DMX_COLOR_EFFECT_SELECTOR_H__
 #define __DMX_COLOR_EFFECT_SELECTOR_H__
 
-#include "System/PersistentSettings.h"
-#include "System/PersistentStringSetting.h"
-#include "System/CloudVariable.h"
 #include "DmxParams/DmxColorLuminanceParameters.h"
 #include "Colorizers/RainbowColors.h"
 #include "Colorizers/AmuletSelfTestColorizer.h"

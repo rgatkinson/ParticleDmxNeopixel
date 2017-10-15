@@ -79,7 +79,7 @@ protected:
     std::vector<PersistentSetting*> _persistentSettings;
 
 public:
-    static PersistentSettings* theInstance;
+    static InstanceHolder<PersistentSettings> theInstance;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -87,7 +87,6 @@ public:
 
     PersistentSettings()
     {
-        theInstance = this;
     }
 
     void addSetting(PersistentSetting* persistentSetting)
@@ -320,6 +319,8 @@ public:
         }
     }
 };
+
+decltype(PersistentSettings::theInstance) SELECTANY PersistentSettings::theInstance;
 
 #undef USE_HAL
 #endif

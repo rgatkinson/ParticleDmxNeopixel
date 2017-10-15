@@ -63,6 +63,22 @@ template <typename T> inline void zero(T* pt)
     zero(pt, sizeof(T));
 }
 
+template <typename T>
+struct InstanceHolder
+{
+private:
+    T* theInstance = nullptr;
+public:
+    T* operator->()
+    {
+        if (nullptr == theInstance)
+        {
+            theInstance = new T{};
+        }
+        return theInstance;
+    }
+};
+
 //--------------------------------------------------------------------------------------------------
 // Math / numerics
 //--------------------------------------------------------------------------------------------------

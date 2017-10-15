@@ -29,10 +29,6 @@ public:
 
 private:
     SerialLogHandler        _logHandler;
-    SystemEventRegistrar    _systemEventRegistrar;
-    NetworkStatusMonitor    _networkStatusMonitor;
-    PersistentSettings      _persistentSettings;
-    NetworkManager          _networkManager;
     int                     _buttonToken;
 
     //----------------------------------------------------------------------------------------------
@@ -41,7 +37,6 @@ private:
 
 public:
     Globals(NetworkManager::InitializerType applications)
-        : _networkManager(applications)
     {
         theInstance = this;
         System.enableFeature(FEATURE_RESET_INFO);
@@ -64,6 +59,8 @@ public:
             {
                 report();
             });
+
+        NetworkManager::theInstance->setApplications(applications);
     }
 
 public:
@@ -87,22 +84,22 @@ public:
     void begin()
     {
         announceLog();
-        _persistentSettings.begin();
-        _systemEventRegistrar.begin();
-        _networkManager.begin();
+        PersistentSettings::theInstance->begin();
+        SystemEventRegistrar::theInstance->begin();
+        NetworkManager::theInstance->begin();
     }
 
     void loop()
     {
-        _systemEventRegistrar.loop();
-        _networkManager.loop();
+        SystemEventRegistrar::theInstance->loop();
+        NetworkManager::theInstance->loop();
     }
 
     void report()
     {
         INFO("--------------------------------------------");
         INFO("free memory: %lu", System.freeMemory());
-        _networkManager.report();
+        NetworkManager::theInstance->report();
     }
 };
 

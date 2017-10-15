@@ -15,10 +15,10 @@ struct KridaGlobals
 protected:
 
 public:
-    static KridaGlobals* theInstance;
+    static InstanceHolder<KridaGlobals> theInstance;
 
-    PersistentIntSetting  _percentFirst;
-    PersistentIntSetting  _percentLast;
+    static PersistentIntSetting  _percentFirst;
+    static PersistentIntSetting  _percentLast;
 
     CloudVariable<int>    _percentFirstCloudVar;
     CloudVariable<int>    _percentLastCloudVar;
@@ -29,20 +29,11 @@ public:
 public:
 
     KridaGlobals()
-        : _percentFirst(0),
-          _percentLast(100),
-          _percentFirstCloudVar("dim100First", &_percentFirst),
+        : _percentFirstCloudVar("dim100First", &_percentFirst),
           _percentLastCloudVar("dim100Last", &_percentLast)
     {
-        theInstance = this;
-    }
-
-    static void createInstance()
-    {
-        if (theInstance==nullptr)
-        {
-            new KridaGlobals();
-        }
+        _percentFirst.setDefault(0);
+        _percentLast.setDefault(100);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -81,6 +72,8 @@ public:
     }
 };
 
-KridaGlobals* SELECTANY KridaGlobals::theInstance = nullptr;
+decltype(KridaGlobals::theInstance)   SELECTANY KridaGlobals::theInstance;
+decltype(KridaGlobals::_percentFirst) SELECTANY KridaGlobals::_percentFirst;
+decltype(KridaGlobals::_percentLast)  SELECTANY KridaGlobals::_percentLast;
 
 #endif

@@ -80,10 +80,6 @@ protected:
     ElapsedTime                     _upTime;
     Deadline                        _sleepTimer;
 
-    PersistentStringSetting<14>     _appName;
-    PersistentIntSetting            _sleepTimeout;
-    PersistentIntSetting            _sleepLength;
-
     CloudVariable<LPCSTR>           _cloudAppName;
     CloudVariable<int>              _cloudSleepTimeout;
     CloudVariable<int>              _cloudSleepLength;
@@ -93,8 +89,12 @@ protected:
     Looper*                         _pLooper;
     bool                            _begun;
 
+    static PersistentStringSetting<14> _appName;
+    static PersistentIntSetting        _sleepTimeout;
+    static PersistentIntSetting        _sleepLength;
+
 public:
-    static NetworkManager* theInstance;
+    static InstanceHolder<NetworkManager> theInstance;
 
     //----------------------------------------------------------------------------------------------
     // Construction
@@ -103,31 +103,36 @@ public:
 
     typedef std::initializer_list<AppMapPairType> InitializerType;
 
-    NetworkManager(InitializerType applications)
-        : _sleepTimeout(_sSleepTimeoutDefault),
-          _sleepLength(_sSleepLengthDefault),
-          _appName(_defaultAppName),
-          _cloudAppName("app", &_appName),
+    NetworkManager()
+        : _cloudAppName("app", &_appName),
           _cloudSleepTimeout("sleepTimeout", &_sleepTimeout),
           _cloudSleepLength("sleepLength", &_sleepLength),
           _cloudUptime("uptime", [this]() { return _upTime.seconds(); }),
-          _appMap(applications),
+          _appMap(),
           _pLooper(nullptr),
           _begun(false)
     {
+        _sleepTimeout.setDefault(_sSleepTimeoutDefault);
+        _sleepLength.setDefault(_sSleepLengthDefault);
+        _appName.setDefault(_defaultAppName);
+
         pinMode(_wakeUpPin, _wakeUpPinMode);
-        theInstance = this;
         WiFi.selectAntenna(ANT_INTERNAL);   // persistently remembered
         _sleepTimeout.registerNotifyChanged([this](int oldValue) { resetSleepTimer("sleepTimeout changed"); });
         _appName.registerNotifyChanged([this](LPCSTR oldValue) { onAppNameChanged(); });
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
 
-        _appMap[_nullAppName] = []() { return nullptr; };
     }
     ~NetworkManager()
     {
         SystemEventRegistrar::theInstance->unregisterSystemEvents(this);
         releaseRef(_pLooper);
+    }
+
+    void setApplications(InitializerType applications)
+    {
+        _appMap = std::map<AppNameType, CreateLooperType>(applications);
+        _appMap[_nullAppName] = []() { return nullptr; };
     }
 
     void addPassword(WiFiPassword& password)
@@ -339,6 +344,11 @@ public:
     }
 
 };
+
+decltype(NetworkManager::_appName)      SELECTANY NetworkManager::_appName;
+decltype(NetworkManager::_sleepTimeout) SELECTANY NetworkManager::_sleepTimeout;
+decltype(NetworkManager::_sleepLength)  SELECTANY NetworkManager::_sleepLength;
+decltype(NetworkManager::theInstance)   SELECTANY NetworkManager::theInstance;
 
 inline void resetSleepTimer(LPCSTR sz)
 {
