@@ -66,7 +66,8 @@ struct NotifyableSetting : TypedSetting<T>
 // PersistentSettings
 //==================================================================================================
 
-#define USE_HAL 1
+#define USE_HAL 0 // nice hack, but it doesn't work reliably as currently manifest. we don't know why
+// seemed to work for most vars, but isn't working for the header.
 
 struct PersistentSettings
 {
@@ -114,8 +115,8 @@ public:
 
     struct Header
     {
-        byte _flag;
         int  _ibValidMax;
+        byte _flag;
 
         bool isInitialized()
         {
@@ -126,8 +127,8 @@ public:
             bool result = false;
             if (!isInitialized())
             {
-                _flag = 0;
                 _ibValidMax = 0;
+                _flag = VALID_BYTE;
                 result = true;
             }
             return result;
@@ -170,6 +171,7 @@ public:
         {
             header.initialize();
             writeHeader(header);
+            INFO("saveInitialized: isInitialized()=%d", isInitialized());
         }
     }
     void noteValid(int ibValidMax)
