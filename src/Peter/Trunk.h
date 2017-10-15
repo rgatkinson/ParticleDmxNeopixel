@@ -1,18 +1,18 @@
 //
-// Crate.h
+// Trunk.h
 //
-#ifndef __CRATE_H__
-#define __CRATE_H__
+#ifndef __TRUNK_H__
+#define __TRUNK_H__
 
 #include "Util/Misc.h"
 #include "Util/Color.h"
 #include "Peter/NeopixelDmxDevice.h"
 #include "Pixels/MiniSkinnyNeoPixelStrip.h"
-#include "Lumenizers/AmuletSelfTestLuminance.h"
-#include "Colorizers/AmuletSelfTestColorizer.h"
+#include "Lumenizers/BreathingLuminance.h"
+#include "Colorizers/UniformColor.h"
 #include "Artnet/DmxDemoManager.h"
 
-struct Crate : NeoPixelDmxDevice
+struct Trunk : NeoPixelDmxDevice
 {
     //----------------------------------------------------------------------------------------------
     // State
@@ -27,7 +27,7 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    Crate(int pixelCount=60, LPCSTR shortName="Crate")
+    Trunk(int pixelCount=60, LPCSTR shortName="Trunk")
         : NeoPixelDmxDevice(new MiniSkinnyNeoPixelStrip(pixelCount), shortName)
     {
         setDemo();
@@ -38,16 +38,16 @@ public:
             });
     }
 
-    ~Crate()
+    ~Trunk()
     {
         SystemEventRegistrar::theInstance->unregisterButtonClick(_buttonToken);
     }
 
     void setDemo()
     {
-        INFO("crate demo #%d", (int)_demo);
-        Colorizer* pColorizer = new AmuletSelfTestColorizer();
-        Lumenizer* pLumenizer = new AmuletSelfTestLuminance(2,3);
+        INFO("Trunk demo #%d", (int)_demo);
+        Colorizer* pColorizer = new UniformColor(Color::rgb(0,128,0));
+        Lumenizer* pLumenizer = new BreathingLuminance(6000,4000);
         DmxDemoManager::setDemo(_pPixels, _demo, pColorizer, pLumenizer);
         releaseRef(pColorizer);
         releaseRef(pLumenizer);
