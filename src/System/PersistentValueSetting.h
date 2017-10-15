@@ -69,7 +69,6 @@ public:
     {
         _defaultValue = defaultValue;
         _state.invalidate();
-        trace("setDefault", defaultValue);
     }
 
     bool ensureLoaded() override

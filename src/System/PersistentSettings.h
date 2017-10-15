@@ -89,7 +89,6 @@ public:
     PersistentSettings()
     {
         _ibNext = ibDataFirst();
-        clear(); // WRONG
     }
 
     int addSetting(PersistentSetting* persistentSetting)
@@ -223,7 +222,7 @@ public:
             }
             else
             {
-                INFO("past end of data: %d %d", ibFirst, cb);
+                // INFO("past end of data: %d %d", ibFirst, cb);
             }
         }
         else

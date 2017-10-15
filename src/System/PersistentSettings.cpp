@@ -9,6 +9,9 @@
 #include "I2c/KridaDimmersDevice.h"
 #include "System/NetworkManager.h"
 
+// Defined in one file so that their relative initializatio order is defined and fixed.
+// That is important as it determines the order of layout in EEPROM.
+
 decltype(NetworkManager::_appName)      NetworkManager::_appName;
 decltype(NetworkManager::_sleepTimeout) NetworkManager::_sleepTimeout;
 decltype(NetworkManager::_sleepLength)  NetworkManager::_sleepLength;

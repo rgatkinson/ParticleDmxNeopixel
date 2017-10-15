@@ -73,7 +73,6 @@ public:
     {
         _defaultValue = defaultValue;
         _state.invalidate();
-        INFO("PersistentStringSetting: setDefault: '%s' ibFirst=%d", defaultValue, _ibFirst);
     }
 
     bool ensureLoaded() override
@@ -96,7 +95,7 @@ public:
     bool loadDefault()
     {
         _state.setValue(_defaultValue.c_str());
-        INFO("PersistentStringSetting: loaded default: '%s' ibFirst=%d", valueAsString().c_str(), _ibFirst);
+        INFO("PersistentStringSetting: loaded default: '%s'", valueAsString().c_str());
         return true;
     }
     bool load(void* pv, int cb) override
@@ -106,7 +105,7 @@ public:
             memcpy(pointer(), pv, cb);
             if (_state.isValid())
             {
-                INFO("PersistentStringSetting: loaded: '%s' ibFirst=%d", valueAsString().c_str(), _ibFirst);
+                INFO("PersistentStringSetting: loaded: '%s' ibFirst=%d", valueAsString().c_str());
                 return true;
             }
         }
