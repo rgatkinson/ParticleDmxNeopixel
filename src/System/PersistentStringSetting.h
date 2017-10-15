@@ -46,6 +46,7 @@ private:
         }
     };
 
+    int     _ibFirst;
     String  _defaultValue;
     State   _state;
 
@@ -62,7 +63,7 @@ public:
     PersistentStringSetting(LPCSTR defaultValue)
     {
         setDefault(defaultValue);
-        PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
+        _ibFirst = PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
     void setDefault(LPCSTR defaultValue)
     {
@@ -75,7 +76,7 @@ public:
         bool result = _state.isValid();
         if (!result)
         {
-            result = PersistentSettings::theInstance->load(this);
+            result = PersistentSettings::theInstance->load(this, _ibFirst);
         }
         if (!result)
         {
@@ -117,7 +118,7 @@ public:
     }
     void save()
     {
-        PersistentSettings::theInstance->save(this);
+        PersistentSettings::theInstance->save(this, _ibFirst);
         INFO("PersistentStringSetting: saved: %s", valueAsString().c_str());
     }
 

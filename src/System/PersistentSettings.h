@@ -77,6 +77,7 @@ struct PersistentSettings
 protected:
 
     std::vector<PersistentSetting*> _persistentSettings;
+    int                             _ibNext;
 
 public:
     static InstanceHolder<PersistentSettings> theInstance;
@@ -87,11 +88,15 @@ public:
 
     PersistentSettings()
     {
+        _ibNext = ibDataFirst();
     }
 
-    void addSetting(PersistentSetting* persistentSetting)
+    int addSetting(PersistentSetting* persistentSetting)
     {
         _persistentSettings.push_back(persistentSetting);
+        int result = _ibNext;
+        _ibNext += persistentSetting->size();
+        return result;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -186,23 +191,8 @@ public:
     // Storage
     //----------------------------------------------------------------------------------------------
 
-    int ibFirst(PersistentSetting* persistentSetting)
+    void save(PersistentSetting* persistentSetting, int ibFirst)
     {
-        int ib = ibDataFirst();
-        for (auto it = _persistentSettings.begin(); it != _persistentSettings.end(); it++)
-        {
-            if ((*it)==persistentSetting)
-            {
-                return ib;
-            }
-            ib += (*it)->size();
-        }
-        return -1;
-    }
-
-    void save(PersistentSetting* persistentSetting)
-    {
-        int ibFirst = this->ibFirst(persistentSetting);
         if (ibFirst >= 0)
         {
             persistentSetting->ensureLoaded();
@@ -214,10 +204,9 @@ public:
         }
     }
 
-    bool load(PersistentSetting* persistentSetting)
+    bool load(PersistentSetting* persistentSetting, int ibFirst)
     {
         bool result = false;
-        int ibFirst = this->ibFirst(persistentSetting);
         if (ibFirst >= 0)
         {
             int cb = persistentSetting->size();

@@ -43,6 +43,7 @@ private:
         }
     };
 
+    int     _ibFirst;
     T       _defaultValue;
     State   _state;
 
@@ -57,7 +58,7 @@ public:
     PersistentValueSetting(const T& defaultValue)
     {
         setDefault(defaultValue);
-        PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
+        _ibFirst = PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
 
     void setDefault(const T& defaultValue)
@@ -70,7 +71,7 @@ public:
         bool result = _state.isValid();
         if (!result)
         {
-            result = PersistentSettings::theInstance->load(this);
+            result = PersistentSettings::theInstance->load(this, _ibFirst);
         }
         if (!result)
         {
@@ -113,7 +114,7 @@ public:
     }
     void save()
     {
-        PersistentSettings::theInstance->save(this);
+        PersistentSettings::theInstance->save(this, _ibFirst);
         trace("saved", _state.value());
     }
 
