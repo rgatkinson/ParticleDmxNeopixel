@@ -41,6 +41,10 @@ private:
             _value = value;
             _flag = PersistentSettings::VALID_BYTE;
         }
+        void invalidate()
+        {
+            _flag = PersistentSettings::INVALID_BYTE;
+        }
     };
 
     int     _ibFirst;
@@ -57,13 +61,15 @@ public:
     }
     PersistentValueSetting(const T& defaultValue)
     {
-        setDefault(defaultValue);
+        _defaultValue = defaultValue;
         _ibFirst = PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
 
     void setDefault(const T& defaultValue)
     {
         _defaultValue = defaultValue;
+        _state.invalidate();
+        trace("setDefault", defaultValue);
     }
 
     bool ensureLoaded() override

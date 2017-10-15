@@ -89,6 +89,7 @@ public:
     PersistentSettings()
     {
         _ibNext = ibDataFirst();
+        clear(); // WRONG
     }
 
     int addSetting(PersistentSetting* persistentSetting)
@@ -207,7 +208,7 @@ public:
     bool load(PersistentSetting* persistentSetting, int ibFirst)
     {
         bool result = false;
-        if (ibFirst >= 0)
+        if (ibFirst >= ibDataFirst())
         {
             int cb = persistentSetting->size();
             int ibMax = ibFirst + cb;
@@ -220,6 +221,14 @@ public:
                 result = persistentSetting->load(pb, cb);
                 free(pb);
             }
+            else
+            {
+                INFO("past end of data: %d %d", ibFirst, cb);
+            }
+        }
+        else
+        {
+            INFO("invalid ibFirst: %d", ibFirst);
         }
         return result;
     }

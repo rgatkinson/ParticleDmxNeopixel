@@ -33,10 +33,10 @@ protected:
 public:
 
     KridaDimmersDevice(int dimmerCount=1, LPCSTR shortName="Dimmers")
-        : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(dimmerCount), shortName),
-          _dimmerCountCloudVar("dimmerCount", &_dimmerCount)
+        : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(dimmerCount), shortName)
     {
         _dimmerCount.setDefault(dimmerCount);
+        _dimmerCountCloudVar.initialize("dimmerCount", &_dimmerCount);
 
         Wire.setSpeed(CLOCK_SPEED_100KHZ);
         Wire.begin();

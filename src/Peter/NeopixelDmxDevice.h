@@ -35,10 +35,10 @@ public:
         : _pPixels(pixels),
           _pLuminanceEffectSelector(new DmxLuminanceEffectSelector(_pPixels)),
           _pColorEffectSelector(new DmxColorEffectSelector(_pPixels)),
-          _cloudLuminanceEffect("lumEffect", [this]() { return _pLuminanceEffectSelector->effectName(); }),
-          _cloudColorEffect("colorEffect", [this]() { return _pColorEffectSelector->effectName(); }),
           _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(), shortName)
     {
+        _cloudLuminanceEffect.initialize("lumEffect", [this]() { return _pLuminanceEffectSelector->effectName(); });
+        _cloudColorEffect.initialize("colorEffect", [this]() { return _pColorEffectSelector->effectName(); });
     }
 
     ~NeoPixelDmxDevice() override

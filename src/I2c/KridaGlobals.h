@@ -29,11 +29,12 @@ public:
 public:
 
     KridaGlobals()
-        : _percentFirstCloudVar("dim100First", &_percentFirst),
-          _percentLastCloudVar("dim100Last", &_percentLast)
     {
         _percentFirst.setDefault(0);
         _percentLast.setDefault(100);
+
+        _percentFirstCloudVar.initialize("dim100First", &_percentFirst);
+        _percentLastCloudVar.initialize("dim100Last", &_percentLast);
     }
 
     //----------------------------------------------------------------------------------------------

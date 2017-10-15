@@ -44,6 +44,10 @@ private:
         {
             ::zero(&_rgchValue[0], _cchValue);
         }
+        void invalidate()
+        {
+            _flag = PersistentSettings::INVALID_BYTE;
+        }
     };
 
     int     _ibFirst;
@@ -62,14 +66,15 @@ public:
     }
     PersistentStringSetting(LPCSTR defaultValue)
     {
-        setDefault(defaultValue);
+        _defaultValue = defaultValue;
         _ibFirst = PersistentSettings::theInstance->addSetting(this);    // note: we lay out in declaration order!
     }
     void setDefault(LPCSTR defaultValue)
     {
         _defaultValue = defaultValue;
+        _state.invalidate();
+        INFO("PersistentStringSetting: setDefault: '%s' ibFirst=%d", defaultValue, _ibFirst);
     }
-
 
     bool ensureLoaded() override
     {
@@ -91,7 +96,7 @@ public:
     bool loadDefault()
     {
         _state.setValue(_defaultValue.c_str());
-        INFO("PersistentStringSetting: loaded default: %s", valueAsString().c_str());
+        INFO("PersistentStringSetting: loaded default: '%s' ibFirst=%d", valueAsString().c_str(), _ibFirst);
         return true;
     }
     bool load(void* pv, int cb) override
@@ -101,7 +106,7 @@ public:
             memcpy(pointer(), pv, cb);
             if (_state.isValid())
             {
-                INFO("PersistentStringSetting: loaded: %s", valueAsString().c_str());
+                INFO("PersistentStringSetting: loaded: '%s' ibFirst=%d", valueAsString().c_str(), _ibFirst);
                 return true;
             }
         }

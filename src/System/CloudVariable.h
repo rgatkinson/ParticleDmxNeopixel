@@ -31,9 +31,13 @@ public:
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    AbstractCloudVariable(LPCSTR name)
-        : _name(name)
+    AbstractCloudVariable()
     {
+    }
+
+    void initialize(LPCSTR name)
+    {
+        _name = name;
         _fnGetValue = []() { return VALUE{}; };
     }
 
@@ -197,9 +201,13 @@ struct ComputedCloudVariable : AbstractCloudVariable<VALUE>
     // Construction
     //----------------------------------------------------------------------------------------------
 public:
-    ComputedCloudVariable(LPCSTR name, std::function<VALUE()> fnGetValue)
-        : AbstractCloudVariable<VALUE>(name)
+    ComputedCloudVariable()
     {
+    }
+
+    void initialize(LPCSTR name, std::function<VALUE()> fnGetValue)
+    {
+        AbstractCloudVariable<VALUE>::initialize(name);
         AbstractCloudVariable<VALUE>::_fnGetValue = fnGetValue;
     }
 };
@@ -226,11 +234,15 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
 
-    CloudVariable(LPCSTR name, Setting* pSetting, ReadWriteable writeable = ReadWriteable::RW)
-        : AbstractCloudVariable<VALUE>(name),
-          _setting(pSetting),
-          _writeable(writeable)
+    CloudVariable()
     {
+    }
+
+    void initialize(LPCSTR name, Setting* pSetting, ReadWriteable writeable = ReadWriteable::RW)
+    {
+        super::initialize(name);
+        _setting = pSetting;
+        _writeable = writeable;
         super::_fnGetValue = [this]() { return _setting->value(); };
     }
 

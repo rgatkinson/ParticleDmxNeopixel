@@ -67,11 +67,11 @@ protected:
      *   D1, D2, D3, D4, A0, A1, A3, A4, A6, A7 (WKP)
      * The same pin limitations as attachInterrupt apply
     */
-    static const int              _sSleepTimeoutDefault  = 0;
-    static const int              _sSleepLengthDefault   = 600;
-    static const uint16_t         _wakeUpPin             = A7;
-    static const PinMode          _wakeUpPinMode         = INPUT_PULLUP;
-    static const InterruptMode    _wakeUpEdgeMode        = FALLING;
+           const int              _sSleepTimeoutDefault  = 0;
+           const int              _sSleepLengthDefault   = 600;
+           const uint16_t         _wakeUpPin             = A7;
+           const PinMode          _wakeUpPinMode         = INPUT_PULLUP;
+           const InterruptMode    _wakeUpEdgeMode        = FALLING;
            const SleepNetworkFlag _wakeUpNetworkMode     = SLEEP_NETWORK_OFF;
 
     bool                            _connectAttempted = false;
@@ -104,24 +104,13 @@ public:
     typedef std::initializer_list<AppMapPairType> InitializerType;
 
     NetworkManager()
-        : _cloudAppName("app", &_appName),
-          _cloudSleepTimeout("sleepTimeout", &_sleepTimeout),
-          _cloudSleepLength("sleepLength", &_sleepLength),
-          _cloudUptime("uptime", [this]() { return _upTime.seconds(); }),
-          _appMap(),
+        : _appMap(),
           _pLooper(nullptr),
           _begun(false)
     {
-        _sleepTimeout.setDefault(_sSleepTimeoutDefault);
-        _sleepLength.setDefault(_sSleepLengthDefault);
-        _appName.setDefault(_defaultAppName);
-
         pinMode(_wakeUpPin, _wakeUpPinMode);
         WiFi.selectAntenna(ANT_INTERNAL);   // persistently remembered
-        _sleepTimeout.registerNotifyChanged([this](int oldValue) { resetSleepTimer("sleepTimeout changed"); });
-        _appName.registerNotifyChanged([this](LPCSTR oldValue) { onAppNameChanged(); });
         SystemEventRegistrar::theInstance->registerSystemEvents(this);
-
     }
     ~NetworkManager()
     {
@@ -277,9 +266,28 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
+    void beginVariables()
+    {
+        _appName.setDefault(_defaultAppName);
+        _sleepTimeout.setDefault(_sSleepTimeoutDefault);
+        _sleepLength.setDefault(_sSleepLengthDefault);
+
+        _cloudAppName.initialize("app", &_appName);
+        _cloudUptime.initialize("uptime", [this]() { return _upTime.seconds(); });
+        _cloudSleepTimeout.initialize("sleepTimeout", &_sleepTimeout);
+        _cloudSleepLength.initialize("sleepLength", &_sleepLength);
+
+        _cloudAppName.begin();
+        _cloudUptime.begin();
+        _cloudSleepTimeout.begin();
+        _cloudSleepLength.begin();
+
+        _sleepTimeout.registerNotifyChanged([this](int oldValue) { resetSleepTimer("sleepTimeout changed"); });
+        _appName.registerNotifyChanged([this](LPCSTR oldValue) { onAppNameChanged(); });
+    }
+
     void begin()
     {
-        onAppNameLoad();
         resetSleepTimer("NetworkManager::begin");
 
         WiFi.on();  // must be on first before we call setCredentials()
@@ -296,10 +304,10 @@ public:
         }
 
         WiFi.connect(); // no point in WIFI_CONNECT_SKIP_LISTEN: that only matters if WiFi lacks credentials
-        _cloudAppName.begin();
-        _cloudUptime.begin();
-        _cloudSleepTimeout.begin();
-        _cloudSleepLength.begin();
+
+        beginVariables();
+        onAppNameLoad();
+
         report();
 
         if (_pLooper) _pLooper->begin();

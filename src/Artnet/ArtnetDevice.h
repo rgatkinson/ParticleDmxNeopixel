@@ -46,13 +46,8 @@ protected:
     //----------------------------------------------------------------------------------------------
 public:
     ArtnetDevice(DmxPacketConsumer* pOwner, DMX_ADDRESS dmxAddress, int dmxCount, LPCSTR name="<name>", LPCSTR description="<description>")
-        : _dmxCount(dmxCount),
-          _dmxUniverseCloudVar("dmxUniverse", &_dmxUniverse),
-          _dmxAddressCloudVar("dmxAddrFirst", &_dmxAddress),
-          _dmxLastCloudVar("dmxAddrLast", [this]() { return dmxLast(); }),
-          _nameCloudVar("name", &_name),
-          _descriptionCloudVar("description", &_description)
     {
+        _dmxCount = dmxCount;
         _dmxUniverse.setDefault(0);
         _dmxAddress.setDefault(dmxAddress);
         _name.setDefault(name);
@@ -172,13 +167,24 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 public:
-    virtual void begin()
+    void beginVariables()
     {
+        _dmxUniverseCloudVar.initialize("dmxUniverse", &_dmxUniverse);
+        _dmxAddressCloudVar.initialize("dmxAddrFirst", &_dmxAddress);
+        _dmxLastCloudVar.initialize("dmxAddrLast", [this]() { return dmxLast(); });
+        _nameCloudVar.initialize("name", &_name);
+        _descriptionCloudVar.initialize("description", &_description);
+
         _dmxUniverseCloudVar.begin();
         _dmxAddressCloudVar.begin();
         _dmxLastCloudVar.begin();
         _nameCloudVar.begin();
         _descriptionCloudVar.begin();
+    }
+
+    virtual void begin()
+    {
+        beginVariables();
     }
 
     virtual void loop()
