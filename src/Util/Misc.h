@@ -67,7 +67,7 @@ template <typename T>
 struct InstanceHolder
 {
 private:
-    T* theInstance = nullptr;
+    T* theInstance; // we rely on zero-phase initialization
 public:
     T* operator->()
     {

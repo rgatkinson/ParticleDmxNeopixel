@@ -105,7 +105,7 @@ public:
             memcpy(pointer(), pv, cb);
             if (_state.isValid())
             {
-                INFO("PersistentStringSetting: loaded: '%s' ibFirst=%d", valueAsString().c_str());
+                INFO("PersistentStringSetting: loaded: '%s'", valueAsString().c_str());
                 return true;
             }
         }
@@ -123,7 +123,7 @@ public:
     void save()
     {
         PersistentSettings::theInstance->save(this, _ibFirst);
-        INFO("PersistentStringSetting: saved: %s", valueAsString().c_str());
+        INFO("PersistentStringSetting: saved: '%s'", valueAsString().c_str());
     }
 
     //----------------------------------------------------------------------------------------------

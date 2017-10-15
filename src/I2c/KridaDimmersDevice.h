@@ -36,7 +36,6 @@ public:
         : _artnet(this, DMX_ADDRESS_DEFAULT, dmxCount(dimmerCount), shortName)
     {
         _dimmerCount.setDefault(dimmerCount);
-        _dimmerCountCloudVar.initialize("dimmerCount", &_dimmerCount);
 
         Wire.setSpeed(CLOCK_SPEED_100KHZ);
         Wire.begin();
@@ -102,10 +101,16 @@ public:
     // Loop
     //----------------------------------------------------------------------------------------------
 
+    void beginVariables()
+    {
+        _dimmerCountCloudVar.initialize("dimmerCount", &_dimmerCount);
+        _dimmerCountCloudVar.begin();
+    }
+
     void begin() override
     {
         _artnet.begin();
-        _dimmerCountCloudVar.begin();
+        beginVariables();
         KridaGlobals::theInstance->begin();
         for (auto it = _dimmers.begin(); it != _dimmers.end(); it++)
         {

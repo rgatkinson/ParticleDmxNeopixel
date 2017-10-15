@@ -32,9 +32,6 @@ public:
     {
         _percentFirst.setDefault(0);
         _percentLast.setDefault(100);
-
-        _percentFirstCloudVar.initialize("dim100First", &_percentFirst);
-        _percentLastCloudVar.initialize("dim100Last", &_percentLast);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -56,6 +53,8 @@ public:
 
     void begin()
     {
+        _percentFirstCloudVar.initialize("dim100First", &_percentFirst);
+        _percentLastCloudVar.initialize("dim100Last", &_percentLast);
         _percentFirstCloudVar.begin();
         _percentLastCloudVar.begin();
     }
